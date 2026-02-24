@@ -80,7 +80,8 @@ export function Home() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <a href="/" className="text-lg font-bold text-foreground">
+          <a href="/" className="flex items-center gap-2 text-lg font-bold text-foreground">
+            <img src="/flow-logo.png" alt="Flow Mortgage" className="h-8 w-8" />
             Flow <span className="text-primary">Mortgage</span>
           </a>
           <a

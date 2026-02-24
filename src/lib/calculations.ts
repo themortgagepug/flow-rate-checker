@@ -150,13 +150,28 @@ export function calculateGrade(
 }
 
 /**
- * Estimate penalty as 3 months' interest (fallback).
+ * Estimate mortgage penalty.
+ * For fixed-rate: greater of 3-month interest or IRD.
+ * For variable-rate: 3-month interest only.
  */
 export function estimatePenalty(
   balance: number,
-  annualRate: number
+  annualRate: number,
+  mortgageType: "Fixed" | "Variable" = "Fixed",
+  comparableRate?: number,
+  remainingMonths?: number
 ): number {
-  return Math.round(balance * (annualRate / 100) * 3 / 12);
+  const threeMonthInterest = balance * (annualRate / 100) * 3 / 12;
+
+  if (mortgageType === "Variable" || !comparableRate || !remainingMonths) {
+    return Math.round(threeMonthInterest * 100) / 100;
+  }
+
+  // IRD: (contract_rate - comparison_rate) × balance × remaining_months / 12
+  const rateDiff = (annualRate - comparableRate) / 100;
+  const ird = rateDiff > 0 ? rateDiff * balance * remainingMonths / 12 : 0;
+
+  return Math.round(Math.max(threeMonthInterest, ird) * 100) / 100;
 }
 
 /**
@@ -195,10 +210,10 @@ export function computeResults(
   const comparableRate = getComparableRate(answers.term, answers.type, rateData);
   const grade = calculateGrade(answers.rate, comparableRate);
 
-  // Yearly + monthly savings
+  // Yearly + monthly savings (2-decimal precision)
   const yearlySavings = Math.round(
-    ((answers.rate - comparableRate) / 100) * answers.balance
-  );
+    ((answers.rate - comparableRate) / 100) * answers.balance * 100
+  ) / 100;
   const monthlySavings =
     ((answers.rate - comparableRate) / 100) * answers.balance / 12;
 
@@ -216,23 +231,25 @@ export function computeResults(
     answers.paymentFrequency
   );
 
-  // Penalty
+  // Penalty — compute remaining months for IRD
+  const renewalDate = new Date(answers.renewalDate);
+  const now = new Date();
+  const remainingMs = renewalDate.getTime() - now.getTime();
+  const remainingMonths = Math.max(0, Math.ceil(remainingMs / (1000 * 60 * 60 * 24 * 30.44)));
   const penalty =
-    penaltyOverride ?? estimatePenalty(answers.balance, answers.rate);
+    penaltyOverride ?? estimatePenalty(answers.balance, answers.rate, answers.type, comparableRate, remainingMonths);
 
   // Break-even
   const breakevenMonths = calculateBreakeven(penalty, monthlySavings);
 
   // Total savings potential (net of penalty, over remaining term)
-  const renewalDate = new Date(answers.renewalDate);
-  const now = new Date();
   const yearsRemaining = Math.max(
     0,
-    (renewalDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 365.25)
+    remainingMs / (1000 * 60 * 60 * 24 * 365.25)
   );
   const totalSavingsPotential = Math.max(
     0,
-    Math.floor(yearlySavings * yearsRemaining) - penalty
+    Math.round((yearlySavings * yearsRemaining - penalty) * 100) / 100
   );
 
   // Comparable payment at the better rate
@@ -240,9 +257,9 @@ export function computeResults(
   const comparableMonthly = amortTotalMonths > 0
     ? calculateMonthlyPayment(answers.balance, comparableRate, amortTotalMonths)
     : 0;
-  const comparablePayment = Math.floor(
-    adjustForFrequency(comparableMonthly, answers.paymentFrequency)
-  );
+  const comparablePayment = Math.round(
+    adjustForFrequency(comparableMonthly, answers.paymentFrequency) * 100
+  ) / 100;
 
   return {
     grade,

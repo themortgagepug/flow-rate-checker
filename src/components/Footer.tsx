@@ -5,7 +5,8 @@ export function Footer() {
     <footer className="py-10 px-4 border-t border-border/50">
       <div className="max-w-3xl mx-auto text-center">
         <div className="mb-4">
-          <span className="text-lg font-bold text-foreground">
+          <span className="inline-flex items-center gap-2 text-lg font-bold text-foreground">
+            <img src="/flow-logo.png" alt="Flow Mortgage" className="h-7 w-7" />
             Flow{" "}
             <span className="text-primary">Mortgage</span>
           </span>
