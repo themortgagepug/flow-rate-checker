@@ -82,7 +82,7 @@ export function Home() {
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 text-lg font-bold text-foreground">
             <img src="/flow-logo.png" alt="Flow Mortgage" className="h-8 w-8" />
-            Flow <span className="text-primary">Mortgage</span>
+            Flow <span className="text-primary">Mortgage Co.</span>
           </a>
           <a
             href="tel:604-262-3500"

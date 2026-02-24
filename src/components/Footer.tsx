@@ -8,7 +8,7 @@ export function Footer() {
           <span className="inline-flex items-center gap-2 text-lg font-bold text-foreground">
             <img src="/flow-logo.png" alt="Flow Mortgage" className="h-7 w-7" />
             Flow{" "}
-            <span className="text-primary">Mortgage</span>
+            <span className="text-primary">Mortgage Co.</span>
           </span>
         </div>
 
