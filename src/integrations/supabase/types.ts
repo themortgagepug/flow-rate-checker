@@ -47,6 +47,33 @@ export type Database = {
         }
         Relationships: []
       }
+      market_rates: {
+        Row: {
+          id: string
+          rate: number
+          rate_type: string
+          source: string | null
+          term_key: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          rate: number
+          rate_type?: string
+          source?: string | null
+          term_key: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          rate?: number
+          rate_type?: string
+          source?: string | null
+          term_key?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       mortgage_submissions: {
         Row: {
           alerts_requested: boolean | null
