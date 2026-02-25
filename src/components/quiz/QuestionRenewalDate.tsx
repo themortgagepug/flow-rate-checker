@@ -69,7 +69,7 @@ export function QuestionRenewalDate({ value, term, onNext }: Props) {
       {step === "month" && year !== null && (
         <div>
           <p className="text-sm text-primary mb-3 font-medium">{year}</p>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
             {MONTHS.map((m, i) => (
               <button
                 key={m}
@@ -88,7 +88,7 @@ export function QuestionRenewalDate({ value, term, onNext }: Props) {
           <p className="text-sm text-primary mb-3 font-medium">
             {MONTHS[month]} {year}
           </p>
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {Array.from(
               { length: getDaysInMonth(year, month) },
               (_, i) => i + 1

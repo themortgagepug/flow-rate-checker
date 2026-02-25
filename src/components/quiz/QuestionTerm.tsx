@@ -13,7 +13,7 @@ export function QuestionTerm({ value, onNext }: Props) {
       </h2>
       <p className="text-muted-foreground mb-6">Select your term length</p>
 
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
         {TERMS.map((term) => (
           <button
             key={term}
