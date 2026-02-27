@@ -42,6 +42,7 @@ function ScenarioCard({
   const freqPayment = adjustForFrequency(scenario.newPayment, frequency as any);
   const freqSavings = adjustForFrequency(scenario.paymentSavings, frequency as any);
   const amortYears = Math.floor(scenario.amortMonths / 12);
+  const termYears = Math.round(scenario.termMonths / 12 * 10) / 10;
 
   return (
     <div
@@ -77,7 +78,7 @@ function ScenarioCard({
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Total interest saved</span>
+          <span className="text-muted-foreground">Interest saved over {termYears}yr term</span>
           <span className="font-semibold text-foreground">
             {scenario.totalInterestSaved > 0
               ? formatCurrency(scenario.totalInterestSaved)
@@ -85,7 +86,7 @@ function ScenarioCard({
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Amortization</span>
+          <span className="text-muted-foreground">New amortization</span>
           <span className="font-semibold text-foreground">{amortYears} years</span>
         </div>
 

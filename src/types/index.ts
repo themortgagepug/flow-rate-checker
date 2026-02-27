@@ -53,6 +53,8 @@ export interface ScenarioResult {
   totalInterestSaved: number;
   netSavings: number;
   amortMonths: number;
+  termMonths: number;
+  totalPaymentSavings: number;
 }
 
 export interface QuizResult {

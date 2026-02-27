@@ -115,7 +115,7 @@ export function Home() {
           <section className="py-20 px-4">
             <LoadingAnimation
               onComplete={handleLoadingComplete}
-              savingsAmount={result?.yearlySavings ?? 0}
+              savingsAmount={result?.scenarioMatch?.totalInterestSaved ?? result?.yearlySavings ?? 0}
             />
           </section>
         )}
