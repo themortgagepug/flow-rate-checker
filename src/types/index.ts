@@ -45,6 +45,16 @@ export interface PenaltyEstimate {
   note?: string;
 }
 
+export interface ScenarioResult {
+  newPayment: number;
+  paymentSavings: number;
+  totalInterestCurrent: number;
+  totalInterestNew: number;
+  totalInterestSaved: number;
+  netSavings: number;
+  amortMonths: number;
+}
+
 export interface QuizResult {
   grade: number;
   currentRate: number;
@@ -70,6 +80,11 @@ export interface QuizResult {
   paymentFrequency: string;
   firstName: string;
   penaltyBreakdown?: PenaltyEstimate["breakdown"];
+  switchingCosts: number;
+  legalFees: number;
+  dischargeFee: number;
+  scenarioFresh: ScenarioResult;
+  scenarioMatch: ScenarioResult;
 }
 
 export type QuizStep =
