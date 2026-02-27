@@ -1,27 +1,23 @@
 import type { QuizResult } from "@/types";
-
-const ZOHO_WEBHOOK_URL = import.meta.env.VITE_ZOHO_WEBHOOK_URL || "";
+import { supabase } from "@/lib/supabase";
 
 /**
- * Push lead data to Zoho CRM via webhook.
- * Configure a Zoho Flow / webhook to receive this payload
- * and create a Contact + Deal in your CRM.
+ * Push lead data to Zoho CRM via server-side edge function.
+ * The webhook URL is stored as a server secret, not exposed to clients.
  */
 export async function pushToZohoCRM(
   result: QuizResult,
   email: string,
   selectedOptions: string[]
 ): Promise<void> {
-  if (!ZOHO_WEBHOOK_URL) {
-    console.warn("Zoho webhook URL not configured");
+  if (!supabase) {
+    console.warn("Supabase not configured, skipping Zoho push");
     return;
   }
 
   try {
-    await fetch(ZOHO_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    const { error } = await supabase.functions.invoke("submit-lead", {
+      body: {
         // Contact fields
         first_name: result.firstName,
         email,
@@ -55,8 +51,10 @@ export async function pushToZohoCRM(
 
         // Metadata
         submitted_at: new Date().toISOString(),
-      }),
+      },
     });
+
+    if (error) throw error;
   } catch (err) {
     console.error("Failed to push to Zoho CRM:", err);
   }

@@ -1,1 +1,16 @@
 project_id = "dotglplhsdsmrbacmtrx"
+
+[functions.save-submission]
+verify_jwt = false
+
+[functions.send-report]
+verify_jwt = false
+
+[functions.submit-lead]
+verify_jwt = false
+
+[functions.scrape-rates]
+verify_jwt = false
+
+[functions.mortgage-penalty-estimator]
+verify_jwt = false
