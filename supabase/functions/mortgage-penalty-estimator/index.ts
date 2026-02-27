@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 /** Map remaining months to nearest available term key in market_rates. */
@@ -15,20 +15,62 @@ function termKeyForMonths(months: number): string {
   return "5yr_fixed";
 }
 
+/** Validate and sanitize input parameters */
+function validateInput(body: unknown): {
+  lender: string;
+  mortgage_type: string;
+  contract_rate: number;
+  term_years: number;
+  maturity_date: string;
+  balance: number;
+} {
+  if (!body || typeof body !== "object") {
+    throw new Error("VALIDATION");
+  }
+
+  const b = body as Record<string, unknown>;
+
+  const lender = typeof b.lender === "string" ? b.lender.trim().slice(0, 100) : "";
+  if (!lender) throw new Error("VALIDATION");
+
+  const mortgage_type = b.mortgage_type;
+  if (mortgage_type !== "Fixed" && mortgage_type !== "Variable") {
+    throw new Error("VALIDATION");
+  }
+
+  const contract_rate = Number(b.contract_rate);
+  if (!Number.isFinite(contract_rate) || contract_rate < 0 || contract_rate > 25) {
+    throw new Error("VALIDATION");
+  }
+
+  const term_years = Number(b.term_years);
+  if (!Number.isInteger(term_years) || term_years < 1 || term_years > 10) {
+    throw new Error("VALIDATION");
+  }
+
+  const maturity_date = String(b.maturity_date || "");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(maturity_date)) {
+    throw new Error("VALIDATION");
+  }
+  const parsed = new Date(maturity_date);
+  if (isNaN(parsed.getTime())) throw new Error("VALIDATION");
+
+  const balance = Number(b.balance);
+  if (!Number.isFinite(balance) || balance < 1000 || balance > 100_000_000) {
+    throw new Error("VALIDATION");
+  }
+
+  return { lender, mortgage_type, contract_rate, term_years, maturity_date, balance };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const {
-      lender,
-      mortgage_type,
-      contract_rate,
-      term_years,
-      maturity_date,
-      balance,
-    } = await req.json();
+    const rawBody = await req.json();
+    const { mortgage_type, contract_rate, maturity_date, balance } = validateInput(rawBody);
 
     // Calculate remaining months
     const now = new Date();
@@ -124,9 +166,17 @@ Deno.serve(async (req) => {
     );
   } catch (err) {
     console.error("penalty-estimator error:", err);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+
+    if (err instanceof Error && err.message === "VALIDATION") {
+      return new Response(
+        JSON.stringify({ error: "Invalid input parameters. Please check your values and try again." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ error: "Unable to calculate penalty estimate. Please try again later." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 });
