@@ -200,19 +200,34 @@ export function getFallbackRates(): RateData {
 }
 
 /**
- * Calculate total interest paid over the life of a loan.
+ * Calculate total interest paid over a specific number of months
+ * using month-by-month amortization schedule.
  */
-export function calculateTotalInterest(
+export function calculateInterestOverTerm(
   balance: number,
   annualRate: number,
-  amortMonths: number
+  amortMonths: number,
+  termMonths: number
 ): number {
   const monthlyPayment = calculateMonthlyPayment(balance, annualRate, amortMonths);
-  return Math.max(0, monthlyPayment * amortMonths - balance);
+  const r = toMonthlyRate(annualRate);
+  let remaining = balance;
+  let totalInterest = 0;
+
+  const months = Math.min(termMonths, amortMonths);
+  for (let i = 0; i < months && remaining > 0; i++) {
+    const interestPortion = remaining * r;
+    totalInterest += interestPortion;
+    const principalPortion = monthlyPayment - interestPortion;
+    remaining = Math.max(0, remaining - principalPortion);
+  }
+
+  return totalInterest;
 }
 
 /**
- * Compute a scenario: compare current vs new rate for a given amortization.
+ * Compute a scenario: compare current vs new rate over the remaining TERM.
+ * Interest savings are calculated over termMonths, not the full amortization.
  */
 export function computeScenario(
   balance: number,
@@ -221,16 +236,21 @@ export function computeScenario(
   currentAmortMonths: number,
   newRate: number,
   newAmortMonths: number,
+  termMonths: number,
   switchingCosts: number
 ): import("@/types").ScenarioResult {
   const newMonthlyPayment = calculateMonthlyPayment(balance, newRate, newAmortMonths);
   const paymentSavings = currentMonthlyPayment - newMonthlyPayment;
 
-  // Total interest under current situation (remaining amort at current rate)
-  const totalInterestCurrent = calculateTotalInterest(balance, currentRate, currentAmortMonths);
-  // Total interest under new scenario
-  const totalInterestNew = calculateTotalInterest(balance, newRate, newAmortMonths);
+  // Interest paid over the remaining TERM (not full amortization)
+  const totalInterestCurrent = calculateInterestOverTerm(balance, currentRate, currentAmortMonths, termMonths);
+  const totalInterestNew = calculateInterestOverTerm(balance, newRate, newAmortMonths, termMonths);
   const totalInterestSaved = totalInterestCurrent - totalInterestNew;
+
+  // Total payment savings over remaining term
+  const totalPaymentSavings = paymentSavings * termMonths;
+
+  // Net savings = interest saved - switching costs
   const netSavings = totalInterestSaved - switchingCosts;
 
   return {
@@ -241,6 +261,8 @@ export function computeScenario(
     totalInterestSaved: Math.round(totalInterestSaved * 100) / 100,
     netSavings: Math.round(netSavings * 100) / 100,
     amortMonths: newAmortMonths,
+    termMonths,
+    totalPaymentSavings: Math.round(totalPaymentSavings * 100) / 100,
   };
 }
 
@@ -286,17 +308,18 @@ export function computeResults(
   const currentMonthlyPayment = toMonthlyPayment(answers.payment, answers.paymentFrequency);
   const currentAmortMonths = amort.years * 12 + amort.months;
   const safeCurrentAmort = Math.max(currentAmortMonths, 12); // floor to 1 year
+  const safeTermMonths = Math.max(remainingMonths, 1); // remaining term months
 
-  // Scenario A: Fresh 30-year amortization
+  // Scenario A: Fresh 30-year amortization, compared over remaining term
   const scenarioFresh = computeScenario(
     answers.balance, answers.rate, currentMonthlyPayment, safeCurrentAmort,
-    comparableRate, 360, switchingCosts
+    comparableRate, 360, safeTermMonths, switchingCosts
   );
 
-  // Scenario B: Match current remaining amortization
+  // Scenario B: Match current remaining amortization, compared over remaining term
   const scenarioMatch = computeScenario(
     answers.balance, answers.rate, currentMonthlyPayment, safeCurrentAmort,
-    comparableRate, safeCurrentAmort, switchingCosts
+    comparableRate, safeCurrentAmort, safeTermMonths, switchingCosts
   );
 
   // Use Scenario B (matched amort) for headline savings
