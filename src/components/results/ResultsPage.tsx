@@ -119,6 +119,7 @@ export function ResultsPage({ result }: Props) {
   const hasAnyCta = wantReport || wantAlerts || wantCall;
   const needsEmail = wantReport || wantAlerts;
 
+  const eitherPositive = result.scenarioFresh.netSavings > 0 || result.scenarioMatch.netSavings > 0;
   const freshIsBetter = result.scenarioFresh.netSavings > result.scenarioMatch.netSavings;
 
   const gradeMessage = () => {
@@ -243,7 +244,7 @@ export function ResultsPage({ result }: Props) {
               subtitle="Lower payments, longer timeline"
               scenario={result.scenarioFresh}
               frequency={result.paymentFrequency}
-              recommended={freshIsBetter}
+              recommended={eitherPositive && freshIsBetter}
             />
 
             <ScenarioCard
@@ -253,7 +254,7 @@ export function ResultsPage({ result }: Props) {
               )} year amortization`}
               scenario={result.scenarioMatch}
               frequency={result.paymentFrequency}
-              recommended={!freshIsBetter}
+              recommended={eitherPositive && !freshIsBetter}
             />
           </div>
         )}
