@@ -12,15 +12,99 @@ import {
   Send,
   Phone,
   Mail,
-  Share2,
+  RefreshCw,
+  Timer,
+  CheckCircle,
 } from "lucide-react";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 import { saveSubmission, sendReport } from "@/lib/supabase";
 import { pushToZohoCRM } from "@/lib/zoho";
-import type { QuizResult } from "@/types";
+import type { QuizResult, ScenarioResult } from "@/types";
+import { adjustForFrequency } from "@/lib/calculations";
 
 interface Props {
   result: QuizResult;
+}
+
+function ScenarioCard({
+  title,
+  subtitle,
+  scenario,
+  frequency,
+  recommended,
+}: {
+  title: string;
+  subtitle: string;
+  scenario: ScenarioResult;
+  frequency: string;
+  recommended?: boolean;
+}) {
+  const freqPayment = adjustForFrequency(scenario.newPayment, frequency as any);
+  const freqSavings = adjustForFrequency(scenario.paymentSavings, frequency as any);
+  const amortYears = Math.floor(scenario.amortMonths / 12);
+
+  return (
+    <div
+      className={`rounded-xl border p-5 ${
+        recommended
+          ? "border-primary/40 bg-primary/5"
+          : "border-border bg-secondary/30"
+      }`}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h4 className="text-sm font-bold text-foreground">{title}</h4>
+          <p className="text-xs text-muted-foreground">{subtitle}</p>
+        </div>
+        {recommended && (
+          <span className="flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+            <CheckCircle className="w-3 h-3" /> Best option
+          </span>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">New {frequency.toLowerCase()} payment</span>
+          <span className="font-semibold text-foreground">
+            {formatCurrency(Math.round(freqPayment))}
+          </span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Payment savings</span>
+          <span className="font-semibold text-success">
+            {freqSavings > 0 ? `${formatCurrency(Math.round(freqSavings))}/${frequency.toLowerCase().replace("ly", "").replace("bi-week", "2 wks")}` : "—"}
+          </span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Total interest saved</span>
+          <span className="font-semibold text-foreground">
+            {scenario.totalInterestSaved > 0
+              ? formatCurrency(scenario.totalInterestSaved)
+              : "—"}
+          </span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Amortization</span>
+          <span className="font-semibold text-foreground">{amortYears} years</span>
+        </div>
+
+        <div className="pt-2 border-t border-border mt-2">
+          <div className="flex justify-between text-sm">
+            <span className="font-medium text-foreground">Net benefit after costs</span>
+            <span
+              className={`font-bold ${
+                scenario.netSavings > 0 ? "text-success" : "text-destructive"
+              }`}
+            >
+              {scenario.netSavings > 0 ? "+" : ""}
+              {formatCurrency(scenario.netSavings)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function ResultsPage({ result }: Props) {
@@ -34,9 +118,11 @@ export function ResultsPage({ result }: Props) {
   const hasAnyCta = wantReport || wantAlerts || wantCall;
   const needsEmail = wantReport || wantAlerts;
 
+  const freshIsBetter = result.scenarioFresh.netSavings > result.scenarioMatch.netSavings;
+
   const gradeMessage = () => {
     if (result.totalSavingsPotential <= 0 && result.grade < 5) {
-      return "Switching now may not be worth it after penalties. Holding to renewal could be the smarter move.";
+      return "Switching now may not be worth it after penalties and fees. Holding to renewal could be the smarter move.";
     }
     if (result.grade === 5)
       return "You're in great shape. Stay the course and protect your savings.";
@@ -67,7 +153,6 @@ export function ResultsPage({ result }: Props) {
       setSubmitted(true);
 
       if (wantCall) {
-        // Open Calendly
         const w = window as any;
         if (w.Calendly) {
           w.Calendly.initPopupWidget({
@@ -117,59 +202,72 @@ export function ResultsPage({ result }: Props) {
           </div>
         </div>
 
-        {/* Savings breakdown */}
-        {result.yearlySavings > 0 && (
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-success/10 border border-success/20">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-success" />
-                <span className="text-sm text-foreground">Yearly savings</span>
+        {/* Switching costs breakdown */}
+        {result.penalty > 0 && (
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+              <TrendingDown className="w-4 h-4 text-muted-foreground" />
+              Cost to switch
+            </h4>
+            <div className="bg-secondary/30 rounded-lg p-3 border border-border space-y-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Est. penalty</span>
+                <span className="text-foreground">{formatCurrency(result.penalty)}</span>
               </div>
-              <span className="text-lg font-bold text-success">
-                {formatCurrency(result.yearlySavings)}
-              </span>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Legal / closing fees</span>
+                <span className="text-foreground">{formatCurrency(result.legalFees)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Discharge fee</span>
+                <span className="text-foreground">{formatCurrency(result.dischargeFee)}</span>
+              </div>
+              <div className="flex justify-between text-sm font-semibold pt-1.5 border-t border-border">
+                <span className="text-foreground">Total</span>
+                <span className="text-foreground">{formatCurrency(result.switchingCosts)}</span>
+              </div>
             </div>
+          </div>
+        )}
 
-            {result.penalty > 0 && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border">
-                <div className="flex items-center gap-2">
-                  <TrendingDown className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">
-                    Est. penalty to break
-                  </span>
-                </div>
-                <span className="text-sm font-semibold text-foreground">
-                  {formatCurrency(result.penalty)}
-                </span>
-              </div>
-            )}
+        {/* Dual scenarios */}
+        {result.currentRate > result.comparableRate && (
+          <div className="space-y-4 mb-6">
+            <h4 className="text-sm font-semibold text-foreground">
+              Your options
+            </h4>
 
-            {result.breakevenMonths > 0 && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">Break-even</span>
-                </div>
-                <span className="text-sm font-semibold text-foreground">
-                  {result.breakevenMonths} month
-                  {result.breakevenMonths !== 1 ? "s" : ""}
-                </span>
-              </div>
-            )}
+            <ScenarioCard
+              title="Start fresh — 30 years"
+              subtitle="Lower payments, longer timeline"
+              scenario={result.scenarioFresh}
+              frequency={result.paymentFrequency}
+              recommended={freshIsBetter}
+            />
 
-            {result.totalSavingsPotential > 0 && (
-              <div className="flex items-center justify-between p-4 rounded-lg gradient-primary border border-primary/30">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-primary-foreground" />
-                  <span className="text-sm font-medium text-primary-foreground">
-                    Total savings potential
-                  </span>
-                </div>
-                <span className="text-xl font-bold text-primary-foreground">
-                  {formatCurrency(result.totalSavingsPotential)}
-                </span>
-              </div>
-            )}
+            <ScenarioCard
+              title="Keep your timeline"
+              subtitle={`Match your remaining ~${Math.floor(
+                result.scenarioMatch.amortMonths / 12
+              )} year amortization`}
+              scenario={result.scenarioMatch}
+              frequency={result.paymentFrequency}
+              recommended={!freshIsBetter}
+            />
+          </div>
+        )}
+
+        {/* Break-even */}
+        {result.breakevenMonths > 0 && result.breakevenMonths < 120 && (
+          <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border mb-6">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-foreground">Break-even after switching</span>
+            </div>
+            <span className="text-sm font-semibold text-foreground">
+              {result.breakevenMonths} month
+              {result.breakevenMonths !== 1 ? "s" : ""}
+            </span>
           </div>
         )}
 
@@ -185,13 +283,9 @@ export function ResultsPage({ result }: Props) {
             </p>
           </div>
           <div className="bg-secondary/30 rounded-lg p-3 border border-border">
-            <p className="text-xs text-muted-foreground mb-0.5">
-              Better {result.paymentFrequency.toLowerCase()} payment
-            </p>
+            <p className="text-xs text-muted-foreground mb-0.5">Remaining amortization</p>
             <p className="font-medium text-foreground">
-              {result.comparablePayment > 0
-                ? formatCurrency(result.comparablePayment)
-                : "—"}
+              {result.amortizationYears}y {result.amortizationMonths}m
             </p>
           </div>
         </div>

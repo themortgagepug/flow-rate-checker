@@ -45,7 +45,7 @@ export function adjustForFrequency(
 /**
  * Normalize any frequency payment back to monthly.
  */
-function toMonthlyPayment(
+export function toMonthlyPayment(
   payment: number,
   frequency: "Monthly" | "Bi-weekly" | "Weekly"
 ): number {
@@ -200,22 +200,60 @@ export function getFallbackRates(): RateData {
 }
 
 /**
+ * Calculate total interest paid over the life of a loan.
+ */
+export function calculateTotalInterest(
+  balance: number,
+  annualRate: number,
+  amortMonths: number
+): number {
+  const monthlyPayment = calculateMonthlyPayment(balance, annualRate, amortMonths);
+  return Math.max(0, monthlyPayment * amortMonths - balance);
+}
+
+/**
+ * Compute a scenario: compare current vs new rate for a given amortization.
+ */
+export function computeScenario(
+  balance: number,
+  currentRate: number,
+  currentMonthlyPayment: number,
+  currentAmortMonths: number,
+  newRate: number,
+  newAmortMonths: number,
+  switchingCosts: number
+): import("@/types").ScenarioResult {
+  const newMonthlyPayment = calculateMonthlyPayment(balance, newRate, newAmortMonths);
+  const paymentSavings = currentMonthlyPayment - newMonthlyPayment;
+
+  // Total interest under current situation (remaining amort at current rate)
+  const totalInterestCurrent = calculateTotalInterest(balance, currentRate, currentAmortMonths);
+  // Total interest under new scenario
+  const totalInterestNew = calculateTotalInterest(balance, newRate, newAmortMonths);
+  const totalInterestSaved = totalInterestCurrent - totalInterestNew;
+  const netSavings = totalInterestSaved - switchingCosts;
+
+  return {
+    newPayment: Math.round(newMonthlyPayment * 100) / 100,
+    paymentSavings: Math.round(paymentSavings * 100) / 100,
+    totalInterestCurrent: Math.round(totalInterestCurrent * 100) / 100,
+    totalInterestNew: Math.round(totalInterestNew * 100) / 100,
+    totalInterestSaved: Math.round(totalInterestSaved * 100) / 100,
+    netSavings: Math.round(netSavings * 100) / 100,
+    amortMonths: newAmortMonths,
+  };
+}
+
+/**
  * Master function: compute all results from quiz answers + rate data.
  */
 export function computeResults(
   answers: QuizAnswers,
   rateData: RateData,
   penaltyOverride?: number
-): QuizResult {
+): import("@/types").QuizResult {
   const comparableRate = getComparableRate(answers.term, answers.type, rateData);
   const grade = calculateGrade(answers.rate, comparableRate);
-
-  // Yearly + monthly savings (2-decimal precision)
-  const yearlySavings = Math.round(
-    ((answers.rate - comparableRate) / 100) * answers.balance * 100
-  ) / 100;
-  const monthlySavings =
-    ((answers.rate - comparableRate) / 100) * answers.balance / 12;
 
   // Amortization
   const amort = calculateRemainingAmortization(
@@ -239,23 +277,41 @@ export function computeResults(
   const penalty =
     penaltyOverride ?? estimatePenalty(answers.balance, answers.rate, answers.type, comparableRate, remainingMonths);
 
-  // Break-even
-  const breakevenMonths = calculateBreakeven(penalty, monthlySavings);
+  // Switching costs
+  const legalFees = 1000;
+  const dischargeFee = 300;
+  const switchingCosts = penalty + legalFees + dischargeFee;
 
-  // Total savings potential (net of penalty, over remaining term)
-  const yearsRemaining = Math.max(
-    0,
-    remainingMs / (1000 * 60 * 60 * 24 * 365.25)
-  );
-  const totalSavingsPotential = Math.max(
-    0,
-    Math.round((yearlySavings * yearsRemaining - penalty) * 100) / 100
+  // Current monthly payment (normalized)
+  const currentMonthlyPayment = toMonthlyPayment(answers.payment, answers.paymentFrequency);
+  const currentAmortMonths = amort.years * 12 + amort.months;
+  const safeCurrentAmort = Math.max(currentAmortMonths, 12); // floor to 1 year
+
+  // Scenario A: Fresh 30-year amortization
+  const scenarioFresh = computeScenario(
+    answers.balance, answers.rate, currentMonthlyPayment, safeCurrentAmort,
+    comparableRate, 360, switchingCosts
   );
 
-  // Comparable payment at the better rate
-  const amortTotalMonths = amort.years * 12 + amort.months;
-  const comparableMonthly = amortTotalMonths > 0
-    ? calculateMonthlyPayment(answers.balance, comparableRate, amortTotalMonths)
+  // Scenario B: Match current remaining amortization
+  const scenarioMatch = computeScenario(
+    answers.balance, answers.rate, currentMonthlyPayment, safeCurrentAmort,
+    comparableRate, safeCurrentAmort, switchingCosts
+  );
+
+  // Use Scenario B (matched amort) for headline savings
+  const monthlySavings = Math.max(0, scenarioMatch.paymentSavings);
+  const yearlySavings = Math.round(monthlySavings * 12 * 100) / 100;
+
+  // Break-even using switching costs
+  const breakevenMonths = monthlySavings > 0 ? Math.ceil(switchingCosts / monthlySavings) : 0;
+
+  // Total savings potential = net savings from matched scenario
+  const totalSavingsPotential = Math.max(0, scenarioMatch.netSavings);
+
+  // Comparable payment at the better rate (matched amort, user's frequency)
+  const comparableMonthly = safeCurrentAmort > 0
+    ? calculateMonthlyPayment(answers.balance, comparableRate, safeCurrentAmort)
     : 0;
   const comparablePayment = Math.round(
     adjustForFrequency(comparableMonthly, answers.paymentFrequency) * 100
@@ -283,5 +339,10 @@ export function computeResults(
     payment: answers.payment,
     paymentFrequency: answers.paymentFrequency,
     firstName: answers.firstName,
+    switchingCosts,
+    legalFees,
+    dischargeFee,
+    scenarioFresh,
+    scenarioMatch,
   };
 }
