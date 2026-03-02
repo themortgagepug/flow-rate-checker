@@ -1,6 +1,7 @@
 {
   "team_recipients": [
-    { "email": "team@getflowmortgage.ca", "name": "Flow Team" }
+    { "email": "team@getflowmortgage.ca", "name": "Flow Team" },
+    { "email": "alex@getflowmortgage.ca", "name": "Alex McFadyen" }
   ],
   "from_email": "rates@getflowmortgage.ca",
   "from_name": "Flow Rate Intelligence",
