@@ -1,0 +1,165 @@
+{
+  "team_recipients": [
+    { "email": "team@getflowmortgage.ca", "name": "Flow Team" }
+  ],
+  "from_email": "rates@getflowmortgage.ca",
+  "from_name": "Flow Rate Intelligence",
+  "programs": {
+    "insured": {
+      "label": "Insured",
+      "description": "< 20% down payment, default-insured via CMHC / Sagen / Canada Guaranty",
+      "max_amortization": 25,
+      "min_down_payment": "5%",
+      "note": "Best rates available — insurance premium (2.8–4.0%) added to mortgage balance",
+      "rate_adjustment": -0.10
+    },
+    "insurable": {
+      "label": "Insurable",
+      "description": "≥ 20% down, purchase ≤ $1M, qualifies for lender-paid bulk portfolio insurance",
+      "max_amortization": 25,
+      "min_down_payment": "20%",
+      "note": "Near-insured pricing without the borrower-paid premium",
+      "rate_adjustment": -0.05
+    },
+    "uninsured": {
+      "label": "Uninsured",
+      "description": "Refinances, switches, purchases > $1M, or 30-year amortization",
+      "max_amortization": 30,
+      "min_down_payment": "20%",
+      "note": "Highest rates but most flexibility — 30yr amort available",
+      "rate_adjustment": 0.00
+    }
+  },
+  "lenders": [
+    {
+      "name": "TD Bank",
+      "type": "Big 5",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": 6.49,
+      "penalty_method": "Posted-rate IRD",
+      "penalty_severity": "severe",
+      "penalty_note": "Worst penalties in Canada — uses inflated posted rate for IRD calculation",
+      "flow_advantage": "Our monoline lenders use fair discount-rate IRD. On a $400K mortgage breaking 2yr early: TD penalty ~$12,000 vs monoline ~$3,500."
+    },
+    {
+      "name": "RBC",
+      "type": "Big 5",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": 6.44,
+      "penalty_method": "Posted-rate IRD",
+      "penalty_severity": "severe",
+      "penalty_note": "Uses posted rate for IRD — similar to TD in penalty severity",
+      "flow_advantage": "RBC's 'special offer' rates still trail broker-channel pricing by 0.3–0.5%. Plus their penalties are 2–3x higher."
+    },
+    {
+      "name": "Scotiabank",
+      "type": "Big 5",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": 6.49,
+      "penalty_method": "Posted-rate IRD",
+      "penalty_severity": "severe",
+      "penalty_note": "eHOME rates have restrictive prepayment terms — read the fine print",
+      "flow_advantage": "Scotia's eHOME 'low rate' product restricts prepayments to 15% and has bona fide sale clause. Our lenders offer 20% prepayment + portable."
+    },
+    {
+      "name": "BMO",
+      "type": "Big 5",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": 6.79,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "moderate",
+      "penalty_note": "Fairest Big 5 penalty — uses discounted rate for IRD (still higher than monolines)",
+      "flow_advantage": "BMO has the fairest Big 5 penalties, but their rates are still 0.2–0.4% above broker channel. We match BMO's penalty fairness with better rates."
+    },
+    {
+      "name": "CIBC",
+      "type": "Big 5",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": 6.49,
+      "penalty_method": "Posted-rate IRD",
+      "penalty_severity": "severe",
+      "penalty_note": "Standard posted-rate IRD calculation",
+      "flow_advantage": "CIBC's mortgage specialists are limited to CIBC products. We access 30+ lenders to find the absolute best fit."
+    },
+    {
+      "name": "First National",
+      "type": "Monoline",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": null,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "fair",
+      "penalty_note": "Canada's largest non-bank lender — fair penalties, excellent service",
+      "flow_advantage": "First National is our go-to for rate + flexibility. Discount-rate IRD, 20% annual prepayment, fully portable."
+    },
+    {
+      "name": "MCAP",
+      "type": "Monoline",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": null,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "fair",
+      "penalty_note": "Competitive rates, strong broker channel presence",
+      "flow_advantage": "MCAP often leads on insured pricing. Fair penalties + strong online portal for clients."
+    },
+    {
+      "name": "RMG",
+      "type": "Monoline",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": null,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "fair",
+      "penalty_note": "Part of MCAP family — similar terms and flexibility",
+      "flow_advantage": "RMG offers aggressive variable-rate pricing. Great for clients who want flexibility + fair penalty terms."
+    },
+    {
+      "name": "CMLS",
+      "type": "Monoline",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": null,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "fair",
+      "penalty_note": "Solid uninsured product — competitive on longer terms",
+      "flow_advantage": "CMLS excels on 3-year and longer fixed terms for uninsured. Their 30yr amort pricing is among the best."
+    },
+    {
+      "name": "Manulife",
+      "type": "Monoline",
+      "programs": ["insured", "insurable", "uninsured"],
+      "posted_5yr_fixed": null,
+      "penalty_method": "Discount-rate IRD",
+      "penalty_severity": "fair",
+      "penalty_note": "Manulife One (all-in-one) product available for flexible borrowers",
+      "flow_advantage": "Manulife One is the best all-in-one account in Canada — mortgage + chequing + savings. Ideal for self-employed and investors."
+    }
+  ],
+  "flow_value_props": [
+    {
+      "icon": "shield",
+      "title": "Penalty Savings",
+      "hook": "Big 5 banks use posted-rate IRD = massive penalties. Our monoline lenders use discount-rate IRD — saving you thousands if you break early.",
+      "proof": "$400K mortgage, breaking 2yr early: TD penalty ~$12,000 vs. First National ~$3,500",
+      "color": "#ef4444"
+    },
+    {
+      "icon": "search",
+      "title": "30+ Lenders, One Application",
+      "hook": "We shop 30+ lenders instantly. Your bank only shows you their own products — and their 'best rate' still trails broker pricing by 0.3–0.5%.",
+      "proof": "Average Flow client saves $4,200/yr vs. their bank's renewal offer",
+      "color": "#06b6d4"
+    },
+    {
+      "icon": "calendar",
+      "title": "30-Year Amortization",
+      "hook": "Uninsured mortgages qualify for 30yr amortization — lower payments and more monthly cash flow for investments or life.",
+      "proof": "$500K at 3.69%: 25yr = $2,536/mo vs 30yr = $2,296/mo — $240/mo freed up",
+      "color": "#10b981"
+    },
+    {
+      "icon": "dollar",
+      "title": "$0 Cost Switch at Renewal",
+      "hook": "At renewal, switching lenders through a broker costs $0 in most cases. Your bank just won't tell you that.",
+      "proof": "95% of Canadians auto-renew and overpay by 0.5–1.5% — that's $2,500–$7,500/yr on $500K",
+      "color": "#f59e0b"
+    }
+  ]
+}

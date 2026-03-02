@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Rate Intelligence — {{BRIEFING_DATE}}</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#1e293b;-webkit-text-size-adjust:100%;">
+
+<!-- Wrapper -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">
+<tr><td align="center" style="padding:24px 16px;">
+
+<!-- Container -->
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+
+<!-- Header -->
+<tr>
+<td style="background:linear-gradient(135deg,#0a0e1a 0%,#0f1629 100%);padding:32px 40px;text-align:center;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Flow <span style="color:#06b6d4;">Rate Intelligence</span></div>
+      <div style="font-size:13px;color:#94a3b8;margin-top:8px;letter-spacing:1px;text-transform:uppercase;">Weekly Market Briefing</div>
+      <div style="font-size:14px;color:#64748b;margin-top:4px;">{{BRIEFING_DATE}}</div>
+    </td>
+  </tr>
+  </table>
+</td>
+</tr>
+
+<!-- Rate Snapshot -->
+<tr>
+<td style="padding:32px 40px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:16px;">Best Uninsured Rates (Broker Channel)</td>
+  </tr>
+  </table>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+  <tr style="background:#f8fafc;">
+    <td style="padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;">Term</td>
+    <td style="padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;text-align:center;">Rate</td>
+    <td style="padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;text-align:center;">Program</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;">1-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:18px;font-weight:800;color:#0f1629;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_1YR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr style="background:#fafbfc;">
+    <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;">2-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:18px;font-weight:800;color:#0f1629;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_2YR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;">3-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:18px;font-weight:800;color:#0f1629;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_3YR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr style="background:#fafbfc;">
+    <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;">4-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:18px;font-weight:800;color:#0f1629;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_4YR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;font-size:14px;font-weight:700;color:#0f1629;border-bottom:1px solid #f1f5f9;">5-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:20px;font-weight:900;color:#06b6d4;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_5YR_FIXED}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr style="background:#fafbfc;">
+    <td style="padding:12px 16px;font-size:14px;font-weight:700;color:#0f1629;border-bottom:1px solid #f1f5f9;">5-Year Variable</td>
+    <td style="padding:12px 16px;font-size:20px;font-weight:900;color:#10b981;text-align:center;border-bottom:1px solid #f1f5f9;">{{RATE_5YR_VAR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">Uninsured</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#1e293b;">10-Year Fixed</td>
+    <td style="padding:12px 16px;font-size:18px;font-weight:800;color:#0f1629;text-align:center;">{{RATE_10YR}}%</td>
+    <td style="padding:12px 16px;font-size:12px;color:#64748b;text-align:center;">Uninsured</td>
+  </tr>
+  </table>
+
+  <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Source: {{RATE_SOURCE}} &mdash; Updated {{RATE_UPDATED}}</div>
+</td>
+</tr>
+
+<!-- Program Comparison -->
+<tr>
+<td style="padding:24px 40px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:16px;">Program Comparison — 5-Year Fixed</td>
+  </tr>
+  </table>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+  <tr style="background:#f8fafc;">
+    <td style="padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;width:33%;">Insured</td>
+    <td style="padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;width:33%;">Insurable</td>
+    <td style="padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;width:34%;">Uninsured</td>
+  </tr>
+  <tr>
+    <td style="padding:16px 12px;vertical-align:top;border-right:1px solid #f1f5f9;">
+      <div style="font-size:24px;font-weight:900;color:#10b981;">{{RATE_INSURED}}%</div>
+      <div style="font-size:11px;color:#64748b;margin-top:6px;">Max 25yr amort</div>
+      <div style="font-size:11px;color:#64748b;">Min 5% down</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.4;">CMHC/Sagen insured. Premium added to balance.</div>
+    </td>
+    <td style="padding:16px 12px;vertical-align:top;border-right:1px solid #f1f5f9;">
+      <div style="font-size:24px;font-weight:900;color:#3b82f6;">{{RATE_INSURABLE}}%</div>
+      <div style="font-size:11px;color:#64748b;margin-top:6px;">Max 25yr amort</div>
+      <div style="font-size:11px;color:#64748b;">Min 20% down</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.4;">Bulk-insured by lender. No borrower premium.</div>
+    </td>
+    <td style="padding:16px 12px;vertical-align:top;">
+      <div style="font-size:24px;font-weight:900;color:#f59e0b;">{{RATE_5YR_FIXED}}%</div>
+      <div style="font-size:11px;color:#64748b;margin-top:6px;">Max 30yr amort</div>
+      <div style="font-size:11px;color:#64748b;">Min 20% down</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.4;">Refis, switches, &gt;$1M purchases.</div>
+    </td>
+  </tr>
+  </table>
+</td>
+</tr>
+
+<!-- Lender Matrix -->
+<tr>
+<td style="padding:24px 40px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:16px;">Lender Competitive Matrix</td>
+  </tr>
+  </table>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;font-size:12px;">
+  <tr style="background:#0f1629;">
+    <td style="padding:10px 12px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b;">Lender</td>
+    <td style="padding:10px 12px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b;text-align:center;">Type</td>
+    <td style="padding:10px 12px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b;text-align:center;">Posted 5yr</td>
+    <td style="padding:10px 12px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b;text-align:center;">Penalty</td>
+    <td style="padding:10px 12px;font-size:10px;font-weight:700;color:#06b6d4;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b;">How We Win</td>
+  </tr>
+  {{LENDER_ROWS}}
+  </table>
+</td>
+</tr>
+
+<!-- Flow Competitive Advantages -->
+<tr>
+<td style="padding:24px 40px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:16px;">Flow Competitive Advantages</td>
+  </tr>
+  </table>
+
+  {{VALUE_PROP_CARDS}}
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="padding:24px 40px 32px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr><td style="border-top:1px solid #e2e8f0;padding-top:20px;text-align:center;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;">Powered by Flow Mortgage</div>
+    <div style="font-size:11px;color:#cbd5e1;margin-top:4px;">604-262-3500 &bull; getflowmortgage.ca</div>
+    <div style="font-size:10px;color:#cbd5e1;margin-top:8px;">Auto-generated {{BRIEFING_DATE}} at {{BRIEFING_TIME}} ET</div>
+  </td></tr>
+  </table>
+</td>
+</tr>
+
+</table>
+<!-- /Container -->
+
+</td></tr>
+</table>
+<!-- /Wrapper -->
+
+</body>
+</html>

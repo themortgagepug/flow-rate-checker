@@ -1,0 +1,23 @@
+name: Weekly Rate Briefing
+
+on:
+  schedule:
+    # Every Monday at 9:00 AM ET (13:00 UTC)
+    - cron: '0 13 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq and bc
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq bc
+
+      - name: Send rate intelligence briefing
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TZ: America/Toronto
+        run: bash scripts/send-rate-briefing.sh
