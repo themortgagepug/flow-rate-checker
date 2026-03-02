@@ -81,6 +81,7 @@ jobs:
             echo "RATE_5YR_VAR=${RATE_5VAR:-3.40}" >> $GITHUB_ENV
             echo "RATE_10YR=4.99" >> $GITHUB_ENV
             echo "RATE_SOURCE=WOWA.ca Best Uninsured Rates" >> $GITHUB_ENV
+          fi
 
       - name: Update Supabase market_rates
         env:
