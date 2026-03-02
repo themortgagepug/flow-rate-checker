@@ -1,0 +1,146 @@
+name: Weekly Rate Update
+
+on:
+  schedule:
+    # Every Monday at 10:00 AM ET (14:00 UTC)
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+    inputs:
+      rate_1yr:
+        description: '1-Year Fixed Rate'
+        required: true
+        default: '4.74'
+      rate_2yr:
+        description: '2-Year Fixed Rate'
+        required: true
+        default: '4.29'
+      rate_3yr:
+        description: '3-Year Fixed Rate'
+        required: true
+        default: '3.49'
+      rate_4yr:
+        description: '4-Year Fixed Rate'
+        required: true
+        default: '3.89'
+      rate_5yr_fixed:
+        description: '5-Year Fixed Rate'
+        required: true
+        default: '3.69'
+      rate_5yr_var:
+        description: '5-Year Variable Rate'
+        required: true
+        default: '3.40'
+      rate_10yr:
+        description: '10-Year Fixed Rate'
+        required: true
+        default: '4.99'
+      source:
+        description: 'Rate source'
+        required: true
+        default: 'WOWA.ca Best Uninsured Rates'
+
+jobs:
+  update-rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set rate values
+        id: rates
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "RATE_1YR=${{ inputs.rate_1yr }}" >> $GITHUB_ENV
+            echo "RATE_2YR=${{ inputs.rate_2yr }}" >> $GITHUB_ENV
+            echo "RATE_3YR=${{ inputs.rate_3yr }}" >> $GITHUB_ENV
+            echo "RATE_4YR=${{ inputs.rate_4yr }}" >> $GITHUB_ENV
+            echo "RATE_5YR_FIXED=${{ inputs.rate_5yr_fixed }}" >> $GITHUB_ENV
+            echo "RATE_5YR_VAR=${{ inputs.rate_5yr_var }}" >> $GITHUB_ENV
+            echo "RATE_10YR=${{ inputs.rate_10yr }}" >> $GITHUB_ENV
+            echo "RATE_SOURCE=${{ inputs.source }}" >> $GITHUB_ENV
+          else
+            # Scheduled run: scrape best rates from WOWA.ca
+            echo "Fetching rates from WOWA.ca..."
+
+            PAGE=$(curl -sL "https://wowa.ca/mortgage-rates" || true)
+
+            # Extract rates - look for the uninsured rate table
+            # Fallback to current defaults if scraping fails
+            RATE_5YR=$(echo "$PAGE" | grep -oP '(?<=5-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+            RATE_5VAR=$(echo "$PAGE" | grep -oP '(?<=5-Year Variable.*?)\d+\.\d+' | head -1 || echo "")
+            RATE_3YR=$(echo "$PAGE" | grep -oP '(?<=3-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+            RATE_1YR=$(echo "$PAGE" | grep -oP '(?<=1-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+            RATE_2YR=$(echo "$PAGE" | grep -oP '(?<=2-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+            RATE_4YR=$(echo "$PAGE" | grep -oP '(?<=4-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+
+            # Use scraped values or fall back to current defaults
+            echo "RATE_1YR=${RATE_1YR:-4.74}" >> $GITHUB_ENV
+            echo "RATE_2YR=${RATE_2YR:-4.29}" >> $GITHUB_ENV
+            echo "RATE_3YR=${RATE_3YR:-3.49}" >> $GITHUB_ENV
+            echo "RATE_4YR=${RATE_4YR:-3.89}" >> $GITHUB_ENV
+            echo "RATE_5YR_FIXED=${RATE_5YR:-3.69}" >> $GITHUB_ENV
+            echo "RATE_5YR_VAR=${RATE_5VAR:-3.40}" >> $GITHUB_ENV
+            echo "RATE_10YR=4.99" >> $GITHUB_ENV
+            echo "RATE_SOURCE=WOWA.ca Best Uninsured Rates" >> $GITHUB_ENV
+
+      - name: Update Supabase market_rates
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          SUPABASE_URL="https://dotglplhsdsmrbacmtrx.supabase.co"
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          update_rate() {
+            local term_key="$1"
+            local rate="$2"
+            curl -sf -o /dev/null \
+              "$SUPABASE_URL/rest/v1/market_rates?term_key=eq.$term_key&rate_type=eq.uninsured" \
+              -X PATCH \
+              -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Content-Type: application/json" \
+              -H "Prefer: return=minimal" \
+              -d "{\"rate\": $rate, \"source\": \"$RATE_SOURCE\", \"updated_at\": \"$DATE\"}"
+            echo "Updated $term_key -> $rate%"
+          }
+
+          update_rate "1yr_fixed" "$RATE_1YR"
+          update_rate "2yr_fixed" "$RATE_2YR"
+          update_rate "3yr_fixed" "$RATE_3YR"
+          update_rate "4yr_fixed" "$RATE_4YR"
+          update_rate "5yr_fixed" "$RATE_5YR_FIXED"
+          update_rate "5yr_variable" "$RATE_5YR_VAR"
+          update_rate "10yr_fixed" "$RATE_10YR"
+
+      - name: Update fallback rates in codebase
+        run: |
+          # calculations.ts
+          sed -i "s/fiveYearFixed: [0-9.]*,/fiveYearFixed: $RATE_5YR_FIXED,/" src/lib/calculations.ts
+          sed -i "s/fiveYearVariable: [0-9.]*,/fiveYearVariable: $RATE_5YR_VAR,/" src/lib/calculations.ts
+          sed -i "s/threeYearFixed: [0-9.]*,/threeYearFixed: $RATE_3YR,/" src/lib/calculations.ts
+          sed -i "s/oneYearFixed: [0-9.]*,/oneYearFixed: $RATE_1YR,/" src/lib/calculations.ts
+          sed -i "s/twoYearFixed: [0-9.]*,/twoYearFixed: $RATE_2YR,/" src/lib/calculations.ts
+          sed -i "s/fourYearFixed: [0-9.]*,/fourYearFixed: $RATE_4YR,/" src/lib/calculations.ts
+
+          # supabase.ts
+          sed -i "s/fiveYearFixed: data.fiveYearFixed ?? [0-9.]*,/fiveYearFixed: data.fiveYearFixed ?? $RATE_5YR_FIXED,/" src/lib/supabase.ts
+          sed -i "s/fiveYearVariable: data.fiveYearVariable ?? [0-9.]*,/fiveYearVariable: data.fiveYearVariable ?? $RATE_5YR_VAR,/" src/lib/supabase.ts
+          sed -i "s/threeYearFixed: data.threeYearFixed ?? [0-9.]*,/threeYearFixed: data.threeYearFixed ?? $RATE_3YR,/" src/lib/supabase.ts
+          sed -i "s/oneYearFixed: data.oneYearFixed ?? [0-9.]*,/oneYearFixed: data.oneYearFixed ?? $RATE_1YR,/" src/lib/supabase.ts
+          sed -i "s/twoYearFixed: data.twoYearFixed ?? [0-9.]*,/twoYearFixed: data.twoYearFixed ?? $RATE_2YR,/" src/lib/supabase.ts
+          sed -i "s/fourYearFixed: data.fourYearFixed ?? [0-9.]*,/fourYearFixed: data.fourYearFixed ?? $RATE_4YR,/" src/lib/supabase.ts
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "flow-rate-bot"
+          git config user.email "alex@getflowmortgage.ca"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No rate changes detected"
+          else
+            git commit -m "chore: weekly rate update $(date +%Y-%m-%d)
+
+            1yr: $RATE_1YR% | 2yr: $RATE_2YR% | 3yr: $RATE_3YR%
+            4yr: $RATE_4YR% | 5yr fixed: $RATE_5YR_FIXED% | 5yr var: $RATE_5YR_VAR%
+            Source: $RATE_SOURCE"
+            git push
+          fi
