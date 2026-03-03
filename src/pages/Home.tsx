@@ -26,8 +26,6 @@ export function Home() {
   };
 
   const handleQuizComplete = useCallback(async (answers: QuizAnswers) => {
-    setStage("loading");
-
     // If payment wasn't provided, estimate it
     if (!answers.payment) {
       const monthly = calculateMonthlyPayment(answers.balance, answers.rate, 300);
@@ -36,8 +34,10 @@ export function Home() {
       );
     }
 
+    // Start loading animation immediately, compute in background
+    setStage("loading");
+
     try {
-      // Fetch rates and penalty in parallel
       const [rateData, penaltyData] = await Promise.all([
         fetchMarketRates(),
         fetchPenaltyEstimate({
@@ -53,7 +53,6 @@ export function Home() {
       const penaltyAmount = penaltyData?.penalty_estimate ?? undefined;
       const computed = computeResults(answers, rateData, penaltyAmount);
 
-      // Attach penalty details if available
       if (penaltyData) {
         computed.penaltyType = penaltyData.penalty_type;
         computed.penaltyConfidence = penaltyData.confidence;
@@ -63,7 +62,6 @@ export function Home() {
       setResult(computed);
     } catch (err) {
       console.error("Error computing results:", err);
-      // Compute with fallback
       const { getFallbackRates } = await import("@/lib/calculations");
       const computed = computeResults(answers, getFallbackRates());
       setResult(computed);
@@ -115,7 +113,10 @@ export function Home() {
 
         {stage === "loading" && (
           <section className="py-20 px-4">
-            <LoadingAnimation onComplete={handleLoadingComplete} />
+            <LoadingAnimation
+              onComplete={handleLoadingComplete}
+              savingsAmount={result?.scenarioMatch?.totalInterestSaved ?? result?.yearlySavings ?? 0}
+            />
           </section>
         )}
 

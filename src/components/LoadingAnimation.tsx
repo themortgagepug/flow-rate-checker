@@ -10,9 +10,10 @@ const STEPS = [
 
 interface Props {
   onComplete: () => void;
+  savingsAmount?: number;
 }
 
-export function LoadingAnimation({ onComplete }: Props) {
+export function LoadingAnimation({ onComplete, savingsAmount = 0 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [savingsCounter, setSavingsCounter] = useState(0);
 
@@ -30,16 +31,16 @@ export function LoadingAnimation({ onComplete }: Props) {
     setTimeout(advanceStep, STEPS[0].duration);
   }, [onComplete]);
 
-  // Animate savings counter
+  // Animate savings counter to the actual amount
   useEffect(() => {
-    const target = 4200;
+    const target = savingsAmount > 0 ? Math.round(savingsAmount) : 0;
+    if (target <= 0) return;
     const duration = 6000;
     const startTime = Date.now();
 
     const tick = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out
       const eased = 1 - Math.pow(1 - progress, 3);
       setSavingsCounter(Math.round(target * eased));
 
@@ -48,7 +49,7 @@ export function LoadingAnimation({ onComplete }: Props) {
       }
     };
     requestAnimationFrame(tick);
-  }, []);
+  }, [savingsAmount]);
 
   const CurrentIcon = STEPS[currentStep].icon;
 
