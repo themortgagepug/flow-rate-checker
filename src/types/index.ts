@@ -8,6 +8,7 @@ export interface QuizAnswers {
   renewalDate: string;
   payment: number;
   paymentFrequency: "Monthly" | "Bi-weekly" | "Weekly";
+  propertyType: "Owner Occupied" | "Rental";
   firstName: string;
 }
 
@@ -97,6 +98,7 @@ export type QuizStep =
   | "term"
   | "renewalDate"
   | "payment"
+  | "propertyType"
   | "firstName";
 
 export interface LenderOption {

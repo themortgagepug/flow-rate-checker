@@ -286,14 +286,12 @@ export function computeResults(
 ): import("@/types").QuizResult {
   const baseRate = getComparableRate(answers.term, answers.type, rateData);
 
-  // Apply refinance premium to all comparable rates (every user is evaluating a refi)
-  const comparableRate = Math.round((baseRate + REFINANCE_PREMIUM) * 100) / 100;
+  // Apply refinance premium + rental premium if applicable
+  const rentalAdj = answers.propertyType === "Rental" ? RENTAL_PREMIUM : 0;
+  const comparableRate = Math.round((baseRate + REFINANCE_PREMIUM + rentalAdj) * 100) / 100;
 
   // Rate for 30-year fresh scenario gets additional 30yr premium
   const freshScenarioRate = Math.round((comparableRate + THIRTY_YEAR_PREMIUM) * 100) / 100;
-
-  // Rental premium would apply here if property type is known
-  // TODO: Add property type question to quiz, then apply RENTAL_PREMIUM
 
   const grade = calculateGrade(answers.rate, comparableRate);
 

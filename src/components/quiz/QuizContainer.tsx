@@ -8,6 +8,7 @@ import { QuestionTerm } from "./QuestionTerm";
 import { QuestionRenewalDate } from "./QuestionRenewalDate";
 import { QuestionPayment } from "./QuestionPayment";
 import { QuestionName } from "./QuestionName";
+import { QuestionPropertyType } from "./QuestionPropertyType";
 import { Shield, ArrowLeft } from "lucide-react";
 import type { QuizAnswers, QuizStep } from "@/types";
 
@@ -19,6 +20,7 @@ const STEPS: QuizStep[] = [
   "term",
   "renewalDate",
   "payment",
+  "propertyType",
   "firstName",
 ];
 
@@ -155,6 +157,16 @@ export function QuizContainer({ onComplete }: Props) {
           />
         )}
 
+        {stepName === "propertyType" && (
+          <QuestionPropertyType
+            value={answers.propertyType || ""}
+            onNext={(propertyType) => {
+              setAnswers((a) => ({ ...a, propertyType }));
+              goNext();
+            }}
+          />
+        )}
+
         {stepName === "firstName" && (
           <QuestionName
             value={answers.firstName || ""}
@@ -169,6 +181,7 @@ export function QuizContainer({ onComplete }: Props) {
                 renewalDate: answers.renewalDate!,
                 payment: answers.payment!,
                 paymentFrequency: answers.paymentFrequency!,
+                propertyType: answers.propertyType!,
                 firstName,
               };
               handleComplete(complete);
