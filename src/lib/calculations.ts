@@ -267,6 +267,16 @@ export function computeScenario(
 }
 
 /**
+ * Rate premiums applied to market rates for realistic comparisons.
+ * Refinance: +0.35% (always applies — every quiz user is evaluating a refi)
+ * 30-year amortization: +0.10% (applies to fresh 30yr scenario only)
+ * Rental property: +0.25% (applies when property type is rental)
+ */
+const REFINANCE_PREMIUM = 0.35;
+const THIRTY_YEAR_PREMIUM = 0.10;
+const RENTAL_PREMIUM = 0.25;
+
+/**
  * Master function: compute all results from quiz answers + rate data.
  */
 export function computeResults(
@@ -274,7 +284,17 @@ export function computeResults(
   rateData: RateData,
   penaltyOverride?: number
 ): import("@/types").QuizResult {
-  const comparableRate = getComparableRate(answers.term, answers.type, rateData);
+  const baseRate = getComparableRate(answers.term, answers.type, rateData);
+
+  // Apply refinance premium to all comparable rates (every user is evaluating a refi)
+  const comparableRate = Math.round((baseRate + REFINANCE_PREMIUM) * 100) / 100;
+
+  // Rate for 30-year fresh scenario gets additional 30yr premium
+  const freshScenarioRate = Math.round((comparableRate + THIRTY_YEAR_PREMIUM) * 100) / 100;
+
+  // Rental premium would apply here if property type is known
+  // TODO: Add property type question to quiz, then apply RENTAL_PREMIUM
+
   const grade = calculateGrade(answers.rate, comparableRate);
 
   // Amortization
@@ -311,9 +331,10 @@ export function computeResults(
   const safeTermMonths = Math.max(remainingMonths, 1); // remaining term months
 
   // Scenario A: Fresh 30-year amortization, compared over remaining term
+  // Uses freshScenarioRate which includes the 30yr amort premium
   const scenarioFresh = computeScenario(
     answers.balance, answers.rate, currentMonthlyPayment, safeCurrentAmort,
-    comparableRate, 360, safeTermMonths, switchingCosts
+    freshScenarioRate, 360, safeTermMonths, switchingCosts
   );
 
   // Scenario B: Match current remaining amortization, compared over remaining term
