@@ -26,28 +26,46 @@ jobs:
           check() {
             local name="$1"
             local url="$2"
-            local expect_json="$3"
+            local mode="$3"  # "json" = expect status:ok, "auth" = 401 means alive, "web" = follow redirects
             CHECKED=$((CHECKED + 1))
 
-            STATUS=$(curl -s -o /tmp/health_body -w "%{http_code}" --max-time 15 "$url" 2>/dev/null || echo "000")
+            if [ "$mode" = "web" ]; then
+              STATUS=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 15 "$url" 2>/dev/null || echo "000")
+            else
+              STATUS=$(curl -s -o /tmp/health_body -w "%{http_code}" --max-time 15 "$url" 2>/dev/null || echo "000")
+            fi
             BODY=$(cat /tmp/health_body 2>/dev/null || echo "")
 
-            if [ "$STATUS" = "200" ]; then
-              if [ -n "$expect_json" ]; then
-                if echo "$BODY" | grep -q '"status":"ok"'; then
-                  REPORT="${REPORT}OK  ${name}\n"
-                else
-                  FAILED=$((FAILED + 1))
-                  FAILURES="${FAILURES}\n-- ${name} --\nHTTP 200 but health check returned:\n${BODY}\n"
-                  REPORT="${REPORT}FAIL  ${name} (bad health response)\n"
-                fi
+            if [ "$mode" = "auth" ]; then
+              # Authenticated services: 401/403 proves the service is running
+              if [ "$STATUS" = "401" ] || [ "$STATUS" = "403" ] || [ "$STATUS" = "200" ] || [ "$STATUS" = "400" ]; then
+                REPORT="${REPORT}OK  ${name} (responding, HTTP ${STATUS})\n"
               else
+                FAILED=$((FAILED + 1))
+                FAILURES="${FAILURES}\n-- ${name} --\nHTTP ${STATUS} (expected 401/403, service may be down)\n"
+                REPORT="${REPORT}FAIL  ${name} (HTTP ${STATUS})\n"
+              fi
+            elif [ "$mode" = "json" ]; then
+              if [ "$STATUS" = "200" ] && echo "$BODY" | grep -q '"status".*"ok"'; then
                 REPORT="${REPORT}OK  ${name}\n"
+              elif [ "$STATUS" = "200" ]; then
+                FAILED=$((FAILED + 1))
+                FAILURES="${FAILURES}\n-- ${name} --\nHTTP 200 but health check failed:\n${BODY}\n"
+                REPORT="${REPORT}FAIL  ${name} (bad health response)\n"
+              else
+                FAILED=$((FAILED + 1))
+                FAILURES="${FAILURES}\n-- ${name} --\nHTTP ${STATUS}\n${BODY}\n"
+                REPORT="${REPORT}FAIL  ${name} (HTTP ${STATUS})\n"
               fi
             else
-              FAILED=$((FAILED + 1))
-              FAILURES="${FAILURES}\n-- ${name} --\nHTTP ${STATUS}\n${BODY}\n"
-              REPORT="${REPORT}FAIL  ${name} (HTTP ${STATUS})\n"
+              # web mode or default
+              if [ "$STATUS" = "200" ]; then
+                REPORT="${REPORT}OK  ${name}\n"
+              else
+                FAILED=$((FAILED + 1))
+                FAILURES="${FAILURES}\n-- ${name} --\nHTTP ${STATUS}\n"
+                REPORT="${REPORT}FAIL  ${name} (HTTP ${STATUS})\n"
+              fi
             fi
           }
 
@@ -62,42 +80,42 @@ jobs:
             "json"
 
           check "Transcript Processor" \
-            "https://transcript-processor-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://transcript-processor-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "Partner Intel" \
-            "https://partner-intel-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://partner-intel-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "Planning Session Processor" \
-            "https://planning-session-processor-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://planning-session-processor-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "Finmo Sync" \
-            "https://finmo-sync-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://finmo-sync-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "Rate Watch Sync" \
-            "https://rate-watch-sync-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://rate-watch-sync-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "Rate Watch Digest" \
-            "https://rate-watch-digest-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://rate-watch-digest-158142130858.us-central1.run.app/" \
+            "auth"
 
           check "WealthFlow Email Server" \
-            "https://wealthflow-email-server-158142130858.us-central1.run.app/health" \
-            "json"
+            "https://wealthflow-email-server-158142130858.us-central1.run.app/" \
+            "auth"
 
           # --- Web Properties ---
           echo "Checking web properties..."
           check "Rate Quiz (rate.getflowmortgage.ca)" \
             "https://rate.getflowmortgage.ca" \
-            ""
+            "web"
 
           check "Flow Website (getflowmortgage.ca)" \
             "https://getflowmortgage.ca" \
-            ""
+            "web"
 
           # --- Supabase ---
           echo "Checking Supabase..."
