@@ -22,12 +22,12 @@ fi
 
 # --- Rate input (override via env vars or use defaults) ---
 # These should be best UNINSURED rates from WOWA.ca / broker channel
-RATE_1YR="${RATE_1YR:-4.74}"
-RATE_2YR="${RATE_2YR:-4.29}"
-RATE_3YR="${RATE_3YR:-3.49}"
-RATE_4YR="${RATE_4YR:-3.89}"
-RATE_5YR_FIXED="${RATE_5YR_FIXED:-3.69}"
-RATE_5YR_VAR="${RATE_5YR_VAR:-3.40}"
+RATE_1YR="${RATE_1YR:-5.09}"
+RATE_2YR="${RATE_2YR:-4.59}"
+RATE_3YR="${RATE_3YR:-4.19}"
+RATE_4YR="${RATE_4YR:-4.29}"
+RATE_5YR_FIXED="${RATE_5YR_FIXED:-4.39}"
+RATE_5YR_VAR="${RATE_5YR_VAR:-3.85}"
 RATE_10YR="${RATE_10YR:-4.99}"
 SOURCE="${RATE_SOURCE:-WOWA.ca Best Uninsured Rates}"
 

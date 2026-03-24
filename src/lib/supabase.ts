@@ -32,12 +32,12 @@ export async function fetchMarketRates(): Promise<RateData> {
     if (error) throw error;
 
     const rates: RateData = {
-      fiveYearFixed: data.fiveYearFixed ?? 3.69,
-      fiveYearVariable: data.fiveYearVariable ?? 3.40,
-      threeYearFixed: data.threeYearFixed ?? 3.49,
-      oneYearFixed: data.oneYearFixed ?? 4.74,
-      twoYearFixed: data.twoYearFixed ?? 4.29,
-      fourYearFixed: data.fourYearFixed ?? 3.89,
+      fiveYearFixed: data.fiveYearFixed ?? 4.39,
+      fiveYearVariable: data.fiveYearVariable ?? 3.85,
+      threeYearFixed: data.threeYearFixed ?? 4.19,
+      oneYearFixed: data.oneYearFixed ?? 5.09,
+      twoYearFixed: data.twoYearFixed ?? 4.59,
+      fourYearFixed: data.fourYearFixed ?? 4.29,
       rates: data.rates,
       scrapedAt: data.scrapedAt,
       source: data.source,
