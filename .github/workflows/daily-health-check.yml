@@ -1,0 +1,213 @@
+name: Daily System Health Check
+
+on:
+  schedule:
+    # Every day at 8:00 AM ET (12:00 UTC)
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check all Flow systems
+        id: checks
+        env:
+          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZXVqcXpsY2xyeGh3YW1wbGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MDcyNzUsImV4cCI6MjA4MjE4MzI3NX0.Y2Bs9ur37qQ3dVdcy2XrVa-J5idbrENEPzCeeAn9ji4"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          FAILURES=""
+          REPORT=""
+          CHECKED=0
+          FAILED=0
+
+          check() {
+            local name="$1"
+            local url="$2"
+            local expect_json="$3"
+            CHECKED=$((CHECKED + 1))
+
+            STATUS=$(curl -s -o /tmp/health_body -w "%{http_code}" --max-time 15 "$url" 2>/dev/null || echo "000")
+            BODY=$(cat /tmp/health_body 2>/dev/null || echo "")
+
+            if [ "$STATUS" = "200" ]; then
+              if [ -n "$expect_json" ]; then
+                if echo "$BODY" | grep -q '"status":"ok"'; then
+                  REPORT="${REPORT}OK  ${name}\n"
+                else
+                  FAILED=$((FAILED + 1))
+                  FAILURES="${FAILURES}\n-- ${name} --\nHTTP 200 but health check returned:\n${BODY}\n"
+                  REPORT="${REPORT}FAIL  ${name} (bad health response)\n"
+                fi
+              else
+                REPORT="${REPORT}OK  ${name}\n"
+              fi
+            else
+              FAILED=$((FAILED + 1))
+              FAILURES="${FAILURES}\n-- ${name} --\nHTTP ${STATUS}\n${BODY}\n"
+              REPORT="${REPORT}FAIL  ${name} (HTTP ${STATUS})\n"
+            fi
+          }
+
+          echo "=== Flow Mortgage Co - Daily Health Check ==="
+          echo "Date: $(TZ='America/Vancouver' date '+%B %d, %Y %I:%M %p PT')"
+          echo ""
+
+          # --- GCP Cloud Run Services ---
+          echo "Checking GCP Cloud Run services..."
+          check "PDF Generator" \
+            "https://flow-pdf-generator-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Transcript Processor" \
+            "https://transcript-processor-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Partner Intel" \
+            "https://partner-intel-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Planning Session Processor" \
+            "https://planning-session-processor-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Finmo Sync" \
+            "https://finmo-sync-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Rate Watch Sync" \
+            "https://rate-watch-sync-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "Rate Watch Digest" \
+            "https://rate-watch-digest-158142130858.us-central1.run.app/health" \
+            "json"
+
+          check "WealthFlow Email Server" \
+            "https://wealthflow-email-server-158142130858.us-central1.run.app/health" \
+            "json"
+
+          # --- Web Properties ---
+          echo "Checking web properties..."
+          check "Rate Quiz (rate.getflowmortgage.ca)" \
+            "https://rate.getflowmortgage.ca" \
+            ""
+
+          check "Flow Website (getflowmortgage.ca)" \
+            "https://getflowmortgage.ca" \
+            ""
+
+          # --- Supabase ---
+          echo "Checking Supabase..."
+          check "Supabase Brain" \
+            "https://jkeujqzlclrxhwamplby.supabase.co/rest/v1/brain?limit=1&select=id&apikey=${SUPABASE_ANON_KEY}" \
+            ""
+
+          # --- GitHub Actions (check last workflow runs) ---
+          echo "Checking GitHub Actions..."
+          RATE_UPDATE=$(gh run list --repo themortgagepug/flow-rate-checker --workflow "Weekly Rate Update" --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
+          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow "Weekly Rate Briefing" --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
+
+          CHECKED=$((CHECKED + 2))
+          if [ "$RATE_UPDATE" = "success" ]; then
+            REPORT="${REPORT}OK  GitHub: Weekly Rate Update (last run: success)\n"
+          else
+            FAILED=$((FAILED + 1))
+            FAILURES="${FAILURES}\n-- GitHub: Weekly Rate Update --\nLast run conclusion: ${RATE_UPDATE}\n"
+            REPORT="${REPORT}FAIL  GitHub: Weekly Rate Update (${RATE_UPDATE})\n"
+          fi
+
+          if [ "$RATE_BRIEFING" = "success" ]; then
+            REPORT="${REPORT}OK  GitHub: Weekly Rate Briefing (last run: success)\n"
+          else
+            FAILED=$((FAILED + 1))
+            FAILURES="${FAILURES}\n-- GitHub: Weekly Rate Briefing --\nLast run conclusion: ${RATE_BRIEFING}\n"
+            REPORT="${REPORT}FAIL  GitHub: Weekly Rate Briefing (${RATE_BRIEFING})\n"
+          fi
+
+          # --- Summary ---
+          echo ""
+          echo "=== RESULTS ==="
+          echo -e "$REPORT"
+          echo ""
+          echo "Checked: $CHECKED | Passed: $((CHECKED - FAILED)) | Failed: $FAILED"
+
+          # Store for email step
+          echo "FAILED_COUNT=$FAILED" >> $GITHUB_ENV
+          echo "CHECKED_COUNT=$CHECKED" >> $GITHUB_ENV
+          echo "PASSED_COUNT=$((CHECKED - FAILED))" >> $GITHUB_ENV
+
+          # Store multiline report
+          {
+            echo "REPORT<<REPORTEOF"
+            echo -e "$REPORT"
+            echo "REPORTEOF"
+          } >> $GITHUB_ENV
+
+          {
+            echo "FAILURES<<FAILEOF"
+            echo -e "$FAILURES"
+            echo "FAILEOF"
+          } >> $GITHUB_ENV
+
+      - name: Send alert email if failures detected
+        if: env.FAILED_COUNT != '0'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          DATE=$(TZ='America/Vancouver' date '+%B %d, %Y')
+
+          # Build HTML email
+          cat > /tmp/alert.json << 'JSONEOF'
+          {
+            "from": "Flow Systems <systems@getflowmortgage.ca>",
+            "to": ["alex@getflowmortgage.ca"],
+            "subject": "ALERT: $FAILED_COUNT system(s) failing - $DATE",
+            "html": "<div style='font-family:Inter,sans-serif;max-width:600px;margin:0 auto;background:#0a1628;color:#e2e8f0;padding:32px;border-radius:12px'><h1 style='color:#f87171;margin:0 0 8px'>System Health Alert</h1><p style='color:#94a3b8;margin:0 0 24px'>$DATE - $FAILED_COUNT of $CHECKED_COUNT checks failed</p><pre style='background:#1e293b;padding:16px;border-radius:8px;font-size:13px;overflow-x:auto;color:#e2e8f0'>$REPORT</pre><h3 style='color:#f87171;margin:24px 0 8px'>Failure Details</h3><pre style='background:#1e293b;padding:16px;border-radius:8px;font-size:12px;overflow-x:auto;color:#fca5a5'>$FAILURES</pre><p style='color:#64748b;margin:24px 0 0;font-size:12px'>Automated health check - Flow Mortgage Co</p></div>"
+          }
+          JSONEOF
+
+          # Substitute env vars
+          sed -i "s/\$FAILED_COUNT/$FAILED_COUNT/g" /tmp/alert.json
+          sed -i "s/\$CHECKED_COUNT/$CHECKED_COUNT/g" /tmp/alert.json
+          sed -i "s/\$DATE/$DATE/g" /tmp/alert.json
+
+          # Escape newlines for JSON
+          REPORT_ESCAPED=$(echo "$REPORT" | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$//')
+          FAILURES_ESCAPED=$(echo "$FAILURES" | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$//')
+
+          curl -s -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"Flow Systems <systems@getflowmortgage.ca>\",
+              \"to\": [\"alex@getflowmortgage.ca\"],
+              \"subject\": \"ALERT: ${FAILED_COUNT} system(s) failing - ${DATE}\",
+              \"html\": \"<div style='font-family:monospace;padding:16px'><h2 style='color:red'>System Health Alert</h2><p>${DATE} - ${FAILED_COUNT} of ${CHECKED_COUNT} checks failed</p><pre>${REPORT_ESCAPED}</pre><h3>Failure Details</h3><pre>${FAILURES_ESCAPED}</pre></div>\"
+            }"
+
+          echo ""
+          echo "Alert email sent to alex@getflowmortgage.ca"
+
+      - name: Send daily summary (all green)
+        if: env.FAILED_COUNT == '0'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          DATE=$(TZ='America/Vancouver' date '+%B %d, %Y')
+
+          REPORT_ESCAPED=$(echo "$REPORT" | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$//')
+
+          curl -s -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"Flow Systems <systems@getflowmortgage.ca>\",
+              \"to\": [\"alex@getflowmortgage.ca\"],
+              \"subject\": \"All systems green - ${DATE}\",
+              \"html\": \"<div style='font-family:monospace;padding:16px'><h2 style='color:#22c55e'>All Systems Operational</h2><p>${DATE} - ${CHECKED_COUNT} checks passed</p><pre>${REPORT_ESCAPED}</pre></div>\"
+            }"
+
+          echo "Daily summary email sent (all green)"
