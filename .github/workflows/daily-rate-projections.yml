@@ -24,8 +24,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SIMULATOR_SUPABASE_URL: https://kdevffjzngobsqsdautq.supabase.co
-          SIMULATOR_SUPABASE_SERVICE_KEY: ${{ secrets.SIMULATOR_SUPABASE_SERVICE_KEY }}
         run: bash scripts/update-rate-projections.sh
 
       - name: Show generated rates

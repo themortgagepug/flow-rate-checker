@@ -393,5 +393,15 @@ else
   echo "SIMULATOR_SUPABASE_SERVICE_KEY not set, skipping Supabase upsert"
 fi
 
+# ============================================================
+# 7. Copy to Google Drive (local runs only)
+# ============================================================
+GDRIVE_PATH="$HOME/Library/CloudStorage/GoogleDrive-alex@getflowmortgage.ca/My Drive/Flow Projects/Tools/Flow Tools Hub/rates.json"
+if [ -d "$(dirname "$GDRIVE_PATH")" ]; then
+  cp rates.json "$GDRIVE_PATH"
+  echo ""
+  echo "--- Copied rates.json to Google Drive ---"
+fi
+
 echo ""
 echo "=== Rate Projection Pipeline Complete ==="
