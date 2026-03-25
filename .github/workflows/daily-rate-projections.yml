@@ -1,0 +1,55 @@
+name: Daily Rate Projections
+
+on:
+  schedule:
+    # Every weekday at 8:30 AM ET (12:30 UTC)
+    - cron: '30 12 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  update-projections:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install python-dateutil
+
+      - name: Run rate projection pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SIMULATOR_SUPABASE_URL: https://kdevffjzngobsqsdautq.supabase.co
+          SIMULATOR_SUPABASE_SERVICE_KEY: ${{ secrets.SIMULATOR_SUPABASE_SERVICE_KEY }}
+        run: bash scripts/update-rate-projections.sh
+
+      - name: Show generated rates
+        run: |
+          python3 -c "
+          import json
+          d = json.load(open('rates.json'))
+          print(f'BoC: {d[\"bocRate\"]}% | Prime: {d[\"prime\"]}%')
+          print(f'Bonds: 2yr={d[\"bondYields\"][\"2yr\"]}% 5yr={d[\"bondYields\"][\"5yr\"]}% 10yr={d[\"bondYields\"][\"10yr\"]}%')
+          for k, v in d['scenarios'].items():
+              print(f'{k}: {v[\"label\"]} -> BoC {v[\"terminalBoC\"]}% / Prime {v[\"terminalPrime\"]}%')
+          "
+
+      - name: Commit updated rates.json
+        run: |
+          git config user.name "Flow Rate Bot"
+          git config user.email "alex@getflowmortgage.ca"
+          git add rates.json
+          if git diff --cached --quiet; then
+            echo "No changes to rates.json"
+          else
+            BOC=$(python3 -c "import json; print(json.load(open('rates.json'))['bocRate'])")
+            PRIME=$(python3 -c "import json; print(json.load(open('rates.json'))['prime'])")
+            BASE_TERM=$(python3 -c "import json; print(json.load(open('rates.json'))['scenarios']['base']['terminalBoC'])")
+            git commit -m "Rate projections: BoC ${BOC}% | Prime ${PRIME}% | Base terminal ${BASE_TERM}%"
+            git push
+          fi
