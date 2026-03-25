@@ -112,6 +112,32 @@ jobs:
           update_rate "5yr_variable" "$RATE_5YR_VAR"
           update_rate "10yr_fixed" "$RATE_10YR"
 
+      - name: Update central rate hub (main Supabase)
+        env:
+          CENTRAL_SUPABASE_SERVICE_KEY: ${{ secrets.CENTRAL_SUPABASE_SERVICE_KEY }}
+        run: |
+          CENTRAL_URL="https://jkeujqzlclrxhwamplby.supabase.co"
+          curl -sf \
+            "$CENTRAL_URL/rest/v1/market_rates?id=eq.1" \
+            -X PATCH \
+            -H "apikey: $CENTRAL_SUPABASE_SERVICE_KEY" \
+            -H "Authorization: Bearer $CENTRAL_SUPABASE_SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d "{
+              \"fixed_1yr\": $RATE_1YR,
+              \"fixed_2yr\": $RATE_2YR,
+              \"fixed_3yr\": $RATE_3YR,
+              \"fixed_4yr\": $RATE_4YR,
+              \"fixed_5yr\": $RATE_5YR_FIXED,
+              \"fixed_10yr\": $RATE_10YR,
+              \"vrm_effective\": $RATE_5YR_VAR,
+              \"source\": \"$RATE_SOURCE\",
+              \"updated_by\": \"github_actions\",
+              \"quiz_supabase_synced_at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+            }"
+          echo "Central rate hub updated"
+
       - name: Update fallback rates in codebase
         run: |
           # calculations.ts
