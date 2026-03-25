@@ -1,0 +1,22 @@
+name: Daily Briefing
+
+on:
+  schedule:
+    # Weekdays at 8:15 AM PT (15:15 UTC) - 15 min after health check
+    - cron: '15 15 * * 1-5'
+  workflow_dispatch: {}
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Generate and send briefing
+        env:
+          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZXVqcXpsY2xyeGh3YW1wbGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MDcyNzUsImV4cCI6MjA4MjE4MzI3NX0.Y2Bs9ur37qQ3dVdcy2XrVa-J5idbrENEPzCeeAn9ji4"
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: bash scripts/daily-briefing.sh
