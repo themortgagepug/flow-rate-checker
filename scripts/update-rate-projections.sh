@@ -268,6 +268,9 @@ for i in range(61):
         "bear": {"boc": round(bear_boc, 2), "prime": round(bear_boc + PRIME_SPREAD, 2)}
     })
 
+# Build flat prime rate path (base case) for Lovable app compatibility
+prime_rate_path = [{"date": m["date"], "prime": m["base"]["prime"]} for m in months]
+
 # Terminal rates for each scenario
 if has_futures:
     sorted_futures = sorted(futures_by_date.items())
@@ -307,30 +310,26 @@ output = {
         "description": "Rental properties add +0.25% to all fixed rates. 30-year amortization adds +0.10% to all rates."
     },
 
-    "primeRatePath": {
-        "description": "Monthly projected prime rate derived from CORRA futures (base), bank consensus (bull/bear). Updated daily.",
-        "scenarios": ["base", "bull", "bear"],
-        "months": months
-    },
+    "primeRatePath": prime_rate_path,
 
     "scenarios": {
         "bull": {
-            "label": "Rates Hold / Drop",
-            "description": f"BoC holds at {BOC_RATE}% (TD, RBC, BMO, CIBC consensus)",
+            "label": "Rates Drop",
             "terminalPrime": bull_terminal_prime,
-            "terminalBoC": BOC_RATE
+            "terminalBoC": BOC_RATE,
+            "description": f"BoC holds at {BOC_RATE}% (TD, RBC, BMO, CIBC consensus)"
         },
         "base": {
-            "label": "Market Pricing",
-            "description": f"CORRA futures imply BoC rising to ~{round(base_terminal_boc, 2)}%",
+            "label": "Rates Hold",
             "terminalPrime": base_terminal_prime,
-            "terminalBoC": round(base_terminal_boc, 2)
+            "terminalBoC": round(base_terminal_boc, 2),
+            "description": f"CORRA futures imply BoC at ~{round(base_terminal_boc, 2)}%"
         },
         "bear": {
             "label": "Rates Rise",
-            "description": "BoC hikes to 3.25%+ (Scotiabank, NBC hawkish view)",
             "terminalPrime": bear_terminal_prime,
-            "terminalBoC": 3.25
+            "terminalBoC": 3.25,
+            "description": "BoC hikes to 3.25%+ (Scotiabank, NBC hawkish view)"
         }
     },
 

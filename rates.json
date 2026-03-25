@@ -38,949 +38,270 @@
     "thirtyYearAmort": 0.1,
     "description": "Rental properties add +0.25% to all fixed rates. 30-year amortization adds +0.10% to all rates."
   },
-  "primeRatePath": {
-    "description": "Monthly projected prime rate derived from CORRA futures (base), bank consensus (bull/bear). Updated daily.",
-    "scenarios": [
-      "base",
-      "bull",
-      "bear"
-    ],
-    "months": [
-      {
-        "date": "2026-03",
-        "base": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.25,
-          "prime": 4.45
-        }
-      },
-      {
-        "date": "2026-04",
-        "base": {
-          "boc": 2.38,
-          "prime": 4.58
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.33,
-          "prime": 4.53
-        }
-      },
-      {
-        "date": "2026-05",
-        "base": {
-          "boc": 2.45,
-          "prime": 4.65
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.42,
-          "prime": 4.62
-        }
-      },
-      {
-        "date": "2026-06",
-        "base": {
-          "boc": 2.52,
-          "prime": 4.72
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.5,
-          "prime": 4.7
-        }
-      },
-      {
-        "date": "2026-07",
-        "base": {
-          "boc": 2.61,
-          "prime": 4.81
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.58,
-          "prime": 4.78
-        }
-      },
-      {
-        "date": "2026-08",
-        "base": {
-          "boc": 2.71,
-          "prime": 4.91
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.67,
-          "prime": 4.87
-        }
-      },
-      {
-        "date": "2026-09",
-        "base": {
-          "boc": 2.8,
-          "prime": 5.0
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.75,
-          "prime": 4.95
-        }
-      },
-      {
-        "date": "2026-10",
-        "base": {
-          "boc": 2.86,
-          "prime": 5.06
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.83,
-          "prime": 5.03
-        }
-      },
-      {
-        "date": "2026-11",
-        "base": {
-          "boc": 2.92,
-          "prime": 5.12
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 2.92,
-          "prime": 5.12
-        }
-      },
-      {
-        "date": "2026-12",
-        "base": {
-          "boc": 2.98,
-          "prime": 5.18
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.0,
-          "prime": 5.2
-        }
-      },
-      {
-        "date": "2027-01",
-        "base": {
-          "boc": 3.03,
-          "prime": 5.23
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.08,
-          "prime": 5.28
-        }
-      },
-      {
-        "date": "2027-02",
-        "base": {
-          "boc": 3.08,
-          "prime": 5.28
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.17,
-          "prime": 5.37
-        }
-      },
-      {
-        "date": "2027-03",
-        "base": {
-          "boc": 3.12,
-          "prime": 5.32
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-04",
-        "base": {
-          "boc": 3.13,
-          "prime": 5.33
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-05",
-        "base": {
-          "boc": 3.13,
-          "prime": 5.33
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-06",
-        "base": {
-          "boc": 3.14,
-          "prime": 5.34
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-07",
-        "base": {
-          "boc": 3.13,
-          "prime": 5.33
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-08",
-        "base": {
-          "boc": 3.11,
-          "prime": 5.31
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-09",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-10",
-        "base": {
-          "boc": 3.09,
-          "prime": 5.29
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-11",
-        "base": {
-          "boc": 3.08,
-          "prime": 5.28
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2027-12",
-        "base": {
-          "boc": 3.07,
-          "prime": 5.27
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-01",
-        "base": {
-          "boc": 3.08,
-          "prime": 5.28
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-02",
-        "base": {
-          "boc": 3.08,
-          "prime": 5.28
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-03",
-        "base": {
-          "boc": 3.09,
-          "prime": 5.29
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-04",
-        "base": {
-          "boc": 3.09,
-          "prime": 5.29
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-05",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-06",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-07",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-08",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-09",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-10",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-11",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2028-12",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-01",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-02",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-03",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-04",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-05",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-06",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-07",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-08",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-09",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-10",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-11",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2029-12",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-01",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-02",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-03",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-04",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-05",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-06",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-07",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-08",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-09",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-10",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-11",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2030-12",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2031-01",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2031-02",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      },
-      {
-        "date": "2031-03",
-        "base": {
-          "boc": 3.1,
-          "prime": 5.3
-        },
-        "bull": {
-          "boc": 2.25,
-          "prime": 4.45
-        },
-        "bear": {
-          "boc": 3.25,
-          "prime": 5.45
-        }
-      }
-    ]
-  },
+  "primeRatePath": [
+    {
+      "date": "2026-03",
+      "prime": 4.45
+    },
+    {
+      "date": "2026-04",
+      "prime": 4.58
+    },
+    {
+      "date": "2026-05",
+      "prime": 4.65
+    },
+    {
+      "date": "2026-06",
+      "prime": 4.72
+    },
+    {
+      "date": "2026-07",
+      "prime": 4.81
+    },
+    {
+      "date": "2026-08",
+      "prime": 4.91
+    },
+    {
+      "date": "2026-09",
+      "prime": 5.0
+    },
+    {
+      "date": "2026-10",
+      "prime": 5.06
+    },
+    {
+      "date": "2026-11",
+      "prime": 5.12
+    },
+    {
+      "date": "2026-12",
+      "prime": 5.18
+    },
+    {
+      "date": "2027-01",
+      "prime": 5.23
+    },
+    {
+      "date": "2027-02",
+      "prime": 5.28
+    },
+    {
+      "date": "2027-03",
+      "prime": 5.32
+    },
+    {
+      "date": "2027-04",
+      "prime": 5.33
+    },
+    {
+      "date": "2027-05",
+      "prime": 5.33
+    },
+    {
+      "date": "2027-06",
+      "prime": 5.34
+    },
+    {
+      "date": "2027-07",
+      "prime": 5.33
+    },
+    {
+      "date": "2027-08",
+      "prime": 5.31
+    },
+    {
+      "date": "2027-09",
+      "prime": 5.3
+    },
+    {
+      "date": "2027-10",
+      "prime": 5.29
+    },
+    {
+      "date": "2027-11",
+      "prime": 5.28
+    },
+    {
+      "date": "2027-12",
+      "prime": 5.27
+    },
+    {
+      "date": "2028-01",
+      "prime": 5.28
+    },
+    {
+      "date": "2028-02",
+      "prime": 5.28
+    },
+    {
+      "date": "2028-03",
+      "prime": 5.29
+    },
+    {
+      "date": "2028-04",
+      "prime": 5.29
+    },
+    {
+      "date": "2028-05",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-06",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-07",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-08",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-09",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-10",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-11",
+      "prime": 5.3
+    },
+    {
+      "date": "2028-12",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-01",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-02",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-03",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-04",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-05",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-06",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-07",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-08",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-09",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-10",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-11",
+      "prime": 5.3
+    },
+    {
+      "date": "2029-12",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-01",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-02",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-03",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-04",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-05",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-06",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-07",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-08",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-09",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-10",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-11",
+      "prime": 5.3
+    },
+    {
+      "date": "2030-12",
+      "prime": 5.3
+    },
+    {
+      "date": "2031-01",
+      "prime": 5.3
+    },
+    {
+      "date": "2031-02",
+      "prime": 5.3
+    },
+    {
+      "date": "2031-03",
+      "prime": 5.3
+    }
+  ],
   "scenarios": {
     "bull": {
-      "label": "Rates Hold / Drop",
-      "description": "BoC holds at 2.25% (TD, RBC, BMO, CIBC consensus)",
+      "label": "Rates Drop",
       "terminalPrime": 4.45,
-      "terminalBoC": 2.25
+      "terminalBoC": 2.25,
+      "description": "BoC holds at 2.25% (TD, RBC, BMO, CIBC consensus)"
     },
     "base": {
-      "label": "Market Pricing",
-      "description": "CORRA futures imply BoC rising to ~3.1%",
+      "label": "Rates Hold",
       "terminalPrime": 5.3,
-      "terminalBoC": 3.1
+      "terminalBoC": 3.1,
+      "description": "CORRA futures imply BoC at ~3.1%"
     },
     "bear": {
       "label": "Rates Rise",
-      "description": "BoC hikes to 3.25%+ (Scotiabank, NBC hawkish view)",
       "terminalPrime": 5.45,
-      "terminalBoC": 3.25
+      "terminalBoC": 3.25,
+      "description": "BoC hikes to 3.25%+ (Scotiabank, NBC hawkish view)"
     }
   },
   "assumptions": {
