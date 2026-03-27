@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-26",
+  "updated": "2026-03-27",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -11,9 +11,9 @@
   "prime": 4.45,
   "bocRate": 2.25,
   "bondYields": {
-    "2yr": 2.95,
-    "5yr": 3.14,
-    "10yr": 3.53
+    "2yr": 2.99,
+    "5yr": 3.2,
+    "10yr": 3.59
   },
   "uninsured": {
     "1yr_fixed": 4.74,
@@ -310,5 +310,5 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-03-26 from live market data. Base case uses CORRA futures market pricing. Bull case uses Big 4 bank consensus (hold). Bear case uses hawkish bank view (Scotiabank/NBC). Bond yields drive fixed rate projections."
+  "notes": "Auto-generated 2026-03-27 from live market data. Base case uses CORRA futures market pricing. Bull case uses Big 4 bank consensus (hold). Bear case uses hawkish bank view (Scotiabank/NBC). Bond yields drive fixed rate projections."
 }
