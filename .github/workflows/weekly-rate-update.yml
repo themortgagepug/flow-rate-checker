@@ -65,19 +65,55 @@ jobs:
           else
             # Scheduled run: scrape best rates from WOWA.ca
             echo "Fetching rates from WOWA.ca..."
+            SCRAPE_FAILED=false
 
-            PAGE=$(curl -sL "https://wowa.ca/mortgage-rates" || true)
+            PAGE=$(curl -sL "https://wowa.ca/best-mortgage-rates" 2>/dev/null || true)
+            if [ -z "$PAGE" ]; then
+              PAGE=$(curl -sL "https://wowa.ca/mortgage-rates" 2>/dev/null || true)
+            fi
 
-            # Extract rates - look for the uninsured rate table
-            # Fallback to current defaults if scraping fails
-            RATE_5YR=$(echo "$PAGE" | grep -oP '(?<=5-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
-            RATE_5VAR=$(echo "$PAGE" | grep -oP '(?<=5-Year Variable.*?)\d+\.\d+' | head -1 || echo "")
-            RATE_3YR=$(echo "$PAGE" | grep -oP '(?<=3-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
-            RATE_1YR=$(echo "$PAGE" | grep -oP '(?<=1-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
-            RATE_2YR=$(echo "$PAGE" | grep -oP '(?<=2-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
-            RATE_4YR=$(echo "$PAGE" | grep -oP '(?<=4-Year Fixed.*?)\d+\.\d+' | head -1 || echo "")
+            if [ -z "$PAGE" ]; then
+              echo "::error::WOWA.ca is unreachable. Using fallback rates."
+              SCRAPE_FAILED=true
+            fi
+
+            if [ "$SCRAPE_FAILED" = "false" ]; then
+              # Try multiple regex patterns for resilience
+              # Pattern 1: Look for rate numbers near term labels
+              RATE_5YR=$(echo "$PAGE" | grep -oP '\b[3-7]\.\d{2}(?=%?\s*</?(td|span|div))' | head -1 || echo "")
+              # Pattern 2: Look for common rate format in JSON-LD or data attributes
+              if [ -z "$RATE_5YR" ]; then
+                RATE_5YR=$(echo "$PAGE" | grep -oP '"5[- ]?[Yy]ear[^"]*"[^}]*"rate":\s*"?(\d+\.\d+)' | grep -oP '\d+\.\d+' | head -1 || echo "")
+              fi
+              # Pattern 3: Broader search for any rate-like numbers between 2-8%
+              if [ -z "$RATE_5YR" ]; then
+                RATE_5YR=$(echo "$PAGE" | grep -oP '5[- ]?[Yy]ear[^<]{0,100}\b([3-7]\.\d{2})\b' | grep -oP '[3-7]\.\d{2}' | head -1 || echo "")
+              fi
+
+              RATE_5VAR=$(echo "$PAGE" | grep -oP '[Vv]ariable[^<]{0,100}\b([2-8]\.\d{2})\b' | grep -oP '[2-8]\.\d{2}' | head -1 || echo "")
+              RATE_3YR=$(echo "$PAGE" | grep -oP '3[- ]?[Yy]ear[^<]{0,100}\b([3-7]\.\d{2})\b' | grep -oP '[3-7]\.\d{2}' | head -1 || echo "")
+              RATE_1YR=$(echo "$PAGE" | grep -oP '1[- ]?[Yy]ear[^<]{0,100}\b([3-8]\.\d{2})\b' | grep -oP '[3-8]\.\d{2}' | head -1 || echo "")
+              RATE_2YR=$(echo "$PAGE" | grep -oP '2[- ]?[Yy]ear[^<]{0,100}\b([3-7]\.\d{2})\b' | grep -oP '[3-7]\.\d{2}' | head -1 || echo "")
+              RATE_4YR=$(echo "$PAGE" | grep -oP '4[- ]?[Yy]ear[^<]{0,100}\b([3-7]\.\d{2})\b' | grep -oP '[3-7]\.\d{2}' | head -1 || echo "")
+
+              # Count how many rates we actually scraped
+              SCRAPED=0
+              [ -n "$RATE_5YR" ] && SCRAPED=$((SCRAPED+1))
+              [ -n "$RATE_5VAR" ] && SCRAPED=$((SCRAPED+1))
+              [ -n "$RATE_3YR" ] && SCRAPED=$((SCRAPED+1))
+              [ -n "$RATE_1YR" ] && SCRAPED=$((SCRAPED+1))
+
+              echo "Scraped $SCRAPED rates from WOWA.ca"
+              echo "  5yr fixed: ${RATE_5YR:-MISS} | 5yr var: ${RATE_5VAR:-MISS} | 3yr: ${RATE_3YR:-MISS} | 1yr: ${RATE_1YR:-MISS}"
+
+              if [ "$SCRAPED" -lt 2 ]; then
+                echo "::warning::WOWA scraper got fewer than 2 rates. Page structure may have changed. Using fallback rates."
+                SCRAPE_FAILED=true
+              fi
+            fi
 
             # Use scraped values or fall back to current defaults
+            # IMPORTANT: defaults should be updated manually when scraper fails
             echo "RATE_1YR=${RATE_1YR:-4.74}" >> $GITHUB_ENV
             echo "RATE_2YR=${RATE_2YR:-4.29}" >> $GITHUB_ENV
             echo "RATE_3YR=${RATE_3YR:-3.49}" >> $GITHUB_ENV
@@ -86,6 +122,7 @@ jobs:
             echo "RATE_5YR_VAR=${RATE_5VAR:-3.40}" >> $GITHUB_ENV
             echo "RATE_10YR=4.99" >> $GITHUB_ENV
             echo "RATE_SOURCE=WOWA.ca Best Uninsured Rates" >> $GITHUB_ENV
+            echo "SCRAPE_FAILED=$SCRAPE_FAILED" >> $GITHUB_ENV
           fi
 
       - name: Update Supabase market_rates
@@ -161,6 +198,21 @@ jobs:
           sed -i "s/twoYearFixed: data.twoYearFixed ?? [0-9.]*,/twoYearFixed: data.twoYearFixed ?? $RATE_2YR,/" src/lib/supabase.ts
           sed -i "s/fourYearFixed: data.fourYearFixed ?? [0-9.]*,/fourYearFixed: data.fourYearFixed ?? $RATE_4YR,/" src/lib/supabase.ts
 
+      - name: Alert on scrape failure
+        if: env.SCRAPE_FAILED == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          curl -sf -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"FlowIQ <rates@getflowmortgage.ca>\",
+              \"to\": \"alex@getflowmortgage.ca\",
+              \"subject\": \"ALERT: Rate scraper failed - using stale defaults\",
+              \"text\": \"The WOWA.ca rate scraper failed to extract fresh rates. The system is using fallback rates which may be outdated.\n\nFallback rates used:\n1yr: $RATE_1YR% | 3yr: $RATE_3YR% | 5yr: $RATE_5YR_FIXED% | Var: $RATE_5YR_VAR%\n\nAction needed: Manually update rates via GitHub Actions or check WOWA.ca page structure.\n\nRun: gh workflow run 'Weekly Rate Update' -f rate_5yr_fixed=X.XX -f rate_5yr_var=X.XX\"
+            }" || echo "Alert email failed to send"
+
       - name: Commit and push if changed
         run: |
           git config user.name "flow-rate-bot"
@@ -173,6 +225,7 @@ jobs:
 
             1yr: $RATE_1YR% | 2yr: $RATE_2YR% | 3yr: $RATE_3YR%
             4yr: $RATE_4YR% | 5yr fixed: $RATE_5YR_FIXED% | 5yr var: $RATE_5YR_VAR%
-            Source: $RATE_SOURCE"
+            Source: $RATE_SOURCE
+            Scrape status: $([ \"$SCRAPE_FAILED\" = \"true\" ] && echo 'FALLBACK' || echo 'OK')"
             git push
           fi
