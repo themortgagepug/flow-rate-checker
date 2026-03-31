@@ -39,11 +39,16 @@ on:
         required: true
         default: 'WOWA.ca Best Uninsured Rates'
 
+permissions:
+  contents: write
+
 jobs:
   update-rates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set rate values
         id: rates
