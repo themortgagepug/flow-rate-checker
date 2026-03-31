@@ -190,12 +190,12 @@ export function calculateBreakeven(
  */
 export function getFallbackRates(): RateData {
   return {
-    fiveYearFixed: 3.69,
+    fiveYearFixed: 4.04,
     fiveYearVariable: 3.40,
-    threeYearFixed: 3.49,
+    threeYearFixed: 4.14,
     oneYearFixed: 4.74,
-    twoYearFixed: 4.29,
-    fourYearFixed: 3.89,
+    twoYearFixed: 4.34,
+    fourYearFixed: 4.09,
   };
 }
 
