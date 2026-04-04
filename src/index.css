@@ -86,3 +86,7 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* Hide Lovable branding badge */
+#lovable-badge { display: none !important; }
+
