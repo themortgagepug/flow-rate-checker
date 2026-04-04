@@ -268,7 +268,7 @@ for i in range(61):
         "bear": {"boc": round(bear_boc, 2), "prime": round(bear_boc + PRIME_SPREAD, 2)}
     })
 
-# Build flat prime rate path (base case) for Lovable app compatibility
+# Build flat prime rate path (base case) for app compatibility
 prime_rate_path = [{"date": m["date"], "prime": m["base"]["prime"]} for m in months]
 
 # Terminal rates for each scenario
