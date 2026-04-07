@@ -191,8 +191,8 @@ insured = {
 }
 
 # Build monthly forward path
-# If we have CORRA futures, use them for base case
-# Otherwise use bank consensus
+# Priority: CORRA futures > bank consensus fallback
+# Scenarios reflect actual market views, not generic bull/base/bear
 
 # Parse futures into dated implied rates
 futures_by_date = {}
@@ -205,82 +205,117 @@ for f in corra_futures:
 now = datetime.strptime(DATE, "%Y-%m-%d")
 months = []
 
-# Three scenarios
-# Base: CORRA futures if available, else hold current
-# Bull: Most dovish (hold at current BoC rate, gradual easing)
-# Bear: Most hawkish (rates rise toward 3.00-3.25% BoC)
-
 has_futures = len(futures_by_date) > 0
 
-    # Build interpolated base curve from quarterly CORRA futures
+# ---- Bank consensus BoC meeting schedule (used when CORRA empty) ----
+# OIS/bank consensus as of Apr 2026:
+#   Market pricing: ~50bps hikes H2 2026, ~25bps 2027 (BoC to 3.00%)
+#   TD/BMO: hold at current (dovish)
+#   RBC/Scotiabank: hike to 3.25% by end 2027 (hawkish)
+#
+# Meeting months (approximate): Jan, Mar, Apr, Jun, Jul, Sep, Oct, Dec
+# Base hike schedule: +25bps Jul 2026, +25bps Oct 2026, +25bps Jun 2027
+# Bear hike schedule: base + extra hikes Mar 2027, Oct 2027 (+25bps each)
+
+# Build anchor points for base case from bank consensus
+def build_consensus_base(start_date, boc_now):
+    """Market-implied path: ~50bps H2 2026, ~25bps 2027"""
+    anchors = []
+    hike_schedule = [
+        ("2026-07", 0.25),  # Jul 2026 meeting
+        ("2026-10", 0.25),  # Oct 2026 meeting
+        ("2027-06", 0.25),  # Jun 2027 meeting
+    ]
+    cumulative = 0.0
+    for date_str, delta in hike_schedule:
+        cumulative += delta
+        anchors.append((date_str, boc_now + cumulative))
+    return anchors, boc_now + cumulative  # anchors + terminal
+
+def build_consensus_bear(start_date, boc_now):
+    """Hawkish path: BoC to 3.25% by end 2027 (RBC/Scotiabank)"""
+    anchors = []
+    hike_schedule = [
+        ("2026-07", 0.25),
+        ("2026-10", 0.25),
+        ("2027-03", 0.25),
+        ("2027-07", 0.25),
+        ("2027-12", 0.25),
+    ]
+    cumulative = 0.0
+    for date_str, delta in hike_schedule:
+        cumulative += delta
+        anchors.append((date_str, boc_now + cumulative))
+    terminal = min(boc_now + cumulative, 3.50)
+    return anchors, terminal
+
+# Month-index helpers
+def month_index(date_str):
+    y, m = date_str.split("-")
+    return int(y) * 12 + int(m)
+
+current_key = now.strftime("%Y-%m")
+base_idx = month_index(current_key)
+
+def make_interpolator(anchor_points_raw):
+    """Build interpolation from anchor points (date_str, boc_rate)"""
+    pts = [(0, BOC_RATE)]  # start at current
+    for date_str, rate in anchor_points_raw:
+        offset = month_index(date_str) - base_idx
+        if offset > 0:
+            pts.append((offset, rate))
+    # Sort and dedupe
+    pts = sorted(set(pts))
+
+    def interp(i):
+        if i <= pts[0][0]: return pts[0][1]
+        if i >= pts[-1][0]: return pts[-1][1]
+        for j in range(len(pts) - 1):
+            x0, y0 = pts[j]
+            x1, y1 = pts[j + 1]
+            if x0 <= i <= x1:
+                # Step function: rate changes at meeting month, not gradually between
+                return y0 if i < x1 else y1
+        return pts[-1][1]
+    return interp
+
+# Build interpolators
 if has_futures:
     sorted_contracts = sorted(futures_by_date.items())
-    # Add current rate as starting point
-    current_key = now.strftime("%Y-%m")
-    anchor_points = [(current_key, BOC_RATE)] + sorted_contracts
+    corra_anchors = [(k, v) for k, v in sorted_contracts]
+    base_interp = make_interpolator(corra_anchors)
+    base_terminal_boc = sorted_contracts[-1][1]
+else:
+    consensus_anchors, base_terminal_boc = build_consensus_base(now, BOC_RATE)
+    base_interp = make_interpolator(consensus_anchors)
 
-    # Convert to month indices for interpolation
-    def month_index(date_str):
-        y, m = date_str.split("-")
-        return int(y) * 12 + int(m)
-
-    base_idx = month_index(current_key)
-    interp_points = [(month_index(k) - base_idx, v) for k, v in anchor_points]
-
-    def interpolate(target_offset):
-        if target_offset <= interp_points[0][0]:
-            return interp_points[0][1]
-        if target_offset >= interp_points[-1][0]:
-            return interp_points[-1][1]
-        for j in range(len(interp_points) - 1):
-            x0, y0 = interp_points[j]
-            x1, y1 = interp_points[j + 1]
-            if x0 <= target_offset <= x1:
-                if x1 == x0:
-                    return y0
-                t = (target_offset - x0) / (x1 - x0)
-                return y0 + t * (y1 - y0)
-        return interp_points[-1][1]
+bear_anchors, bear_terminal_boc = build_consensus_bear(now, BOC_RATE)
+bear_interp = make_interpolator(bear_anchors)
 
 for i in range(61):
     dt = now + relativedelta(months=i)
     date_key = dt.strftime("%Y-%m")
 
-    if has_futures:
-        base_boc = round(interpolate(i), 2)
-    else:
-        base_boc = BOC_RATE
-
-    # Bull: rates stay flat or ease slightly
-    bull_boc = BOC_RATE  # Hold at current level
-
-    # Bear: gradual increase toward 3.25%
-    bear_terminal = 3.25
-    if i <= 12:
-        bear_boc = BOC_RATE + (bear_terminal - BOC_RATE) * (i / 12)
-    else:
-        bear_boc = bear_terminal
+    base_boc = round(base_interp(i), 2)
+    bull_boc = BOC_RATE  # Hold at current (TD/BMO dovish view)
+    bear_boc = round(bear_interp(i), 2)
 
     months.append({
         "date": date_key,
-        "base": {"boc": round(base_boc, 2), "prime": round(base_boc + PRIME_SPREAD, 2)},
-        "bull": {"boc": round(bull_boc, 2), "prime": round(bull_boc + PRIME_SPREAD, 2)},
-        "bear": {"boc": round(bear_boc, 2), "prime": round(bear_boc + PRIME_SPREAD, 2)}
+        "base": {"boc": base_boc, "prime": round(base_boc + PRIME_SPREAD, 2)},
+        "bull": {"boc": bull_boc, "prime": round(bull_boc + PRIME_SPREAD, 2)},
+        "bear": {"boc": bear_boc, "prime": round(bear_boc + PRIME_SPREAD, 2)}
     })
 
-# Build flat prime rate path (base case) for app compatibility
-prime_rate_path = [{"date": m["date"], "prime": m["base"]["prime"]} for m in months]
-
-# Terminal rates for each scenario
-if has_futures:
-    sorted_futures = sorted(futures_by_date.items())
-    base_terminal_boc = sorted_futures[-1][1] if sorted_futures else BOC_RATE
-else:
-    base_terminal_boc = BOC_RATE
+# Build base case prime rate path in simulator-compatible format
+prime_rate_path_months = []
+for m in months:
+    entry = {"date": m["date"], "prime": m["base"]["prime"], "boc": m["base"]["boc"]}
+    prime_rate_path_months.append(entry)
 
 base_terminal_prime = round(base_terminal_boc + PRIME_SPREAD, 2)
 bull_terminal_prime = round(BOC_RATE + PRIME_SPREAD, 2)
-bear_terminal_prime = round(3.25 + PRIME_SPREAD, 2)
+bear_terminal_prime = round(bear_terminal_boc + PRIME_SPREAD, 2)
 
 # Build the output
 output = {
@@ -310,26 +345,30 @@ output = {
         "description": "Rental properties add +0.25% to all fixed rates. 30-year amortization adds +0.10% to all rates."
     },
 
-    "primeRatePath": prime_rate_path,
+    "primeRatePath": {
+        "description": "Monthly projected prime rate for base case. Derived from CORRA futures or bank consensus when futures unavailable.",
+        "scenario": "base",
+        "months": prime_rate_path_months
+    },
 
     "scenarios": {
         "bull": {
-            "label": "Rates Drop",
+            "label": "Rates Hold",
             "terminalPrime": bull_terminal_prime,
             "terminalBoC": BOC_RATE,
-            "description": f"BoC holds at {BOC_RATE}% (TD, RBC, BMO, CIBC consensus)"
+            "description": f"BoC holds at {BOC_RATE}% indefinitely (TD, BMO dovish view). Prime stays at {bull_terminal_prime}%."
         },
         "base": {
-            "label": "Rates Hold",
+            "label": "Market Pricing",
             "terminalPrime": base_terminal_prime,
             "terminalBoC": round(base_terminal_boc, 2),
-            "description": f"CORRA futures imply BoC at ~{round(base_terminal_boc, 2)}%"
+            "description": f"{'CORRA futures' if has_futures else 'OIS/bank consensus'}-implied: BoC to {round(base_terminal_boc, 2)}%, prime to {base_terminal_prime}%."
         },
         "bear": {
-            "label": "Rates Rise",
+            "label": "Rates Rise More",
             "terminalPrime": bear_terminal_prime,
-            "terminalBoC": 3.25,
-            "description": "BoC hikes to 3.25%+ (Scotiabank, NBC hawkish view)"
+            "terminalBoC": round(bear_terminal_boc, 2),
+            "description": f"BoC hikes to {round(bear_terminal_boc, 2)}% (RBC, Scotiabank hawkish view). Prime to {bear_terminal_prime}%."
         }
     },
 
@@ -340,7 +379,7 @@ output = {
         "defaultAmortization": 25
     },
 
-    "notes": f"Auto-generated {DATE} from live market data. Base case uses CORRA futures market pricing. Bull case uses Big 4 bank consensus (hold). Bear case uses hawkish bank view (Scotiabank/NBC). Bond yields drive fixed rate projections."
+    "notes": f"Auto-generated {DATE}. Base = {'CORRA futures' if has_futures else 'OIS/bank consensus'} ({round(base_terminal_boc, 2)}% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish ({round(bear_terminal_boc, 2)}% terminal). Forward curve uses step function at BoC meeting months."
 }
 
 # Write rates.json
