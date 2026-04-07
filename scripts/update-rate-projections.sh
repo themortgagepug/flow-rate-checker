@@ -9,6 +9,7 @@ set -euo pipefail
 
 DATE=$(date -u +"%Y-%m-%d")
 PRIME_SPREAD=2.20  # Prime = BoC + 2.20%
+BROKER_SPREAD=0.30  # WOWA best rates run ~30bps below actual broker rates
 
 echo "=== Rate Projection Pipeline ==="
 echo "Date: $DATE"
@@ -141,6 +142,7 @@ export PROJ_BOND_5YR="$BOND_5YR"
 export PROJ_BOND_10YR="$BOND_10YR"
 export PROJ_CORRA_FUTURES="$CORRA_FUTURES"
 export PROJ_CURRENT_RATES="$CURRENT_RATES"
+export PROJ_BROKER_SPREAD="$BROKER_SPREAD"
 
 python3 << 'PYEOF'
 import json, os
@@ -154,6 +156,7 @@ PRIME_SPREAD = float(os.environ["PROJ_PRIME_SPREAD"])
 BOND_2YR = float(os.environ["PROJ_BOND_2YR"])
 BOND_5YR = float(os.environ["PROJ_BOND_5YR"])
 BOND_10YR = float(os.environ["PROJ_BOND_10YR"])
+BROKER_SPREAD = float(os.environ.get("PROJ_BROKER_SPREAD", "0.30"))
 
 # Parse CORRA futures
 try:
@@ -169,17 +172,20 @@ except:
     current_rates = {}
 
 # Default uninsured rates (from current market or fallback)
+# WOWA scrapes absolute best nationally-advertised rates; add broker spread
+# to reflect rates clients actually see from brokers/lenders
+BS = BROKER_SPREAD
 uninsured = {
-    "1yr_fixed": current_rates.get("1yr_fixed", 5.09),
-    "2yr_fixed": current_rates.get("2yr_fixed", 4.59),
-    "3yr_fixed": current_rates.get("3yr_fixed", 4.19),
-    "4yr_fixed": current_rates.get("4yr_fixed", 4.29),
-    "5yr_fixed": current_rates.get("5yr_fixed", 4.39),
+    "1yr_fixed": round(current_rates.get("1yr_fixed", 5.09) + BS, 2),
+    "2yr_fixed": round(current_rates.get("2yr_fixed", 4.59) + BS, 2),
+    "3yr_fixed": round(current_rates.get("3yr_fixed", 4.19) + BS, 2),
+    "4yr_fixed": round(current_rates.get("4yr_fixed", 4.29) + BS, 2),
+    "5yr_fixed": round(current_rates.get("5yr_fixed", 4.39) + BS, 2),
     "vrm_discount": -0.60,
     "vrm_effective": round(PRIME_RATE - 0.60, 2)
 }
 
-# Insured rates (typically 50-60bps lower)
+# Insured rates (typically 50-60bps lower than uninsured)
 insured = {
     "1yr_fixed": round(uninsured["1yr_fixed"] - 0.55, 2),
     "2yr_fixed": round(uninsured["2yr_fixed"] - 0.60, 2),
@@ -274,8 +280,9 @@ def make_interpolator(anchor_points_raw):
             x0, y0 = pts[j]
             x1, y1 = pts[j + 1]
             if x0 <= i <= x1:
-                # Step function: rate changes at meeting month, not gradually between
-                return y0 if i < x1 else y1
+                if x1 == x0: return y0
+                t = (i - x0) / (x1 - x0)
+                return y0 + t * (y1 - y0)
         return pts[-1][1]
     return interp
 
