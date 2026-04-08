@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-07",
+  "updated": "2026-04-08",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -12,24 +12,24 @@
   "bocRate": 2.25,
   "bondYields": {
     "2yr": 2.82,
-    "5yr": 3.08,
-    "10yr": 3.5
+    "5yr": 3.07,
+    "10yr": 3.49
   },
   "uninsured": {
-    "1yr_fixed": 5.39,
-    "2yr_fixed": 4.89,
-    "3yr_fixed": 4.49,
-    "4yr_fixed": 4.59,
-    "5yr_fixed": 4.69,
+    "1yr_fixed": 5.04,
+    "2yr_fixed": 4.59,
+    "3yr_fixed": 3.6,
+    "4yr_fixed": 4.19,
+    "5yr_fixed": 3.4,
     "vrm_discount": -0.6,
     "vrm_effective": 3.85
   },
   "insured": {
-    "1yr_fixed": 4.84,
-    "2yr_fixed": 4.29,
-    "3yr_fixed": 3.99,
-    "4yr_fixed": 4.04,
-    "5yr_fixed": 4.09,
+    "1yr_fixed": 4.49,
+    "2yr_fixed": 3.99,
+    "3yr_fixed": 3.1,
+    "4yr_fixed": 3.64,
+    "5yr_fixed": 2.8,
     "vrm_discount": -0.96,
     "vrm_effective": 3.49
   },
@@ -375,5 +375,5 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-04-07. Base = CORRA futures (3.02% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months."
+  "notes": "Auto-generated 2026-04-08. Base = CORRA futures (3.02% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months."
 }
