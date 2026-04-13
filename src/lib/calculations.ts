@@ -192,7 +192,7 @@ export function getFallbackRates(): RateData {
   return {
     fiveYearFixed: 3.10,
     fiveYearVariable: 3.30,
-    threeYearFixed: 3.30,
+    threeYearFixed: 3.89,
     oneYearFixed: 4.74,
     twoYearFixed: 4.29,
     fourYearFixed: 3.89,
