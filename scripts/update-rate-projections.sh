@@ -111,19 +111,37 @@ FUTURES_COUNT=$(echo "$CORRA_FUTURES" | python3 -c "import sys,json; print(len(j
 echo "CORRA futures contracts found: $FUTURES_COUNT"
 
 # ============================================================
-# 4. Fetch current mortgage rates from Supabase (if available)
+# 4. Fetch current mortgage rates from Central Rate Hub
+# ============================================================
+# Canonical input source. Updated by the /rate-update skill, which
+# is the manual entry point for the broker (Alex). The old WOWA
+# scraper that wrote here directly was disabled 2026-04-15 because
+# its regex was grabbing wrong values.
 # ============================================================
 echo ""
-echo "--- Fetching current mortgage rates ---"
-SUPABASE_URL="${SUPABASE_URL:-https://dotglplhsdsmrbacmtrx.supabase.co}"
-SUPABASE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
+echo "--- Fetching current mortgage rates from Central Rate Hub ---"
+CENTRAL_HUB_URL="https://transcript-processor-vxwqplu37q-uc.a.run.app/rates"
+HUB_RAW=$(curl -sf "$CENTRAL_HUB_URL" 2>/dev/null || echo "")
 
-if [ -n "$SUPABASE_KEY" ]; then
-  CURRENT_RATES=$(curl -sf "$SUPABASE_URL/rest/v1/market_rates?rate_type=eq.uninsured&select=term_key,rate" \
-    -H "apikey: $SUPABASE_KEY" \
-    -H "Authorization: Bearer $SUPABASE_KEY" 2>/dev/null || echo "[]")
+if [ -n "$HUB_RAW" ]; then
+  CURRENT_RATES=$(echo "$HUB_RAW" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    out = []
+    for term in ['1yr','2yr','3yr','4yr','5yr']:
+        v = d.get(f'fixed_{term}')
+        if v is not None:
+            out.append({'term_key': f'{term}_fixed', 'rate': float(v)})
+    print(json.dumps(out))
+except Exception as e:
+    print('[]', file=sys.stderr)
+    print('[]')
+" 2>/dev/null || echo "[]")
+  HUB_UPDATED=$(echo "$HUB_RAW" | python3 -c "import sys,json; print(json.load(sys.stdin).get('updated_at','unknown'))" 2>/dev/null || echo "unknown")
+  echo "Central hub last updated: $HUB_UPDATED"
 else
-  echo "No Supabase key, using defaults"
+  echo "Central hub unreachable, current_rates=[]"
   CURRENT_RATES="[]"
 fi
 

@@ -1,9 +1,11 @@
-name: Weekly Rate Update
+name: Weekly Rate Update (MANUAL ONLY)
+
+# WOWA scraping disabled 2026-04-15 — the regex was grabbing wrong numbers
+# and poisoning the central rate hub with values below BoC. Canonical input
+# is now the `/rate-update` skill, which writes directly to the central hub.
+# This workflow is kept for manual fallback via workflow_dispatch only.
 
 on:
-  schedule:
-    # Every Monday at 10:00 AM ET (14:00 UTC)
-    - cron: '0 14 * * 1'
   workflow_dispatch:
     inputs:
       rate_1yr:

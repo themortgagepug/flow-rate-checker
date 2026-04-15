@@ -1,0 +1,88 @@
+name: Rate Staleness Check
+
+# Runs daily after the rate projection. Checks two conditions:
+#   1. rates_stale flag is true (sanity check rejected upstream values)
+#   2. Central rate hub hasn't been touched in > 7 days
+# Either fires an email alert via Resend so Alex knows to run /rate-update.
+
+on:
+  schedule:
+    # Every day at 9:00 AM ET (13:00 UTC), 30 min after daily-rate-projections
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-staleness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check rates.json staleness
+        id: check
+        run: |
+          set -e
+
+          # Pull the live rates.json from main
+          curl -sf https://raw.githubusercontent.com/themortgagepug/flow-rate-checker/main/rates.json -o rates.json
+
+          STALE_FLAG=$(python3 -c "import json; print(json.load(open('rates.json')).get('rates_stale', False))")
+          STALE_REASON=$(python3 -c "import json; print(json.load(open('rates.json')).get('stale_reason') or '')")
+          UPDATED=$(python3 -c "import json; print(json.load(open('rates.json'))['updated'])")
+
+          # Check central hub last update timestamp
+          HUB_UPDATED=$(curl -sf https://transcript-processor-vxwqplu37q-uc.a.run.app/rates | python3 -c "import sys,json; print(json.load(sys.stdin).get('updated_at',''))")
+
+          # Days since central hub last touched
+          DAYS=$(python3 -c "
+          from datetime import datetime, timezone
+          ts = '$HUB_UPDATED'
+          if not ts:
+              print(999)
+          else:
+              try:
+                  dt = datetime.fromisoformat(ts.replace('Z','+00:00'))
+                  delta = (datetime.now(timezone.utc) - dt).days
+                  print(delta)
+              except Exception:
+                  print(999)
+          ")
+
+          echo "STALE_FLAG=$STALE_FLAG" >> $GITHUB_ENV
+          echo "STALE_REASON=$STALE_REASON" >> $GITHUB_ENV
+          echo "UPDATED=$UPDATED" >> $GITHUB_ENV
+          echo "HUB_UPDATED=$HUB_UPDATED" >> $GITHUB_ENV
+          echo "DAYS=$DAYS" >> $GITHUB_ENV
+
+          # Decide whether to alert
+          ALERT=false
+          REASON=""
+          if [ "$STALE_FLAG" = "True" ]; then
+            ALERT=true
+            REASON="rates_stale flag is set: $STALE_REASON"
+          elif [ "$DAYS" -gt 7 ]; then
+            ALERT=true
+            REASON="Central rate hub hasn't been updated in $DAYS days (last: $HUB_UPDATED)"
+          fi
+
+          echo "ALERT=$ALERT" >> $GITHUB_ENV
+          echo "REASON=$REASON" >> $GITHUB_ENV
+          echo ""
+          echo "rates.json updated: $UPDATED | stale_flag: $STALE_FLAG | hub age: $DAYS days"
+          echo "Alert needed: $ALERT"
+          [ -n "$REASON" ] && echo "Reason: $REASON"
+
+      - name: Send alert email
+        if: env.ALERT == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          curl -sf -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"Flow Rate Bot <rates@getflowmortgage.ca>\",
+              \"to\": \"alex@getflowmortgage.ca\",
+              \"subject\": \"Rate update needed: $REASON\",
+              \"text\": \"Rate staleness check tripped.\n\nReason: $REASON\n\nrates.json updated: $UPDATED\nCentral hub last touched: $HUB_UPDATED ($DAYS days ago)\nstale_flag: $STALE_FLAG\nstale_reason: $STALE_REASON\n\nFix: run /rate-update with the latest broker rates. The skill writes to the central hub and downstream surfaces will catch up on the next daily projection (8:30 AM ET).\n\nExample:\n  /rate-update 1yr=5.24 2yr=4.79 3yr=4.39 4yr=4.59 5yr=4.79 var=3.85 boc=2.25 prime=4.45\n\nAll Flow rate surfaces are currently using conservative fallback defaults until you do this.\"
+            }" || echo "Alert email failed to send"
+          echo "Alert email sent"
