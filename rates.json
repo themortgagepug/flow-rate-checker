@@ -64,288 +64,288 @@
       },
       {
         "date": "2026-08",
-        "prime": 4.63,
-        "boc": 2.43
+        "prime": 4.64,
+        "boc": 2.44
       },
       {
         "date": "2026-09",
-        "prime": 4.68,
-        "boc": 2.48
+        "prime": 4.69,
+        "boc": 2.49
       },
       {
         "date": "2026-10",
-        "prime": 4.74,
-        "boc": 2.54
+        "prime": 4.75,
+        "boc": 2.55
       },
       {
         "date": "2026-11",
-        "prime": 4.79,
-        "boc": 2.59
+        "prime": 4.8,
+        "boc": 2.6
       },
       {
         "date": "2026-12",
-        "prime": 4.85,
-        "boc": 2.65
+        "prime": 4.86,
+        "boc": 2.66
       },
       {
         "date": "2027-01",
-        "prime": 4.89,
-        "boc": 2.69
+        "prime": 4.91,
+        "boc": 2.71
       },
       {
         "date": "2027-02",
-        "prime": 4.93,
-        "boc": 2.73
+        "prime": 4.96,
+        "boc": 2.76
       },
       {
         "date": "2027-03",
-        "prime": 4.98,
-        "boc": 2.78
+        "prime": 5.01,
+        "boc": 2.81
       },
       {
         "date": "2027-04",
-        "prime": 5.0,
-        "boc": 2.8
+        "prime": 5.03,
+        "boc": 2.83
       },
       {
         "date": "2027-05",
-        "prime": 5.02,
-        "boc": 2.82
+        "prime": 5.06,
+        "boc": 2.86
       },
       {
         "date": "2027-06",
-        "prime": 5.04,
-        "boc": 2.84
-      },
-      {
-        "date": "2027-07",
-        "prime": 5.04,
-        "boc": 2.84
-      },
-      {
-        "date": "2027-08",
-        "prime": 5.05,
-        "boc": 2.85
-      },
-      {
-        "date": "2027-09",
-        "prime": 5.05,
-        "boc": 2.85
-      },
-      {
-        "date": "2027-10",
-        "prime": 5.06,
-        "boc": 2.86
-      },
-      {
-        "date": "2027-11",
-        "prime": 5.06,
-        "boc": 2.86
-      },
-      {
-        "date": "2027-12",
-        "prime": 5.07,
-        "boc": 2.87
-      },
-      {
-        "date": "2028-01",
-        "prime": 5.07,
-        "boc": 2.87
-      },
-      {
-        "date": "2028-02",
         "prime": 5.08,
         "boc": 2.88
       },
       {
-        "date": "2028-03",
+        "date": "2027-07",
         "prime": 5.09,
         "boc": 2.89
+      },
+      {
+        "date": "2027-08",
+        "prime": 5.1,
+        "boc": 2.9
+      },
+      {
+        "date": "2027-09",
+        "prime": 5.1,
+        "boc": 2.9
+      },
+      {
+        "date": "2027-10",
+        "prime": 5.11,
+        "boc": 2.91
+      },
+      {
+        "date": "2027-11",
+        "prime": 5.12,
+        "boc": 2.92
+      },
+      {
+        "date": "2027-12",
+        "prime": 5.12,
+        "boc": 2.92
+      },
+      {
+        "date": "2028-01",
+        "prime": 5.13,
+        "boc": 2.93
+      },
+      {
+        "date": "2028-02",
+        "prime": 5.14,
+        "boc": 2.94
+      },
+      {
+        "date": "2028-03",
+        "prime": 5.15,
+        "boc": 2.95
       },
       {
         "date": "2028-04",
-        "prime": 5.09,
-        "boc": 2.89
+        "prime": 5.15,
+        "boc": 2.95
       },
       {
         "date": "2028-05",
-        "prime": 5.1,
-        "boc": 2.9
+        "prime": 5.16,
+        "boc": 2.96
       },
       {
         "date": "2028-06",
-        "prime": 5.1,
-        "boc": 2.9
+        "prime": 5.16,
+        "boc": 2.96
       },
       {
         "date": "2028-07",
-        "prime": 5.1,
-        "boc": 2.9
+        "prime": 5.16,
+        "boc": 2.96
       },
       {
         "date": "2028-08",
-        "prime": 5.11,
-        "boc": 2.91
+        "prime": 5.17,
+        "boc": 2.97
       },
       {
         "date": "2028-09",
-        "prime": 5.11,
-        "boc": 2.91
+        "prime": 5.17,
+        "boc": 2.97
       },
       {
         "date": "2028-10",
-        "prime": 5.11,
-        "boc": 2.91
+        "prime": 5.17,
+        "boc": 2.97
       },
       {
         "date": "2028-11",
-        "prime": 5.11,
-        "boc": 2.91
+        "prime": 5.17,
+        "boc": 2.97
       },
       {
         "date": "2028-12",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-01",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-02",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-03",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-04",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-05",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-06",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-07",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-08",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-09",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-10",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-11",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2029-12",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-01",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-02",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-03",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-04",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-05",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-06",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-07",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-08",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-09",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-10",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-11",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2030-12",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2031-01",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2031-02",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2031-03",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       },
       {
         "date": "2031-04",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.18,
+        "boc": 2.98
       }
     ]
   },
@@ -358,9 +358,9 @@
     },
     "base": {
       "label": "Market Pricing",
-      "terminalPrime": 5.12,
-      "terminalBoC": 2.92,
-      "description": "CORRA futures-implied: BoC to 2.92%, prime to 5.12%."
+      "terminalPrime": 5.18,
+      "terminalBoC": 2.98,
+      "description": "CORRA futures-implied: BoC to 2.98%, prime to 5.18%."
     },
     "bear": {
       "label": "Rates Rise More",
@@ -375,5 +375,7 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-04-15. Base = CORRA futures (2.92% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months."
+  "notes": "Auto-generated 2026-04-15. Base = CORRA futures (2.98% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
+  "rates_stale": true,
+  "stale_reason": "upstream scraper failed sanity check: bad=['5yr_fixed'] missing_all=False floor=3.25"
 }
