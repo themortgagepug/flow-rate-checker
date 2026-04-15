@@ -9,7 +9,7 @@ set -euo pipefail
 
 DATE=$(date -u +"%Y-%m-%d")
 PRIME_SPREAD=2.20  # Prime = BoC + 2.20%
-BROKER_SPREAD=0.30  # WOWA best rates run ~30bps below actual broker rates
+BROKER_SPREAD=0.50  # WOWA best rates run ~50bps below actual broker rates Flow quotes
 
 echo "=== Rate Projection Pipeline ==="
 echo "Date: $DATE"
@@ -171,19 +171,81 @@ try:
 except:
     current_rates = {}
 
-# Default uninsured rates (from current market or fallback)
-# WOWA scrapes absolute best nationally-advertised rates; add broker spread
-# to reflect rates clients actually see from brokers/lenders
-BS = BROKER_SPREAD
-uninsured = {
-    "1yr_fixed": round(current_rates.get("1yr_fixed", 5.09) + BS, 2),
-    "2yr_fixed": round(current_rates.get("2yr_fixed", 4.59) + BS, 2),
-    "3yr_fixed": round(current_rates.get("3yr_fixed", 4.19) + BS, 2),
-    "4yr_fixed": round(current_rates.get("4yr_fixed", 4.29) + BS, 2),
-    "5yr_fixed": round(current_rates.get("5yr_fixed", 4.39) + BS, 2),
-    "vrm_discount": -0.60,
-    "vrm_effective": round(PRIME_RATE - 0.60, 2)
-}
+# ============================================================
+# Sanity check: reject garbage from upstream scraper
+# WOWA regex is fragile and sometimes grabs the wrong number.
+# Rule of thumb: uninsured pre-spread rate should be >= BoC + 1.0
+# (e.g. BoC 2.25% -> uninsured best rates floor at 3.25%)
+# If any term fails, fall back to the last known good rates.json on disk
+# and mark the run as stale so the alert step fires.
+# ============================================================
+RATE_FLOOR = BOC_RATE + 1.0
+CURRENT_KEYS = ["1yr_fixed","2yr_fixed","3yr_fixed","4yr_fixed","5yr_fixed"]
+rates_stale = False
+stale_reason = ""
+
+def load_last_good():
+    try:
+        with open("rates.json") as f:
+            prev = json.load(f)
+        u = prev.get("uninsured") or {}
+        # Only trust previous file if it itself passes sanity
+        if all(u.get(k, 0) >= RATE_FLOOR for k in CURRENT_KEYS):
+            return u, prev.get("insured")
+        return None, None
+    except Exception:
+        return None, None
+
+def conservative_defaults():
+    """Last-resort safe defaults when upstream AND previous file are both garbage.
+    Calibrated to BoC+2.5 for 5yr (realistic broker floor)."""
+    five = round(BOC_RATE + 2.5, 2)
+    return {
+        "1yr_fixed": round(five + 0.45, 2),
+        "2yr_fixed": round(five + 0.00, 2),
+        "3yr_fixed": round(five - 0.40, 2),
+        "4yr_fixed": round(five - 0.20, 2),
+        "5yr_fixed": five,
+        "vrm_discount": -0.60,
+        "vrm_effective": round(PRIME_RATE - 0.60, 2)
+    }
+
+bad = [k for k in CURRENT_KEYS if k in current_rates and current_rates[k] < RATE_FLOOR]
+missing_all = not any(k in current_rates for k in CURRENT_KEYS)
+
+if bad or missing_all:
+    rates_stale = True
+    stale_reason = f"upstream scraper failed sanity check: bad={bad} missing_all={missing_all} floor={RATE_FLOOR}"
+    print(f"WARN: {stale_reason}")
+    last_uninsured, last_insured = load_last_good()
+    if last_uninsured:
+        print("Using last-known-good uninsured rates from previous rates.json (passed sanity)")
+        uninsured = dict(last_uninsured)
+        uninsured["vrm_effective"] = round(PRIME_RATE - 0.60, 2)
+    else:
+        print("Previous rates.json missing or itself failed sanity, using conservative hardcoded defaults")
+        uninsured = conservative_defaults()
+else:
+    # Normal path: build from current_rates + broker spread
+    BS = BROKER_SPREAD
+    uninsured = {
+        "1yr_fixed": round(current_rates.get("1yr_fixed", 5.09) + BS, 2),
+        "2yr_fixed": round(current_rates.get("2yr_fixed", 4.59) + BS, 2),
+        "3yr_fixed": round(current_rates.get("3yr_fixed", 4.19) + BS, 2),
+        "4yr_fixed": round(current_rates.get("4yr_fixed", 4.29) + BS, 2),
+        "5yr_fixed": round(current_rates.get("5yr_fixed", 4.39) + BS, 2),
+        "vrm_discount": -0.60,
+        "vrm_effective": round(PRIME_RATE - 0.60, 2)
+    }
+
+# Second-pass guardrail: enforce floor even after all the math
+# (catches the case where raw + spread still produces nonsense)
+for k in CURRENT_KEYS:
+    if uninsured[k] < RATE_FLOOR:
+        print(f"WARN: {k}={uninsured[k]} below floor {RATE_FLOOR}, clamping")
+        uninsured[k] = round(RATE_FLOOR, 2)
+        rates_stale = True
+        stale_reason = stale_reason or f"post-spread clamp on {k}"
 
 # Insured rates (typically 50-60bps lower than uninsured)
 insured = {
@@ -386,7 +448,10 @@ output = {
         "defaultAmortization": 25
     },
 
-    "notes": f"Auto-generated {DATE}. Base = {'CORRA futures' if has_futures else 'OIS/bank consensus'} ({round(base_terminal_boc, 2)}% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish ({round(bear_terminal_boc, 2)}% terminal). Forward curve uses step function at BoC meeting months."
+    "notes": f"Auto-generated {DATE}. Base = {'CORRA futures' if has_futures else 'OIS/bank consensus'} ({round(base_terminal_boc, 2)}% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish ({round(bear_terminal_boc, 2)}% terminal). Forward curve uses step function at BoC meeting months.",
+
+    "rates_stale": rates_stale,
+    "stale_reason": stale_reason if rates_stale else None
 }
 
 # Write rates.json
