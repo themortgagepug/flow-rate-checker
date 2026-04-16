@@ -192,12 +192,13 @@ except:
 # ============================================================
 # Sanity check: reject garbage from upstream scraper
 # WOWA regex is fragile and sometimes grabs the wrong number.
-# Rule of thumb: uninsured rate should be >= BoC + 2.0 (realistic
-# broker market floor). e.g. BoC 2.25% -> floor 4.25% minimum.
+# Rule of thumb: pre-spread uninsured rate should be >= BoC + 1.5
+# (nationally-advertised best rates). e.g. BoC 2.25% -> floor 3.75%.
+# Catches garbage like 3.10% while passing legit 3yr rates (~3.89).
 # If any term fails, fall back to the last known good rates.json on disk
 # (which itself has to pass sanity) and mark the run as stale.
 # ============================================================
-RATE_FLOOR = BOC_RATE + 2.0
+RATE_FLOOR = BOC_RATE + 1.5
 CURRENT_KEYS = ["1yr_fixed","2yr_fixed","3yr_fixed","4yr_fixed","5yr_fixed"]
 rates_stale = False
 stale_reason = ""
