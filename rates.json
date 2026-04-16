@@ -16,20 +16,20 @@
     "10yr": 3.47
   },
   "uninsured": {
-    "1yr_fixed": 5.2,
-    "2yr_fixed": 4.75,
-    "3yr_fixed": 4.35,
-    "4yr_fixed": 4.55,
-    "5yr_fixed": 4.75,
+    "1yr_fixed": 5.24,
+    "2yr_fixed": 4.79,
+    "3yr_fixed": 4.39,
+    "4yr_fixed": 4.59,
+    "5yr_fixed": 4.79,
     "vrm_discount": -0.6,
     "vrm_effective": 3.85
   },
   "insured": {
-    "1yr_fixed": 4.65,
-    "2yr_fixed": 4.15,
-    "3yr_fixed": 3.85,
-    "4yr_fixed": 4.0,
-    "5yr_fixed": 4.15,
+    "1yr_fixed": 4.69,
+    "2yr_fixed": 4.19,
+    "3yr_fixed": 3.89,
+    "4yr_fixed": 4.04,
+    "5yr_fixed": 4.19,
     "vrm_discount": -0.96,
     "vrm_effective": 3.49
   },
@@ -376,6 +376,6 @@
     "defaultAmortization": 25
   },
   "notes": "Auto-generated 2026-04-16. Base = CORRA futures (2.98% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
-  "rates_stale": true,
-  "stale_reason": "upstream scraper failed sanity check: bad=['3yr_fixed', '4yr_fixed'] missing_all=False floor=4.25"
+  "rates_stale": false,
+  "stale_reason": null
 }
