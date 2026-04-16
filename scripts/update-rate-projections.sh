@@ -9,7 +9,7 @@ set -euo pipefail
 
 DATE=$(date -u +"%Y-%m-%d")
 PRIME_SPREAD=2.20  # Prime = BoC + 2.20%
-BROKER_SPREAD=0.50  # WOWA best rates run ~50bps below actual broker rates Flow quotes
+BROKER_SPREAD=0.20  # Pipeline adds 20bps; tools hub UI adds another 30bps at render = 50bps total
 
 echo "=== Rate Projection Pipeline ==="
 echo "Date: $DATE"
