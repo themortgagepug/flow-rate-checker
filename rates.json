@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-15",
+  "updated": "2026-04-16",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -375,7 +375,7 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-04-15. Base = CORRA futures (2.98% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
+  "notes": "Auto-generated 2026-04-16. Base = CORRA futures (2.98% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
   "rates_stale": true,
-  "stale_reason": "upstream scraper failed sanity check: bad=['3yr_fixed', '4yr_fixed', '5yr_fixed'] missing_all=False floor=4.25"
+  "stale_reason": "upstream scraper failed sanity check: bad=['3yr_fixed', '4yr_fixed'] missing_all=False floor=4.25"
 }
