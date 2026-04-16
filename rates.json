@@ -16,20 +16,20 @@
     "10yr": 3.47
   },
   "uninsured": {
-    "1yr_fixed": 5.24,
-    "2yr_fixed": 4.79,
-    "3yr_fixed": 4.39,
-    "4yr_fixed": 4.59,
-    "5yr_fixed": 4.79,
+    "1yr_fixed": 4.94,
+    "2yr_fixed": 4.49,
+    "3yr_fixed": 4.09,
+    "4yr_fixed": 4.29,
+    "5yr_fixed": 4.49,
     "vrm_discount": -0.6,
     "vrm_effective": 3.85
   },
   "insured": {
-    "1yr_fixed": 4.69,
-    "2yr_fixed": 4.19,
-    "3yr_fixed": 3.89,
-    "4yr_fixed": 4.04,
-    "5yr_fixed": 4.19,
+    "1yr_fixed": 4.39,
+    "2yr_fixed": 3.89,
+    "3yr_fixed": 3.59,
+    "4yr_fixed": 3.74,
+    "5yr_fixed": 3.89,
     "vrm_discount": -0.96,
     "vrm_effective": 3.49
   },
