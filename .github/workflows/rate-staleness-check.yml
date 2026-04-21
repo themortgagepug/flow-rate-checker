@@ -69,7 +69,9 @@ jobs:
           echo ""
           echo "rates.json updated: $UPDATED | stale_flag: $STALE_FLAG | hub age: $DAYS days"
           echo "Alert needed: $ALERT"
-          [ -n "$REASON" ] && echo "Reason: $REASON"
+          if [ -n "$REASON" ]; then
+            echo "Reason: $REASON"
+          fi
 
       - name: Send alert email
         if: env.ALERT == 'true'
