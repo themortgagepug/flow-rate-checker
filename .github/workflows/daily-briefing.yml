@@ -1,9 +1,9 @@
-name: Daily Briefing
+name: Daily Briefing (DISABLED)
 
+# Disabled 2026-04-28: this brief is now produced by flow-chief-of-staff
+# Cloud Function (Supabase projects table → "## Projects" section in the
+# morning brief). Manual run still possible via workflow_dispatch.
 on:
-  schedule:
-    # Weekdays at 8:15 AM PT (15:15 UTC) - 15 min after health check
-    - cron: '15 15 * * 1-5'
   workflow_dispatch: {}
 
 jobs:
