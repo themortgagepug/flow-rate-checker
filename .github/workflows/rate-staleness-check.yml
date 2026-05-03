@@ -1,15 +1,30 @@
 name: Rate Staleness Check
 
-# Runs daily after the rate projection. Checks two conditions:
-#   1. rates_stale flag is true (sanity check rejected upstream values)
-#   2. Central rate hub hasn't been touched in > 7 days
-# Either fires an email alert via Resend so Alex knows to run /rate-update.
+# Two-tier staleness signal (rebuilt 2026-05-03):
+#
+#   Tier 1 — keepalive health (urgent):
+#     hub updated_at > 36h old => the rate-hub-keepalive Cloud Function is
+#     broken. Daily run should always touch the hub. If it didn't, page Alex.
+#
+#   Tier 2 — broker-rate freshness (actionable):
+#     displayed_5yr unchanged > 14d => Alex hasn't run /rate-update in two
+#     weeks. Real broker rates almost always shift in that window; if our
+#     hub still matches the snapshot, we're stale even though updated_at
+#     looks healthy thanks to the keepalive bump.
+#
+# We track the last fixed-rate change in last_fixed_rates.json (committed).
+# Each run, if displayed_5yr differs from the snapshot, we write a fresh
+# snapshot with last_changed_at=now and commit — no alert. If it matches
+# AND last_changed_at is > 14d old, we alert.
 
 on:
   schedule:
-    # Every day at 9:00 AM ET (13:00 UTC), 30 min after daily-rate-projections
+    # Daily 9:00 AM ET (13:00 UTC) — 30 min after daily-rate-projections.
     - cron: '0 13 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   check-staleness:
@@ -17,74 +32,133 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check rates.json staleness
+      - name: Inspect hub vs snapshot
         id: check
         run: |
           set -e
 
-          # Pull the live rates.json from main
-          curl -sf https://raw.githubusercontent.com/themortgagepug/flow-rate-checker/main/rates.json -o rates.json
+          # Pull live hub state
+          curl -sf "https://transcript-processor-vxwqplu37q-uc.a.run.app/rates?format=slim" -o hub.json
 
-          STALE_FLAG=$(python3 -c "import json; print(json.load(open('rates.json')).get('rates_stale', False))")
-          STALE_REASON=$(python3 -c "import json; print(json.load(open('rates.json')).get('stale_reason') or '')")
-          UPDATED=$(python3 -c "import json; print(json.load(open('rates.json'))['updated'])")
+          HUB_UPDATED=$(python3 -c "import json; print(json.load(open('hub.json'))['updated_at'])")
+          DISPLAYED_5YR=$(python3 -c "import json; print(json.load(open('hub.json'))['displayed']['5yr'])")
+          ADVERTISED_5YR=$(python3 -c "import json; print(json.load(open('hub.json'))['advertised']['5yr'])")
 
-          # Check central hub last update timestamp
-          HUB_UPDATED=$(curl -sf https://transcript-processor-vxwqplu37q-uc.a.run.app/rates | python3 -c "import sys,json; print(json.load(sys.stdin).get('updated_at',''))")
-
-          # Days since central hub last touched
-          DAYS=$(python3 -c "
+          # Hours since hub updated_at
+          HOURS_STALE=$(python3 -c "
           from datetime import datetime, timezone
           ts = '$HUB_UPDATED'
-          if not ts:
-              print(999)
-          else:
-              try:
-                  dt = datetime.fromisoformat(ts.replace('Z','+00:00'))
-                  delta = (datetime.now(timezone.utc) - dt).days
-                  print(delta)
-              except Exception:
-                  print(999)
+          try:
+              dt = datetime.fromisoformat(ts.replace('Z','+00:00'))
+              h = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+              print(f'{h:.1f}')
+          except Exception:
+              print(9999)
           ")
 
-          echo "STALE_FLAG=$STALE_FLAG" >> $GITHUB_ENV
-          echo "STALE_REASON=$STALE_REASON" >> $GITHUB_ENV
-          echo "UPDATED=$UPDATED" >> $GITHUB_ENV
-          echo "HUB_UPDATED=$HUB_UPDATED" >> $GITHUB_ENV
-          echo "DAYS=$DAYS" >> $GITHUB_ENV
-
-          # Decide whether to alert
-          ALERT=false
-          REASON=""
-          if [ "$STALE_FLAG" = "True" ]; then
-            ALERT=true
-            REASON="rates_stale flag is set: $STALE_REASON"
-          elif [ "$DAYS" -gt 7 ]; then
-            ALERT=true
-            REASON="Central rate hub hasn't been updated in $DAYS days (last: $HUB_UPDATED)"
+          # Read or initialize snapshot
+          if [ ! -f "last_fixed_rates.json" ]; then
+            python3 -c "
+          import json, datetime
+          json.dump({
+              'displayed_5yr': float('$DISPLAYED_5YR'),
+              'advertised_5yr': float('$ADVERTISED_5YR'),
+              'last_changed_at': datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }, open('last_fixed_rates.json','w'), indent=2)
+          "
+            echo "Snapshot initialized."
           fi
 
-          echo "ALERT=$ALERT" >> $GITHUB_ENV
-          echo "REASON=$REASON" >> $GITHUB_ENV
+          SNAP_5YR=$(python3 -c "import json; print(json.load(open('last_fixed_rates.json'))['displayed_5yr'])")
+          SNAP_CHANGED_AT=$(python3 -c "import json; print(json.load(open('last_fixed_rates.json'))['last_changed_at'])")
+
+          # Detect change
+          CHANGED=$(python3 -c "print('true' if abs(float('$DISPLAYED_5YR') - float('$SNAP_5YR')) > 0.001 else 'false')")
+
+          if [ "$CHANGED" = "true" ]; then
+            python3 -c "
+          import json, datetime
+          json.dump({
+              'displayed_5yr': float('$DISPLAYED_5YR'),
+              'advertised_5yr': float('$ADVERTISED_5YR'),
+              'last_changed_at': datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }, open('last_fixed_rates.json','w'), indent=2)
+          "
+            SNAP_CHANGED_AT=$(python3 -c "import json; print(json.load(open('last_fixed_rates.json'))['last_changed_at'])")
+            echo "Fixed rate changed: $SNAP_5YR -> $DISPLAYED_5YR. Snapshot rewritten."
+          fi
+
+          DAYS_SINCE_FIXED_CHANGE=$(python3 -c "
+          from datetime import datetime, timezone
+          ts = '$SNAP_CHANGED_AT'
+          try:
+              dt = datetime.fromisoformat(ts.replace('Z','+00:00'))
+              d = (datetime.now(timezone.utc) - dt).days
+              print(d)
+          except Exception:
+              print(0)
+          ")
+
+          # Decide alert tier
+          ALERT_TIER=""
+          ALERT_REASON=""
+
+          # Tier 1: keepalive broken (>36h since any hub touch)
+          if [ "$(python3 -c "print(1 if float('$HOURS_STALE') > 36 else 0)")" = "1" ]; then
+            ALERT_TIER="urgent"
+            ALERT_REASON="rate-hub-keepalive appears broken — hub updated_at is ${HOURS_STALE}h old (last: $HUB_UPDATED). Check Cloud Run logs for rate-hub-keepalive."
+          # Tier 2: broker rates not updated in 14+ days
+          elif [ "$DAYS_SINCE_FIXED_CHANGE" -gt 14 ]; then
+            ALERT_TIER="action"
+            ALERT_REASON="displayed 5yr fixed unchanged at ${DISPLAYED_5YR}% for $DAYS_SINCE_FIXED_CHANGE days. Broker rates almost certainly shifted. Run /rate-update with fresh broker-sheet numbers."
+          fi
+
+          {
+            echo "ALERT_TIER=$ALERT_TIER"
+            echo "ALERT_REASON=$ALERT_REASON"
+            echo "HUB_UPDATED=$HUB_UPDATED"
+            echo "HOURS_STALE=$HOURS_STALE"
+            echo "DISPLAYED_5YR=$DISPLAYED_5YR"
+            echo "DAYS_SINCE_FIXED_CHANGE=$DAYS_SINCE_FIXED_CHANGE"
+            echo "CHANGED=$CHANGED"
+          } >> $GITHUB_ENV
+
           echo ""
-          echo "rates.json updated: $UPDATED | stale_flag: $STALE_FLAG | hub age: $DAYS days"
-          echo "Alert needed: $ALERT"
-          if [ -n "$REASON" ]; then
-            echo "Reason: $REASON"
-          fi
+          echo "Hub updated: $HUB_UPDATED (${HOURS_STALE}h ago)"
+          echo "Displayed 5yr: ${DISPLAYED_5YR}% (snapshot: ${SNAP_5YR}%, changed: $CHANGED, last change: ${DAYS_SINCE_FIXED_CHANGE}d ago)"
+          [ -n "$ALERT_TIER" ] && echo "Alert tier: $ALERT_TIER — $ALERT_REASON" || echo "All clear."
 
       - name: Send alert email
-        if: env.ALERT == 'true'
+        if: env.ALERT_TIER != ''
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
+          if [ "$ALERT_TIER" = "urgent" ]; then
+            SUBJECT="[URGENT] Rate hub keepalive broken: $HOURS_STALE h stale"
+          else
+            SUBJECT="[ACTION] Broker rates need refresh — $DAYS_SINCE_FIXED_CHANGE d unchanged"
+          fi
+
           curl -sf -X POST "https://api.resend.com/emails" \
             -H "Authorization: Bearer $RESEND_API_KEY" \
             -H "Content-Type: application/json" \
             -d "{
               \"from\": \"Flow Rate Bot <rates@getflowmortgage.ca>\",
               \"to\": \"alex@getflowmortgage.ca\",
-              \"subject\": \"Rate update needed: $REASON\",
-              \"text\": \"Rate staleness check tripped.\n\nReason: $REASON\n\nrates.json updated: $UPDATED\nCentral hub last touched: $HUB_UPDATED ($DAYS days ago)\nstale_flag: $STALE_FLAG\nstale_reason: $STALE_REASON\n\nFix: run /rate-update with the latest broker rates. The skill writes to the central hub and downstream surfaces will catch up on the next daily projection (8:30 AM ET).\n\nExample:\n  /rate-update 1yr=5.24 2yr=4.79 3yr=4.39 4yr=4.59 5yr=4.79 var=3.85 boc=2.25 prime=4.45\n\nAll Flow rate surfaces are currently using conservative fallback defaults until you do this.\"
+              \"subject\": \"$SUBJECT\",
+              \"text\": \"Rate staleness check (tier: $ALERT_TIER).\n\n$ALERT_REASON\n\nHub updated_at: $HUB_UPDATED ($HOURS_STALE h ago)\nDisplayed 5yr fixed: $DISPLAYED_5YR%\nDays since last fixed-rate change: $DAYS_SINCE_FIXED_CHANGE\n\nFix: run /rate-update with the latest broker rates.\n\nExample:\n  /rate-update 1yr=5.24 2yr=4.79 3yr=4.39 4yr=4.59 5yr=4.79 var=3.85 boc=2.25 prime=4.45\"
             }" || echo "Alert email failed to send"
-          echo "Alert email sent"
+          echo "Alert email sent ($ALERT_TIER)"
+
+      - name: Commit snapshot if changed
+        if: env.CHANGED == 'true'
+        run: |
+          git config user.name "flow-rate-bot"
+          git config user.email "alex@getflowmortgage.ca"
+          git add last_fixed_rates.json
+          if git diff --cached --quiet; then
+            echo "No snapshot diff."
+          else
+            git commit -m "chore: fixed-rate snapshot — 5yr now ${DISPLAYED_5YR}%"
+            git push
+          fi

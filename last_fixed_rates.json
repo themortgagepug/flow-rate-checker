@@ -1,0 +1,6 @@
+{
+  "displayed_5yr": 4.79,
+  "advertised_5yr": 4.29,
+  "last_changed_at": "2026-05-03T19:11:00+00:00",
+  "_note": "Snapshot of central hub displayed/advertised 5yr fixed rate. Maintained automatically by .github/workflows/rate-staleness-check.yml — rewritten whenever displayed_5yr changes, with last_changed_at set to the change time. Tier-2 staleness alert fires when last_changed_at is >14 days old."
+}
