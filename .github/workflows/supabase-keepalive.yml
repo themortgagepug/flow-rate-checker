@@ -1,0 +1,37 @@
+name: Supabase Keepalive
+
+# Prevents Supabase from auto-pausing the flow-rate-app project (jmfjizepdvhjivxswkvw)
+# after 7 days without activity. Supabase counts any REST read as activity.
+# Sends one cheap GET against market_rates daily and fails loudly if the project
+# is unreachable (so we catch a real outage instead of silently drifting toward pause).
+#
+# Context: weekly-rate-update + daily-rate-projections workflows still target the
+# pre-migration project (dotglplhsdsmrbacmtrx). Until those are repointed, this
+# workflow is what keeps the live project warm.
+
+on:
+  schedule:
+    # Daily at 14:07 UTC (off-minute to dodge the cron rush)
+    - cron: '7 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping flow-rate-app Supabase
+        env:
+          ANON_KEY: ${{ secrets.RATE_APP_SUPABASE_ANON_KEY }}
+        run: |
+          set -e
+          URL="https://jmfjizepdvhjivxswkvw.supabase.co/rest/v1/market_rates?select=id&limit=1"
+          CODE=$(curl -sS -o /tmp/resp.json -w "%{http_code}" \
+            "$URL" \
+            -H "apikey: $ANON_KEY" \
+            -H "Authorization: Bearer $ANON_KEY")
+          echo "HTTP $CODE"
+          head -c 400 /tmp/resp.json; echo
+          if [ "$CODE" != "200" ]; then
+            echo "Keepalive failed — flow-rate-app Supabase did not return 200."
+            exit 1
+          fi
