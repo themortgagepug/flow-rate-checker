@@ -129,9 +129,11 @@ jobs:
 
       - name: Update Supabase market_rates
         env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Post-migration target: jmfjizepdvhjivxswkvw (flow-rate-app, live).
+          # Pre-migration project dotglplhsdsmrbacmtrx is the dead one — do not repoint back.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.RATE_APP_SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          SUPABASE_URL="https://dotglplhsdsmrbacmtrx.supabase.co"
+          SUPABASE_URL="https://jmfjizepdvhjivxswkvw.supabase.co"
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           update_rate() {
