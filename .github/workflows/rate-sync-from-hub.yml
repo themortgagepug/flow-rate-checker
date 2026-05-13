@@ -1,0 +1,107 @@
+name: Daily Rate Sync (Central Hub → flow-rate-app)
+
+# Pulls Alex-curated broker rates from the central rate hub
+# (transcript-processor /rates, updated via /rate-update skill) and PATCHes
+# the flow-rate-app market_rates table so the public rate calculator stays fresh.
+#
+# Why this exists:
+#   - Internet rate sources (WOWA, RateHub, etc.) are noisy and were poisoning
+#     the calculator with values below BoC. WOWA scraping disabled 2026-04-15.
+#   - The central rate hub is the single source of truth (Alex curates via
+#     /rate-update). Mirroring it is more accurate than re-scraping.
+#   - The write also serves as the daily activity ping that keeps Supabase
+#     from auto-pausing the project — supersedes supabase-keepalive.yml.
+
+on:
+  schedule:
+    # Daily at 13:17 UTC (after rate-hub-keepalive's BoC refresh at ~13:00,
+    # before rate-staleness-check at 13:00). Off-minute to dodge cron rush.
+    - cron: '17 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch central hub rates
+        id: hub
+        run: |
+          set -e
+          curl -sSf "https://transcript-processor-vxwqplu37q-uc.a.run.app/rates" -o /tmp/hub.json
+          python3 - <<'PY'
+          import json, os, sys
+          d = json.load(open('/tmp/hub.json'))
+          # Map central-hub advertised_* fields to market_rates term_key rows.
+          # Preserves the calculator's current rate basis (advertised, pre-markup).
+          mapping = {
+              "1yr_fixed":   d.get("advertised_1yr"),
+              "2yr_fixed":   d.get("advertised_2yr"),
+              "3yr_fixed":   d.get("advertised_3yr"),
+              "4yr_fixed":   d.get("advertised_4yr"),
+              "5yr_fixed":   d.get("advertised_5yr"),
+              "10yr_fixed":  d.get("advertised_10yr"),
+              "5yr_variable": d.get("advertised_vrm_effective"),
+          }
+          missing = [k for k,v in mapping.items() if v is None]
+          if missing:
+              print(f"::error::Central hub missing fields for: {missing}", file=sys.stderr)
+              sys.exit(1)
+          # Sanity: every rate must be in a plausible range and >= BoC
+          boc = d.get("boc_rate", 0)
+          for term, rate in mapping.items():
+              if not (0.5 <= float(rate) <= 12.0):
+                  print(f"::error::{term}={rate} out of plausible range", file=sys.stderr)
+                  sys.exit(1)
+              if float(rate) < float(boc) - 0.5:
+                  print(f"::error::{term}={rate} below BoC ({boc}) — refusing to publish", file=sys.stderr)
+                  sys.exit(1)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"payload={json.dumps(mapping)}\n")
+              f.write(f"hub_updated_at={d.get('updated_at','')}\n")
+          print("Hub rates OK:")
+          for k,v in mapping.items():
+              print(f"  {k}: {v}%")
+          PY
+
+      - name: PATCH flow-rate-app market_rates
+        env:
+          SVC: ${{ secrets.RATE_APP_SUPABASE_SERVICE_ROLE_KEY }}
+          PAYLOAD: ${{ steps.hub.outputs.payload }}
+          HUB_UPDATED: ${{ steps.hub.outputs.hub_updated_at }}
+        run: |
+          set -e
+          URL="https://jmfjizepdvhjivxswkvw.supabase.co/rest/v1/market_rates"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          SRC="Flow central rate hub (via /rate-update, hub updated $HUB_UPDATED)"
+
+          echo "$PAYLOAD" | python3 -c "
+          import json, sys
+          for term, rate in json.load(sys.stdin).items():
+              print(f'{term}\t{rate}')
+          " | while IFS=$'\t' read -r term_key rate; do
+            CODE=$(curl -sS -o /tmp/r.json -w "%{http_code}" \
+              "$URL?term_key=eq.$term_key&rate_type=eq.uninsured" \
+              -X PATCH \
+              -H "apikey: $SVC" \
+              -H "Authorization: Bearer $SVC" \
+              -H "Content-Type: application/json" \
+              -H "Prefer: return=representation" \
+              -d "{\"rate\": $rate, \"source\": \"$SRC\", \"updated_at\": \"$NOW\"}")
+            if [ "$CODE" != "200" ]; then
+              echo "::error::PATCH $term_key failed: HTTP $CODE"; cat /tmp/r.json; exit 1
+            fi
+            ROWS=$(python3 -c "import json; print(len(json.load(open('/tmp/r.json'))))")
+            if [ "$ROWS" = "0" ]; then
+              echo "::warning::PATCH $term_key matched 0 rows — row missing from market_rates"
+            else
+              echo "  $term_key -> ${rate}% (rows=$ROWS)"
+            fi
+          done
+
+      - name: Verify read-back
+        env:
+          ANON: ${{ secrets.RATE_APP_SUPABASE_ANON_KEY }}
+        run: |
+          curl -sSf "https://jmfjizepdvhjivxswkvw.supabase.co/rest/v1/market_rates?select=term_key,rate,updated_at&rate_type=eq.uninsured&order=term_key" \
+            -H "apikey: $ANON" -H "Authorization: Bearer $ANON" \
+            | python3 -m json.tool
