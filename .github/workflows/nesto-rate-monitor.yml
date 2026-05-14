@@ -1,0 +1,62 @@
+name: nesto Rate Monitor
+
+# Daily canary on nesto.ca's headline 5yr fixed + 5yr variable.
+# Appends to data/nesto-rate-history.json. On Mondays only (UTC), if either
+# rate moved >= 5bps vs ~7 days ago, emails Alex with hub context and a
+# prefilled /rate-update command to copy into Claude. Silent otherwise.
+#
+# Treats nesto as a directional MARKET-MOVEMENT signal, not a direct proposal
+# for Flow's advertised UNINSURED rates (nesto headlines are INSURED).
+# Lender Spotlight remains the source of truth Alex confirms against.
+
+on:
+  schedule:
+    # Daily at 13:23 UTC (off-minute, after rate-sync-from-hub at 13:17)
+    - cron: '23 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force_email:
+        description: 'Send email regardless of weekday (for testing)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Run nesto monitor
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL_TO: alex@getflowmortgage.ca
+        run: |
+          ARGS=""
+          if [ "${{ inputs.force_email }}" = "true" ]; then
+            ARGS="--force-email"
+          fi
+          python3 scripts/nesto-monitor.py $ARGS
+
+      - name: Commit updated history
+        run: |
+          git config user.name "Flow Rate Bot"
+          git config user.email "alex@getflowmortgage.ca"
+          git add data/nesto-rate-history.json
+          if git diff --cached --quiet; then
+            echo "No history change."
+          else
+            DATE=$(python3 -c "import json; h=json.load(open('data/nesto-rate-history.json'))['history']; print(h[-1]['date'])")
+            FIXED=$(python3 -c "import json; h=json.load(open('data/nesto-rate-history.json'))['history']; print(h[-1]['5yr_fixed_insured'])")
+            git commit -m "chore: nesto rate snapshot $DATE (5yr fixed $FIXED%)"
+            git push
+          fi
