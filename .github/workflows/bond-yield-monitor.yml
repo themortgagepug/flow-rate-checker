@@ -1,0 +1,67 @@
+name: Bond Yield Monitor
+
+# Daily upstream-rate canary using the BoC Valet API.
+# Tracks BoC overnight rate + 2/5/10yr GoC bond yields, snapshots to
+# data/bond-yield-history.json, and emails Alex when either trigger fires:
+#
+#   - DoD: BoC overnight rate changed -> IMMEDIATE email (variable rates
+#     reprice same day, prime moves in lockstep)
+#   - WoW: 5yr GoC bond yield moved >= 8bps vs ~7 days ago -> Monday digest
+#     email (5yr fixed mortgages typically reprice with a 1-2 week lag)
+#
+# Otherwise silent. Replaces the nesto-rate-monitor canary, which was
+# measuring retail-promotional rates instead of broker-channel signal.
+# Lender Spotlight stays Alex's source of truth (automation banned per ToS).
+
+on:
+  schedule:
+    # Daily at 13:25 UTC (after rate-sync-from-hub at 13:17)
+    - cron: '25 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force_email:
+        description: 'Send email regardless of triggers (for testing)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Run bond yield monitor
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL_TO: alex@getflowmortgage.ca
+        run: |
+          ARGS=""
+          if [ "${{ inputs.force_email }}" = "true" ]; then
+            ARGS="--force-email"
+          fi
+          python3 scripts/bond-yield-monitor.py $ARGS
+
+      - name: Commit updated history
+        run: |
+          git config user.name "Flow Rate Bot"
+          git config user.email "alex@getflowmortgage.ca"
+          git add data/bond-yield-history.json
+          if git diff --cached --quiet; then
+            echo "No history change."
+          else
+            DATE=$(python3 -c "import json; h=json.load(open('data/bond-yield-history.json'))['history']; print(h[-1]['date'])")
+            BOC=$(python3 -c "import json; h=json.load(open('data/bond-yield-history.json'))['history']; print(h[-1]['boc_overnight'])")
+            FIVE=$(python3 -c "import json; h=json.load(open('data/bond-yield-history.json'))['history']; print(h[-1]['bond_5yr'])")
+            git commit -m "chore: bond yield snapshot $DATE (BoC $BOC% / 5yr GoC $FIVE%)"
+            git push
+          fi
