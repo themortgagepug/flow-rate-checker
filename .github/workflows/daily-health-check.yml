@@ -124,19 +124,14 @@ jobs:
             ""
 
           # --- GitHub Actions (check last workflow runs) ---
+          # Weekly Rate Update is intentionally MANUAL-ONLY since 2026-04-15
+          # (WOWA scraping disabled; canonical input is the /rate-update skill).
+          # We no longer health-check it — last-run-success is meaningless for
+          # a manual-only workflow that may sit unused for weeks.
           echo "Checking GitHub Actions..."
-          RATE_UPDATE=$(gh run list --repo themortgagepug/flow-rate-checker --workflow "Weekly Rate Update" --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
-          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow "Weekly Rate Briefing" --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
+          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow weekly-rate-briefing.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
 
-          CHECKED=$((CHECKED + 2))
-          if [ "$RATE_UPDATE" = "success" ]; then
-            REPORT="${REPORT}OK  GitHub: Weekly Rate Update (last run: success)\n"
-          else
-            FAILED=$((FAILED + 1))
-            FAILURES="${FAILURES}\n-- GitHub: Weekly Rate Update --\nLast run conclusion: ${RATE_UPDATE}\n"
-            REPORT="${REPORT}FAIL  GitHub: Weekly Rate Update (${RATE_UPDATE})\n"
-          fi
-
+          CHECKED=$((CHECKED + 1))
           if [ "$RATE_BRIEFING" = "success" ]; then
             REPORT="${REPORT}OK  GitHub: Weekly Rate Briefing (last run: success)\n"
           else
