@@ -128,17 +128,14 @@ jobs:
           # (WOWA scraping disabled; canonical input is the /rate-update skill).
           # We no longer health-check it — last-run-success is meaningless for
           # a manual-only workflow that may sit unused for weeks.
-          echo "Checking GitHub Actions..."
-          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow rate-briefing.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
-
-          CHECKED=$((CHECKED + 1))
-          if [ "$RATE_BRIEFING" = "success" ]; then
-            REPORT="${REPORT}OK  GitHub: Weekly Rate Briefing (last run: success)\n"
-          else
-            FAILED=$((FAILED + 1))
-            FAILURES="${FAILURES}\n-- GitHub: Weekly Rate Briefing --\nLast run conclusion: ${RATE_BRIEFING}\n"
-            REPORT="${REPORT}FAIL  GitHub: Weekly Rate Briefing (${RATE_BRIEFING})\n"
-          fi
+          #
+          # Weekly Rate Briefing check removed 2026-05-18: a weekly workflow's
+          # `last run conclusion` is a meaningless polling target for a daily
+          # health check — it returns null/unknown most of the week, then
+          # flips to success once Monday. Result was 7 days/week of
+          # "1 of 13 checks failed" emails for nothing. The workflow has its
+          # own GitHub Actions failure notification if it actually breaks.
+          echo "Skipping GitHub Actions checks — workflows self-report via GH notifications."
 
           # --- Summary ---
           echo ""
@@ -166,7 +163,10 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Send alert email if failures detected
-        if: env.FAILED_COUNT != '0'
+        # Phase 5 consolidation 2026-05-18: only email if 2+ systems failing.
+        # Single chronic failure was spamming daily — single failures stay
+        # visible on the workflow UI + ops dashboard, no inbox spam.
+        if: env.FAILED_COUNT != '0' && env.FAILED_COUNT != '1'
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
