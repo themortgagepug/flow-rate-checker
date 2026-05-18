@@ -129,7 +129,7 @@ jobs:
           # We no longer health-check it — last-run-success is meaningless for
           # a manual-only workflow that may sit unused for weeks.
           echo "Checking GitHub Actions..."
-          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow weekly-rate-briefing.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
+          RATE_BRIEFING=$(gh run list --repo themortgagepug/flow-rate-checker --workflow rate-briefing.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "unknown")
 
           CHECKED=$((CHECKED + 1))
           if [ "$RATE_BRIEFING" = "success" ]; then
@@ -204,23 +204,7 @@ jobs:
           echo ""
           echo "Alert email sent to alex@getflowmortgage.ca"
 
-      - name: Send daily summary (all green)
-        if: env.FAILED_COUNT == '0'
-        env:
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: |
-          DATE=$(TZ='America/Vancouver' date '+%B %d, %Y')
-
-          REPORT_ESCAPED=$(echo "$REPORT" | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$//')
-
-          curl -s -X POST "https://api.resend.com/emails" \
-            -H "Authorization: Bearer $RESEND_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"from\": \"Flow Systems <systems@getflowmortgage.ca>\",
-              \"to\": [\"alex@getflowmortgage.ca\"],
-              \"subject\": \"All systems green - ${DATE}\",
-              \"html\": \"<div style='font-family:monospace;padding:16px'><h2 style='color:#22c55e'>All Systems Operational</h2><p>${DATE} - ${CHECKED_COUNT} checks passed</p><pre>${REPORT_ESCAPED}</pre></div>\"
-            }"
+      # All-green daily summary email removed 2026-05-18 per actionable-only-emails rule.
+      # Health state lives on ops.getflowmortgage.ca/system. Only failures email.
 
           echo "Daily summary email sent (all green)"
