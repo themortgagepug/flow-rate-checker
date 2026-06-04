@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-03",
+  "updated": "2026-06-04",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -11,9 +11,9 @@
   "prime": 4.45,
   "bocRate": 2.25,
   "bondYields": {
-    "2yr": 2.77,
-    "5yr": 3.05,
-    "10yr": 3.41
+    "2yr": 2.81,
+    "5yr": 3.08,
+    "10yr": 3.43
   },
   "uninsured": {
     "1yr_fixed": 5.44,
@@ -54,18 +54,18 @@
       },
       {
         "date": "2026-08",
-        "prime": 4.56,
-        "boc": 2.36
+        "prime": 4.55,
+        "boc": 2.35
       },
       {
         "date": "2026-09",
-        "prime": 4.61,
-        "boc": 2.41
+        "prime": 4.6,
+        "boc": 2.4
       },
       {
         "date": "2026-10",
-        "prime": 4.68,
-        "boc": 2.48
+        "prime": 4.67,
+        "boc": 2.47
       },
       {
         "date": "2026-11",
@@ -74,53 +74,53 @@
       },
       {
         "date": "2026-12",
-        "prime": 4.81,
-        "boc": 2.61
+        "prime": 4.82,
+        "boc": 2.62
       },
       {
         "date": "2027-01",
-        "prime": 4.87,
-        "boc": 2.67
+        "prime": 4.88,
+        "boc": 2.68
       },
       {
         "date": "2027-02",
-        "prime": 4.92,
-        "boc": 2.72
+        "prime": 4.93,
+        "boc": 2.73
       },
       {
         "date": "2027-03",
-        "prime": 4.97,
-        "boc": 2.77
+        "prime": 4.99,
+        "boc": 2.79
       },
       {
         "date": "2027-04",
-        "prime": 5.01,
-        "boc": 2.81
+        "prime": 5.02,
+        "boc": 2.82
       },
       {
         "date": "2027-05",
-        "prime": 5.03,
-        "boc": 2.83
+        "prime": 5.05,
+        "boc": 2.85
       },
       {
         "date": "2027-06",
-        "prime": 5.07,
-        "boc": 2.87
-      },
-      {
-        "date": "2027-07",
         "prime": 5.08,
         "boc": 2.88
       },
       {
+        "date": "2027-07",
+        "prime": 5.1,
+        "boc": 2.9
+      },
+      {
         "date": "2027-08",
-        "prime": 5.09,
-        "boc": 2.89
+        "prime": 5.1,
+        "boc": 2.9
       },
       {
         "date": "2027-09",
-        "prime": 5.1,
-        "boc": 2.9
+        "prime": 5.12,
+        "boc": 2.92
       },
       {
         "date": "2027-10",
@@ -129,8 +129,8 @@
       },
       {
         "date": "2027-11",
-        "prime": 5.12,
-        "boc": 2.92
+        "prime": 5.13,
+        "boc": 2.93
       },
       {
         "date": "2027-12",
@@ -139,8 +139,8 @@
       },
       {
         "date": "2028-01",
-        "prime": 5.14,
-        "boc": 2.94
+        "prime": 5.15,
+        "boc": 2.95
       },
       {
         "date": "2028-02",
@@ -149,23 +149,23 @@
       },
       {
         "date": "2028-03",
-        "prime": 5.16,
-        "boc": 2.96
-      },
-      {
-        "date": "2028-04",
-        "prime": 5.17,
-        "boc": 2.97
-      },
-      {
-        "date": "2028-05",
         "prime": 5.18,
         "boc": 2.98
       },
       {
-        "date": "2028-06",
+        "date": "2028-04",
+        "prime": 5.18,
+        "boc": 2.98
+      },
+      {
+        "date": "2028-05",
         "prime": 5.19,
         "boc": 2.99
+      },
+      {
+        "date": "2028-06",
+        "prime": 5.2,
+        "boc": 3.0
       },
       {
         "date": "2028-07",
@@ -179,13 +179,13 @@
       },
       {
         "date": "2028-09",
-        "prime": 5.2,
-        "boc": 3.0
+        "prime": 5.21,
+        "boc": 3.01
       },
       {
         "date": "2028-10",
-        "prime": 5.21,
-        "boc": 3.01
+        "prime": 5.22,
+        "boc": 3.02
       },
       {
         "date": "2028-11",
@@ -194,158 +194,158 @@
       },
       {
         "date": "2028-12",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-01",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-02",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-03",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-04",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-05",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-06",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-07",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-08",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-09",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-10",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-11",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2029-12",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-01",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-02",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-03",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-04",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-05",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-06",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-07",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-08",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-09",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-10",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-11",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2030-12",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-01",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-02",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-03",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-04",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-05",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       },
       {
         "date": "2031-06",
-        "prime": 5.22,
-        "boc": 3.02
+        "prime": 5.23,
+        "boc": 3.03
       }
     ]
   },
@@ -358,9 +358,9 @@
     },
     "base": {
       "label": "Market Pricing",
-      "terminalPrime": 5.22,
-      "terminalBoC": 3.02,
-      "description": "CORRA futures-implied: BoC to 3.02%, prime to 5.22%."
+      "terminalPrime": 5.23,
+      "terminalBoC": 3.03,
+      "description": "CORRA futures-implied: BoC to 3.03%, prime to 5.23%."
     },
     "bear": {
       "label": "Rates Rise More",
@@ -375,7 +375,7 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-06-03. Base = CORRA futures (3.02% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
+  "notes": "Auto-generated 2026-06-04. Base = CORRA futures (3.03% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
   "rates_stale": false,
   "stale_reason": null
 }
