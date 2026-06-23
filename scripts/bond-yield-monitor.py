@@ -28,6 +28,7 @@ import json
 import os
 import sys
 import urllib.request
+import urllib.error
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -139,20 +140,41 @@ def send_email(subject, body):
         print(body)
         return
     payload = json.dumps({
-        "from": "Flow Rate Bot <rates@getflowmortgage.ca>",
-        "to": to_addr,
+        "from": os.environ.get("ALERT_EMAIL_FROM", "Flow Rate Bot <rates@getflowmortgage.ca>"),
+        "to": [a.strip() for a in to_addr.split(",") if a.strip()],
         "subject": subject,
         "text": body,
     }).encode("utf-8")
     req = urllib.request.Request(
         "https://api.resend.com/emails",
         data=payload,
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            # Cloudflare fronts api.resend.com and signature-bans the default
+            # Python-urllib UA (HTTP 403, error code 1010). A normal UA clears
+            # it — same reason the sibling curl-based workflows never tripped.
+            "User-Agent": "curl/8.7.1",
+        },
     )
-    with urllib.request.urlopen(req, timeout=15) as r:
-        if r.status >= 300:
-            raise RuntimeError(f"Resend returned {r.status}")
-    print(f"Email sent: {subject}")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            print(f"Email sent: {subject}")
+        return True
+    except urllib.error.HTTPError as e:
+        # Surface Resend's JSON error body — a bare 403 hides the real cause
+        # (unverified domain, restricted key, etc.). Loud but non-fatal: the
+        # canary's core job is the committed snapshot, so a bounced
+        # notification must not red-X the whole run.
+        try:
+            detail = e.read().decode("utf-8", "replace")
+        except Exception:
+            detail = "<no response body>"
+        print(f"WARNING: Resend send failed: HTTP {e.code} {e.reason} — {detail}")
+        return False
+    except Exception as e:
+        print(f"WARNING: Resend send failed: {e}")
+        return False
 
 
 def compose_email(today_entry, dod_change, wow_change, hub):
@@ -312,7 +334,8 @@ def main():
 
     hub = fetch_hub_context(args.hub_url)
     subject, body = compose_email(today_entry, dod_change, wow_change, hub)
-    send_email(subject, body)
+    if not send_email(subject, body):
+        print("Email did not send (see warning above). Snapshot still recorded.")
     return 0
 
 
