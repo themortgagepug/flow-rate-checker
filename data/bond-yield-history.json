@@ -458,14 +458,14 @@
     {
       "date": "2026-06-23",
       "boc_overnight": 2.25,
-      "bond_2yr": 2.76,
-      "bond_5yr": 3.04,
-      "bond_10yr": 3.41,
+      "bond_2yr": 2.75,
+      "bond_5yr": 3.03,
+      "bond_10yr": 3.38,
       "dates": {
-        "boc_overnight": "2026-06-15",
-        "bond_2yr": "2026-06-15",
-        "bond_5yr": "2026-06-15",
-        "bond_10yr": "2026-06-15"
+        "boc_overnight": "2026-06-16",
+        "bond_2yr": "2026-06-16",
+        "bond_5yr": "2026-06-16",
+        "bond_10yr": "2026-06-16"
       }
     }
   ]
