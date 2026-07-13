@@ -50,6 +50,90 @@ RATE_INSURABLE=$(echo "$RATE_5YR_FIXED + $INSURABLE_ADJ" | bc)
 
 echo "  Insured 5yr: $RATE_INSURED | Insurable 5yr: $RATE_INSURABLE"
 
+# ── 2b. MLN market intelligence: Flow vs best-of-market + bond/news ──
+# Live from the brain intelligence endpoint (public). Graceful: if MLN is
+# unavailable the two sections stay empty and the briefing still sends.
+echo ""
+echo "Fetching MLN market intelligence..."
+MLN_JSON=$(curl -sf -m 15 "https://jkeujqzlclrxhwamplby.supabase.co/functions/v1/mln-intelligence" || echo "")
+MARKET_POSITION=""
+RATE_NEWS=""
+
+if [ -n "$MLN_JSON" ] && echo "$MLN_JSON" | jq -e '.best.uninsured["5"]' >/dev/null 2>&1; then
+  MLN_LENDERS=$(echo "$MLN_JSON" | jq -r '.lender_count // "—"')
+  echo "  MLN best 5yr: $(echo "$MLN_JSON" | jq -r '.best.uninsured["5"]') | lenders: $MLN_LENDERS"
+
+  MARKET_ROWS=""
+  add_market_row() {
+    local label="$1" flow="$2" mb="$3"
+    { [ -z "$mb" ] || [ "$mb" = "null" ] || [ -z "$flow" ] || [ "$flow" = "null" ]; } && return 0
+    local gap sign color
+    # gap in bps, rounded; + = Flow above the sharpest market rate
+    gap=$(awk -v f="$flow" -v m="$mb" 'BEGIN{d=(f-m)*100; printf "%d", d + (d>=0?0.5:-0.5)}')
+    if [ "$gap" -lt 0 ]; then sign=""; color="#10b981"; else sign="+"; color="#f59e0b"; fi
+    MARKET_ROWS="${MARKET_ROWS}
+    <tr>
+      <td style=\"padding:11px 16px;font-size:13px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;\">${label}</td>
+      <td style=\"padding:11px 16px;font-size:14px;font-weight:700;color:#0f1629;text-align:center;border-bottom:1px solid #f1f5f9;\">${flow}%</td>
+      <td style=\"padding:11px 16px;font-size:14px;font-weight:700;color:#06b6d4;text-align:center;border-bottom:1px solid #f1f5f9;\">${mb}%</td>
+      <td style=\"padding:11px 16px;font-size:13px;font-weight:700;color:${color};text-align:center;border-bottom:1px solid #f1f5f9;\">${sign}${gap} bps</td>
+    </tr>"
+  }
+  add_market_row "1-Year Fixed"    "$RATE_1YR"       "$(echo "$MLN_JSON" | jq -r '.best.uninsured["1"]  // "null"')"
+  add_market_row "2-Year Fixed"    "$RATE_2YR"       "$(echo "$MLN_JSON" | jq -r '.best.uninsured["2"]  // "null"')"
+  add_market_row "3-Year Fixed"    "$RATE_3YR"       "$(echo "$MLN_JSON" | jq -r '.best.uninsured["3"]  // "null"')"
+  add_market_row "4-Year Fixed"    "$RATE_4YR"       "$(echo "$MLN_JSON" | jq -r '.best.uninsured["4"]  // "null"')"
+  add_market_row "5-Year Fixed"    "$RATE_5YR_FIXED" "$(echo "$MLN_JSON" | jq -r '.best.uninsured["5"]  // "null"')"
+  add_market_row "5-Year Variable" "$RATE_5YR_VAR"   "$(echo "$MLN_JSON" | jq -r '.best.uninsured.var    // "null"')"
+  add_market_row "10-Year Fixed"   "$RATE_10YR"      "$(echo "$MLN_JSON" | jq -r '.best.uninsured["10"] // "null"')"
+
+  MARKET_POSITION="
+  <tr>
+  <td style=\"padding:24px 40px 16px;\">
+    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">
+    <tr><td style=\"font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:16px;\">Flow vs Best-of-Market &mdash; BC (${MLN_LENDERS} lenders)</td></tr>
+    </table>
+    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;\">
+    <tr style=\"background:#f8fafc;\">
+      <td style=\"padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;\">Term</td>
+      <td style=\"padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;text-align:center;\">Flow</td>
+      <td style=\"padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;text-align:center;\">Market Best</td>
+      <td style=\"padding:10px 16px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e2e8f0;text-align:center;\">Gap</td>
+    </tr>${MARKET_ROWS}
+    </table>
+    <div style=\"font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.4;\">Flow's posted rate vs the sharpest broker-channel rate on MortgageLogic.News. A positive gap flags room a sharper lender could undercut us &mdash; a prompt to shop the file, not a rate to quote.</div>
+  </td>
+  </tr>"
+
+  # This Week in Rates — bond alerts + rate updates first, then features/externals
+  # Bond alerts + rate updates first, then features/externals. Keep only real
+  # http links (drops mln:// deep-links), and tidy MLN's float artifacts
+  # (e.g. "10.000000000000009bps" -> "10bps").
+  NEWS_ROWS=$(echo "$MLN_JSON" | jq -r '
+    ([.news[] | select(.type=="bond_alert" or .type=="rate_update")]
+     + [.news[] | select(.type=="feature" or .type=="external")])
+    | map(select((.url // "") | test("^https?://")))
+    | unique_by(.headline) | .[0:5][]
+    | "<tr><td style=\"padding:12px 0;border-bottom:1px solid #f1f5f9;\"><a href=\"\(.url)\" style=\"font-size:13px;font-weight:600;color:#0f1629;text-decoration:none;\">" + (.headline|gsub("(?<i>[0-9]+)\\.0{4,}[0-9]+";"\(.i)")|gsub("&";"&amp;")|gsub("<";"&lt;")) + "</a><div style=\"font-size:11px;color:#94a3b8;margin-top:3px;\">" + ((.category // .type) + " &middot; " + (.source // "MLN")) + "</div></td></tr>"
+  ' 2>/dev/null || echo "")
+
+  if [ -n "$NEWS_ROWS" ]; then
+    RATE_NEWS="
+    <tr>
+    <td style=\"padding:24px 40px 16px;\">
+      <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">
+      <tr><td style=\"font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;padding-bottom:8px;\">This Week in Rates</td></tr>
+      </table>
+      <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">${NEWS_ROWS}
+      </table>
+      <div style=\"font-size:11px;color:#94a3b8;margin-top:8px;\">Bond moves &amp; rate commentary &mdash; MortgageLogic.News</div>
+    </td>
+    </tr>"
+  fi
+else
+  echo "  MLN unavailable — briefing sends without market-position/news sections."
+fi
+
 # ── 3. Build lender rows ──
 echo ""
 echo "Building lender matrix..."
@@ -143,17 +227,30 @@ HTML="${HTML//\{\{RATE_INSURED\}\}/$RATE_INSURED}"
 HTML="${HTML//\{\{RATE_INSURABLE\}\}/$RATE_INSURABLE}"
 HTML="${HTML//\{\{LENDER_ROWS\}\}/$LENDER_ROWS}"
 HTML="${HTML//\{\{VALUE_PROP_CARDS\}\}/$VALUE_PROP_CARDS}"
+HTML="${HTML//\{\{MARKET_POSITION\}\}/$MARKET_POSITION}"
+HTML="${HTML//\{\{RATE_NEWS\}\}/$RATE_NEWS}"
 
 # ── 6. Send via Resend ──
 echo ""
 echo "Sending email via Resend..."
 FROM_EMAIL=$(jq -r '.from_email' "$DATA_FILE")
 FROM_NAME=$(jq -r '.from_name' "$DATA_FILE")
-RECIPIENT_COUNT=$(jq '.team_recipients | length' "$DATA_FILE")
+
+# Preview mode: TEST_EMAIL set → send only to that address, subject-tagged.
+# Otherwise send to the full team list from rate-intel-data.json.
+if [ -n "${TEST_EMAIL:-}" ]; then
+  RECIPIENTS_JSON=$(jq -n --arg e "$TEST_EMAIL" '[{email:$e, name:"Preview"}]')
+  SUBJECT_PREFIX="[TEST] "
+  echo "PREVIEW MODE — sending only to $TEST_EMAIL"
+else
+  RECIPIENTS_JSON=$(jq -c '.team_recipients' "$DATA_FILE")
+  SUBJECT_PREFIX=""
+fi
+RECIPIENT_COUNT=$(echo "$RECIPIENTS_JSON" | jq 'length')
 
 for i in $(seq 0 $((RECIPIENT_COUNT - 1))); do
-  TO_EMAIL=$(jq -r ".team_recipients[$i].email" "$DATA_FILE")
-  TO_NAME=$(jq -r ".team_recipients[$i].name" "$DATA_FILE")
+  TO_EMAIL=$(echo "$RECIPIENTS_JSON" | jq -r ".[$i].email")
+  TO_NAME=$(echo "$RECIPIENTS_JSON" | jq -r ".[$i].name")
 
   echo "  Sending to: $TO_NAME <$TO_EMAIL>"
 
@@ -161,7 +258,7 @@ for i in $(seq 0 $((RECIPIENT_COUNT - 1))); do
   PAYLOAD=$(jq -n \
     --arg from "${FROM_NAME} <${FROM_EMAIL}>" \
     --arg to "$TO_EMAIL" \
-    --arg subject "Rate Intel — $BRIEFING_DATE" \
+    --arg subject "${SUBJECT_PREFIX}Rate Intel — $BRIEFING_DATE" \
     --arg html "$HTML" \
     '{from: $from, to: $to, subject: $subject, html: $html}')
 
