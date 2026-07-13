@@ -4,7 +4,12 @@ on:
   schedule:
     # Every Monday at 9:00 AM ET (13:00 UTC)
     - cron: '0 13 * * 1'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      test_email:
+        description: 'Send only to this address (preview). Leave blank to send to the full team list.'
+        required: false
+        default: ''
 
 jobs:
   send-briefing:
@@ -19,5 +24,6 @@ jobs:
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TEST_EMAIL: ${{ inputs.test_email }}
           TZ: America/Toronto
         run: bash scripts/send-rate-briefing.sh
