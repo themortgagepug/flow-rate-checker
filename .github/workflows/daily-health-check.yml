@@ -206,5 +206,3 @@ jobs:
 
       # All-green daily summary email removed 2026-05-18 per actionable-only-emails rule.
       # Health state lives on ops.getflowmortgage.ca/system. Only failures email.
-
-          echo "Daily summary email sent (all green)"
