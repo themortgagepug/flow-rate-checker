@@ -119,8 +119,12 @@ jobs:
 
           # --- Supabase ---
           echo "Checking Supabase..."
-          check "Supabase Brain" \
-            "https://jkeujqzlclrxhwamplby.supabase.co/rest/v1/brain?limit=1&select=id&apikey=${SUPABASE_ANON_KEY}" \
+          # Probe an anon-readable relation. The old target (brain) has no anon
+          # grant by design, so this check reported 42501 permission denied
+          # every run regardless of whether Supabase was up. blog_posts is the
+          # public table the website itself reads, so a failure here is real.
+          check "Supabase Brain (blog_posts read)" \
+            "https://jkeujqzlclrxhwamplby.supabase.co/rest/v1/blog_posts?limit=1&select=id&apikey=${SUPABASE_ANON_KEY}" \
             ""
 
           # --- GitHub Actions (check last workflow runs) ---
