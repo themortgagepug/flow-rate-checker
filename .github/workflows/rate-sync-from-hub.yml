@@ -27,7 +27,9 @@ jobs:
         id: hub
         run: |
           set -e
-          curl -sSf "https://transcript-processor-vxwqplu37q-uc.a.run.app/rates" -o /tmp/hub.json
+          # Hub runs at concurrency 1, so a long /scan/extracts can 429 this call. Retry instead of failing the sync.
+          curl -sSf --retry 6 --retry-delay 30 --retry-max-time 300 \
+            "https://transcript-processor-vxwqplu37q-uc.a.run.app/rates" -o /tmp/hub.json
           python3 - <<'PY'
           import json, os, sys
           d = json.load(open('/tmp/hub.json'))

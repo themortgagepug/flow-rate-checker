@@ -30,7 +30,7 @@ jobs:
           UPDATED=$(python3 -c "import json; print(json.load(open('rates.json'))['updated'])")
 
           # Check central hub last update timestamp
-          HUB_UPDATED=$(curl -sf https://transcript-processor-vxwqplu37q-uc.a.run.app/rates | python3 -c "import sys,json; print(json.load(sys.stdin).get('updated_at',''))")
+          HUB_UPDATED=$(curl -sf --retry 6 --retry-delay 30 --retry-max-time 300 https://transcript-processor-vxwqplu37q-uc.a.run.app/rates | python3 -c "import sys,json; print(json.load(sys.stdin).get('updated_at',''))")
 
           # Days since central hub last touched
           DAYS=$(python3 -c "
