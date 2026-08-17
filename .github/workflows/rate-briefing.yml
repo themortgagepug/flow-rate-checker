@@ -22,7 +22,10 @@ jobs:
 
       - name: Send rate intelligence briefing
         env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # SUPABASE_SERVICE_ROLE_KEY removed 2026-08-17: it belonged to the dead
+          # Lovable project dotglplhsdsmrbacmtrx, whose frozen April table mailed
+          # the team a 3.10% 5yr for four months. Rates now come from the public
+          # mln-intelligence endpoint and need no key.
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           TEST_EMAIL: ${{ inputs.test_email }}
           TZ: America/Toronto
