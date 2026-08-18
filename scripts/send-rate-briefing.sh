@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
 # Flow Rate Intelligence — Weekly Briefing Email
-# Fetches live rates from Supabase, builds HTML email, sends via Resend
-# Requires: SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY env vars
+# Fetches live rates from the brain MLN intelligence endpoint, builds HTML email,
+# sends via Resend.
+# Requires: RESEND_API_KEY env var
+#
+# SOURCE OF TRUTH (2026-08-17): every rate in this email comes from
+# jkeuj/functions/v1/mln-intelligence.
+#   - Flow's own displayed rates  = comparison[].flow_spotlight (brain market_rates,
+#     written by /rate-update from Alex's broker sheet)
+#   - best-of-market comparison   = MLN best insured/uninsured
+# Until 2026-08-17 section 1 read market_rates on the DEAD Lovable project
+# dotglplhsdsmrbacmtrx, which froze on 2026-04-13 and mailed the team a 3.10%
+# 5yr fixed sourced "WOWA.ca" for four months (real displayed 5yr: 4.79). That
+# project is not in Alex's org, returned HTTP 200 forever, and WOWA is a banned
+# source. Do not reintroduce it.
+#
+# This script now FAILS LOUDLY. A briefing that cannot verify its rates sends
+# nothing, because a silent fallback is what hid the bug for four months.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SUPABASE_URL="https://dotglplhsdsmrbacmtrx.supabase.co"
-SERVICE_KEY="${SUPABASE_SERVICE_ROLE_KEY:?SUPABASE_SERVICE_ROLE_KEY required}"
+INTEL_URL="${INTEL_URL:-https://jkeujqzlclrxhwamplby.supabase.co/functions/v1/mln-intelligence}"
+MAX_RATE_AGE_DAYS=21
 RESEND_KEY="${RESEND_API_KEY:?RESEND_API_KEY required}"
 DATA_FILE="$SCRIPT_DIR/rate-intel-data.json"
 TEMPLATE_FILE="$SCRIPT_DIR/rate-briefing-template.html"
@@ -18,28 +33,53 @@ BRIEFING_TIME=$(TZ="America/Toronto" date +"%-I:%M %p")
 echo "=== Flow Rate Intelligence Briefing ==="
 echo "Date: $BRIEFING_DATE $BRIEFING_TIME ET"
 
-# ── 1. Fetch live rates from Supabase ──
-echo ""
-echo "Fetching rates from Supabase..."
-RATES_JSON=$(curl -sf \
-  "$SUPABASE_URL/rest/v1/market_rates?rate_type=eq.uninsured&select=term_key,rate,source,updated_at" \
-  -H "apikey: $SERVICE_KEY" \
-  -H "Authorization: Bearer $SERVICE_KEY")
+die() { echo "ABORT: $*" >&2; echo "No briefing sent." >&2; exit 1; }
 
-# Parse individual rates
-RATE_1YR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="1yr_fixed") | .rate')
-RATE_2YR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="2yr_fixed") | .rate')
-RATE_3YR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="3yr_fixed") | .rate')
-RATE_4YR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="4yr_fixed") | .rate')
-RATE_5YR_FIXED=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="5yr_fixed") | .rate')
-RATE_5YR_VAR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="5yr_variable") | .rate')
-RATE_10YR=$(echo "$RATES_JSON" | jq -r '.[] | select(.term_key=="10yr_fixed") | .rate // "4.99"')
-RATE_SOURCE=$(echo "$RATES_JSON" | jq -r '.[0].source // "WOWA.ca Best Uninsured Rates"')
-RATE_UPDATED=$(echo "$RATES_JSON" | jq -r '[.[].updated_at] | max | split("T")[0] // "today"')
+# ── 1. Fetch live rates from the brain intelligence endpoint ──
+echo ""
+echo "Fetching rates from mln-intelligence..."
+MLN_JSON=$(curl -sf -m 20 "$INTEL_URL") \
+  || die "mln-intelligence unreachable. The team gets no rate table rather than a stale one."
+
+echo "$MLN_JSON" | jq -e '.comparison' >/dev/null 2>&1 \
+  || die "mln-intelligence returned no comparison block."
+
+# Flow's own DISPLAYED rate per term (broker sheet via /rate-update), not market best.
+flow_rate() {
+  echo "$MLN_JSON" | jq -r --arg t "$1" \
+    '(.comparison[] | select(.term==$t) | .flow_spotlight) // empty'
+}
+
+RATE_1YR=$(flow_rate "1")
+RATE_2YR=$(flow_rate "2")
+RATE_3YR=$(flow_rate "3")
+RATE_4YR=$(flow_rate "4")
+RATE_5YR_FIXED=$(flow_rate "5")
+RATE_5YR_VAR=$(flow_rate "var")
+RATE_10YR=$(flow_rate "10")
+
+# Every term must be present and plausible. No defaults, no last-known-good.
+for pair in "1yr:$RATE_1YR" "2yr:$RATE_2YR" "3yr:$RATE_3YR" "4yr:$RATE_4YR" \
+            "5yr:$RATE_5YR_FIXED" "5yr_var:$RATE_5YR_VAR" "10yr:$RATE_10YR"; do
+  label="${pair%%:*}"; value="${pair#*:}"
+  [ -n "$value" ] || die "no Flow displayed rate for $label."
+  awk -v v="$value" 'BEGIN{exit !(v+0 >= 0.5 && v+0 <= 15)}' \
+    || die "implausible $label rate: $value"
+done
+
+RATE_SOURCE="Flow broker rate sheet (displayed)"
+RATE_UPDATED=$(echo "$MLN_JSON" | jq -r '.flow_updated_at // empty' | cut -dT -f1)
+[ -n "$RATE_UPDATED" ] || die "mln-intelligence returned no flow_updated_at stamp."
+
+# Staleness gate. A frozen broker sheet is exactly the failure this replaces.
+RATE_AGE_DAYS=$(( ( $(date -u +%s) - $(date -u -d "$RATE_UPDATED" +%s 2>/dev/null \
+                    || date -u -j -f "%Y-%m-%d" "$RATE_UPDATED" +%s) ) / 86400 ))
+[ "$RATE_AGE_DAYS" -le "$MAX_RATE_AGE_DAYS" ] \
+  || die "Flow rates are ${RATE_AGE_DAYS}d old (limit ${MAX_RATE_AGE_DAYS}d). Run /rate-update."
 
 echo "  1yr: $RATE_1YR | 2yr: $RATE_2YR | 3yr: $RATE_3YR"
 echo "  4yr: $RATE_4YR | 5yr fixed: $RATE_5YR_FIXED | 5yr var: $RATE_5YR_VAR"
-echo "  10yr: $RATE_10YR | Source: $RATE_SOURCE"
+echo "  10yr: $RATE_10YR | Source: $RATE_SOURCE (${RATE_AGE_DAYS}d old)"
 
 # ── 2. Calculate program rates ──
 # Insured = uninsured - 0.10, Insurable = uninsured - 0.05
@@ -51,15 +91,16 @@ RATE_INSURABLE=$(echo "$RATE_5YR_FIXED + $INSURABLE_ADJ" | bc)
 echo "  Insured 5yr: $RATE_INSURED | Insurable 5yr: $RATE_INSURABLE"
 
 # ── 2b. MLN market intelligence: Flow vs best-of-market + bond/news ──
-# Live from the brain intelligence endpoint (public). Graceful: if MLN is
-# unavailable the two sections stay empty and the briefing still sends.
+# Same MLN_JSON already fetched and validated in section 1 — one call, one source.
 echo ""
-echo "Fetching MLN market intelligence..."
-MLN_JSON=$(curl -sf -m 15 "https://jkeujqzlclrxhwamplby.supabase.co/functions/v1/mln-intelligence" || echo "")
+echo "Building market position from MLN..."
 MARKET_POSITION=""
 RATE_NEWS=""
 
-if [ -n "$MLN_JSON" ] && echo "$MLN_JSON" | jq -e '.best.uninsured["5"]' >/dev/null 2>&1; then
+echo "$MLN_JSON" | jq -e '.best.uninsured["5"]' >/dev/null 2>&1 \
+  || die "mln-intelligence returned no best-of-market 5yr."
+
+if true; then
   MLN_LENDERS=$(echo "$MLN_JSON" | jq -r '.lender_count // "—"')
   echo "  MLN best 5yr: $(echo "$MLN_JSON" | jq -r '.best.uninsured["5"]') | lenders: $MLN_LENDERS"
 
@@ -130,8 +171,6 @@ if [ -n "$MLN_JSON" ] && echo "$MLN_JSON" | jq -e '.best.uninsured["5"]' >/dev/n
     </td>
     </tr>"
   fi
-else
-  echo "  MLN unavailable — briefing sends without market-position/news sections."
 fi
 
 # ── 3. Build lender rows ──
@@ -247,6 +286,7 @@ else
   SUBJECT_PREFIX=""
 fi
 RECIPIENT_COUNT=$(echo "$RECIPIENTS_JSON" | jq 'length')
+SEND_FAILURES=0
 
 for i in $(seq 0 $((RECIPIENT_COUNT - 1))); do
   TO_EMAIL=$(echo "$RECIPIENTS_JSON" | jq -r ".[$i].email")
@@ -277,8 +317,13 @@ for i in $(seq 0 $((RECIPIENT_COUNT - 1))); do
   else
     echo "  [FAIL] HTTP $HTTP_CODE"
     echo "  Response: $BODY"
+    SEND_FAILURES=$((SEND_FAILURES + 1))
   fi
 done
 
 echo ""
-echo "=== Rate briefing complete ==="
+if [ "$SEND_FAILURES" -gt 0 ]; then
+  echo "=== Rate briefing FAILED for $SEND_FAILURES of $RECIPIENT_COUNT recipients ==="
+  exit 1
+fi
+echo "=== Rate briefing complete — $RECIPIENT_COUNT sent ==="
