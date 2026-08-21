@@ -1000,6 +1000,201 @@
         "bond_5yr": "2026-07-27",
         "bond_10yr": "2026-07-27"
       }
+    },
+    {
+      "date": "2026-08-05",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.84,
+      "bond_5yr": 3.16,
+      "bond_10yr": 3.53,
+      "dates": {
+        "boc_overnight": "2026-07-29",
+        "bond_2yr": "2026-07-28",
+        "bond_5yr": "2026-07-28",
+        "bond_10yr": "2026-07-28"
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.85,
+      "bond_5yr": 3.19,
+      "bond_10yr": 3.59,
+      "dates": {
+        "boc_overnight": "2026-07-31",
+        "bond_2yr": "2026-07-30",
+        "bond_5yr": "2026-07-30",
+        "bond_10yr": "2026-07-30"
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.85,
+      "bond_5yr": 3.19,
+      "bond_10yr": 3.59,
+      "dates": {
+        "boc_overnight": "2026-07-31",
+        "bond_2yr": "2026-07-30",
+        "bond_5yr": "2026-07-30",
+        "bond_10yr": "2026-07-30"
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.85,
+      "bond_5yr": 3.19,
+      "bond_10yr": 3.59,
+      "dates": {
+        "boc_overnight": "2026-07-31",
+        "bond_2yr": "2026-07-30",
+        "bond_5yr": "2026-07-30",
+        "bond_10yr": "2026-07-30"
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.91,
+      "bond_5yr": 3.27,
+      "bond_10yr": 3.65,
+      "dates": {
+        "boc_overnight": "2026-08-03",
+        "bond_2yr": "2026-07-31",
+        "bond_5yr": "2026-07-31",
+        "bond_10yr": "2026-07-31"
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.83,
+      "bond_5yr": 3.17,
+      "bond_10yr": 3.55,
+      "dates": {
+        "boc_overnight": "2026-08-04",
+        "bond_2yr": "2026-08-04",
+        "bond_5yr": "2026-08-04",
+        "bond_10yr": "2026-08-04"
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.82,
+      "bond_5yr": 3.17,
+      "bond_10yr": 3.55,
+      "dates": {
+        "boc_overnight": "2026-08-05",
+        "bond_2yr": "2026-08-05",
+        "bond_5yr": "2026-08-05",
+        "bond_10yr": "2026-08-05"
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.92,
+      "bond_5yr": 3.22,
+      "bond_10yr": 3.61,
+      "dates": {
+        "boc_overnight": "2026-08-06",
+        "bond_2yr": "2026-08-06",
+        "bond_5yr": "2026-08-06",
+        "bond_10yr": "2026-08-06"
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.96,
+      "bond_5yr": 3.26,
+      "bond_10yr": 3.64,
+      "dates": {
+        "boc_overnight": "2026-08-07",
+        "bond_2yr": "2026-08-07",
+        "bond_5yr": "2026-08-07",
+        "bond_10yr": "2026-08-07"
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.96,
+      "bond_5yr": 3.26,
+      "bond_10yr": 3.64,
+      "dates": {
+        "boc_overnight": "2026-08-07",
+        "bond_2yr": "2026-08-07",
+        "bond_5yr": "2026-08-07",
+        "bond_10yr": "2026-08-07"
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.96,
+      "bond_5yr": 3.26,
+      "bond_10yr": 3.64,
+      "dates": {
+        "boc_overnight": "2026-08-07",
+        "bond_2yr": "2026-08-07",
+        "bond_5yr": "2026-08-07",
+        "bond_10yr": "2026-08-07"
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "boc_overnight": 2.25,
+      "bond_2yr": 3.02,
+      "bond_5yr": 3.34,
+      "bond_10yr": 3.72,
+      "dates": {
+        "boc_overnight": "2026-08-10",
+        "bond_2yr": "2026-08-10",
+        "bond_5yr": "2026-08-10",
+        "bond_10yr": "2026-08-10"
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "boc_overnight": 2.25,
+      "bond_2yr": 3.01,
+      "bond_5yr": 3.32,
+      "bond_10yr": 3.7,
+      "dates": {
+        "boc_overnight": "2026-08-11",
+        "bond_2yr": "2026-08-11",
+        "bond_5yr": "2026-08-11",
+        "bond_10yr": "2026-08-11"
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.98,
+      "bond_5yr": 3.3,
+      "bond_10yr": 3.69,
+      "dates": {
+        "boc_overnight": "2026-08-12",
+        "bond_2yr": "2026-08-12",
+        "bond_5yr": "2026-08-12",
+        "bond_10yr": "2026-08-12"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "boc_overnight": 2.25,
+      "bond_2yr": 2.92,
+      "bond_5yr": 3.23,
+      "bond_10yr": 3.62,
+      "dates": {
+        "boc_overnight": "2026-08-13",
+        "bond_2yr": "2026-08-13",
+        "bond_5yr": "2026-08-13",
+        "bond_10yr": "2026-08-13"
+      }
     }
   ]
 }
