@@ -121,7 +121,24 @@ echo "CORRA futures contracts found: $FUTURES_COUNT"
 echo ""
 echo "--- Fetching current mortgage rates from Central Rate Hub ---"
 CENTRAL_HUB_URL="https://transcript-processor-vxwqplu37q-uc.a.run.app/rates"
-HUB_RAW=$(curl -sf "$CENTRAL_HUB_URL" 2>/dev/null || echo "")
+
+# 2026-08-23: this was a single `curl -sf` with no retry. The hub is a
+# scale-to-zero Cloud Run service that also runs the transcript scanners, so a
+# cold start or a saturated instance returns nothing, current_rates comes back
+# empty, and the sanity check below reports "missing_all=True" as though the
+# upstream scraper had died. It had not. The fallback picked last-known-good and
+# the published rates stayed correct, but it emailed Alex about it every day.
+# Five attempts across roughly two minutes covers a cold start.
+HUB_RAW=""
+for _hub_try in 1 2 3 4 5; do
+  HUB_RAW=$(curl -sf --max-time 30 "$CENTRAL_HUB_URL" 2>/dev/null || echo "")
+  if [ -n "$HUB_RAW" ]; then
+    [ "$_hub_try" -gt 1 ] && echo "Central hub answered on attempt $_hub_try"
+    break
+  fi
+  echo "Central hub attempt $_hub_try returned nothing, retrying in 20s"
+  sleep 20
+done
 
 if [ -n "$HUB_RAW" ]; then
   CURRENT_RATES=$(echo "$HUB_RAW" | python3 -c "
@@ -234,7 +251,11 @@ missing_all = not any(k in current_rates for k in CURRENT_KEYS)
 
 if bad or missing_all:
     rates_stale = True
-    stale_reason = f"upstream scraper failed sanity check: bad={bad} missing_all={missing_all} floor={RATE_FLOOR}"
+    # Name the two causes separately. "missing_all" means we could not read the
+    # hub at all, which is a fetch problem, not a scraper producing garbage.
+    _cause = ("could not read the central rate hub after 5 attempts"
+              if missing_all else f"rates below the {RATE_FLOOR} floor: {bad}")
+    stale_reason = f"{_cause} (bad={bad} missing_all={missing_all} floor={RATE_FLOOR})"
     print(f"WARN: {stale_reason}")
     last_uninsured, last_insured = load_last_good()
     if last_uninsured:
