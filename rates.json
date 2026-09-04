@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-03",
+  "updated": "2026-09-04",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -12,8 +12,8 @@
   "bocRate": 2.25,
   "bondYields": {
     "2yr": 3.01,
-    "5yr": 3.33,
-    "10yr": 3.73
+    "5yr": 3.35,
+    "10yr": 3.75
   },
   "uninsured": {
     "1yr_fixed": 5.44,
@@ -69,73 +69,73 @@
       },
       {
         "date": "2027-02",
-        "prime": 5.03,
-        "boc": 2.83
+        "prime": 5.02,
+        "boc": 2.82
       },
       {
         "date": "2027-03",
-        "prime": 5.14,
-        "boc": 2.94
+        "prime": 5.12,
+        "boc": 2.92
       },
       {
         "date": "2027-04",
-        "prime": 5.2,
-        "boc": 3.0
+        "prime": 5.19,
+        "boc": 2.99
       },
       {
         "date": "2027-05",
-        "prime": 5.27,
-        "boc": 3.07
+        "prime": 5.26,
+        "boc": 3.06
       },
       {
         "date": "2027-06",
-        "prime": 5.33,
-        "boc": 3.13
+        "prime": 5.32,
+        "boc": 3.12
       },
       {
         "date": "2027-07",
-        "prime": 5.37,
-        "boc": 3.17
+        "prime": 5.36,
+        "boc": 3.16
       },
       {
         "date": "2027-08",
-        "prime": 5.41,
-        "boc": 3.21
+        "prime": 5.4,
+        "boc": 3.2
       },
       {
         "date": "2027-09",
-        "prime": 5.45,
-        "boc": 3.25
+        "prime": 5.44,
+        "boc": 3.24
       },
       {
         "date": "2027-10",
-        "prime": 5.48,
-        "boc": 3.28
+        "prime": 5.46,
+        "boc": 3.26
       },
       {
         "date": "2027-11",
-        "prime": 5.5,
-        "boc": 3.3
+        "prime": 5.49,
+        "boc": 3.29
       },
       {
         "date": "2027-12",
+        "prime": 5.51,
+        "boc": 3.31
+      },
+      {
+        "date": "2028-01",
         "prime": 5.53,
         "boc": 3.33
       },
       {
-        "date": "2028-01",
-        "prime": 5.54,
-        "boc": 3.34
-      },
-      {
         "date": "2028-02",
-        "prime": 5.56,
-        "boc": 3.36
+        "prime": 5.55,
+        "boc": 3.35
       },
       {
         "date": "2028-03",
-        "prime": 5.58,
-        "boc": 3.38
+        "prime": 5.57,
+        "boc": 3.37
       },
       {
         "date": "2028-04",
@@ -144,8 +144,8 @@
       },
       {
         "date": "2028-05",
-        "prime": 5.6,
-        "boc": 3.4
+        "prime": 5.59,
+        "boc": 3.39
       },
       {
         "date": "2028-06",
@@ -184,8 +184,8 @@
       },
       {
         "date": "2029-01",
-        "prime": 5.64,
-        "boc": 3.44
+        "prime": 5.65,
+        "boc": 3.45
       },
       {
         "date": "2029-02",
@@ -375,7 +375,7 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-09-03. Base = CORRA futures (3.46% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
+  "notes": "Auto-generated 2026-09-04. Base = CORRA futures (3.46% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
   "rates_stale": false,
   "stale_reason": null
 }
