@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-15",
+  "updated": "2026-09-16",
   "source": "Live data: BoC Valet API, Montreal Exchange CORRA Futures, Flow weekly research",
   "data_sources": {
     "boc_rate": "Bank of Canada Valet API (V39079)",
@@ -11,9 +11,9 @@
   "prime": 4.45,
   "bocRate": 2.25,
   "bondYields": {
-    "2yr": 3.31,
-    "5yr": 3.63,
-    "10yr": 3.94
+    "2yr": 3.35,
+    "5yr": 3.65,
+    "10yr": 3.95
   },
   "uninsured": {
     "1yr_fixed": 5.44,
@@ -49,103 +49,103 @@
       },
       {
         "date": "2026-10",
-        "prime": 4.64,
-        "boc": 2.44
+        "prime": 4.63,
+        "boc": 2.43
       },
       {
         "date": "2026-11",
-        "prime": 4.83,
-        "boc": 2.63
+        "prime": 4.81,
+        "boc": 2.61
       },
       {
         "date": "2026-12",
-        "prime": 5.01,
-        "boc": 2.81
+        "prime": 4.99,
+        "boc": 2.79
       },
       {
         "date": "2027-01",
-        "prime": 5.15,
-        "boc": 2.95
+        "prime": 5.11,
+        "boc": 2.91
       },
       {
         "date": "2027-02",
-        "prime": 5.28,
-        "boc": 3.08
+        "prime": 5.24,
+        "boc": 3.04
       },
       {
         "date": "2027-03",
-        "prime": 5.41,
-        "boc": 3.21
+        "prime": 5.37,
+        "boc": 3.17
       },
       {
         "date": "2027-04",
-        "prime": 5.49,
-        "boc": 3.29
+        "prime": 5.45,
+        "boc": 3.25
       },
       {
         "date": "2027-05",
-        "prime": 5.57,
-        "boc": 3.37
+        "prime": 5.53,
+        "boc": 3.33
       },
       {
         "date": "2027-06",
-        "prime": 5.64,
-        "boc": 3.44
+        "prime": 5.6,
+        "boc": 3.4
       },
       {
         "date": "2027-07",
-        "prime": 5.69,
-        "boc": 3.49
+        "prime": 5.65,
+        "boc": 3.45
       },
       {
         "date": "2027-08",
-        "prime": 5.74,
-        "boc": 3.54
+        "prime": 5.7,
+        "boc": 3.5
       },
       {
         "date": "2027-09",
+        "prime": 5.75,
+        "boc": 3.55
+      },
+      {
+        "date": "2027-10",
         "prime": 5.78,
         "boc": 3.58
       },
       {
-        "date": "2027-10",
+        "date": "2027-11",
         "prime": 5.8,
         "boc": 3.6
       },
       {
-        "date": "2027-11",
+        "date": "2027-12",
         "prime": 5.83,
         "boc": 3.63
       },
       {
-        "date": "2027-12",
-        "prime": 5.85,
-        "boc": 3.65
+        "date": "2028-01",
+        "prime": 5.84,
+        "boc": 3.64
       },
       {
-        "date": "2028-01",
+        "date": "2028-02",
         "prime": 5.86,
         "boc": 3.66
       },
       {
-        "date": "2028-02",
+        "date": "2028-03",
         "prime": 5.87,
         "boc": 3.67
       },
       {
-        "date": "2028-03",
-        "prime": 5.88,
-        "boc": 3.68
-      },
-      {
         "date": "2028-04",
-        "prime": 5.88,
-        "boc": 3.68
+        "prime": 5.87,
+        "boc": 3.67
       },
       {
         "date": "2028-05",
-        "prime": 5.89,
-        "boc": 3.69
+        "prime": 5.88,
+        "boc": 3.68
       },
       {
         "date": "2028-06",
@@ -174,13 +174,13 @@
       },
       {
         "date": "2028-11",
-        "prime": 5.88,
-        "boc": 3.68
+        "prime": 5.89,
+        "boc": 3.69
       },
       {
         "date": "2028-12",
-        "prime": 5.88,
-        "boc": 3.68
+        "prime": 5.89,
+        "boc": 3.69
       },
       {
         "date": "2029-01",
@@ -375,7 +375,7 @@
     "defaultMortgageAmount": 400000,
     "defaultAmortization": 25
   },
-  "notes": "Auto-generated 2026-09-15. Base = CORRA futures (3.67% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
+  "notes": "Auto-generated 2026-09-16. Base = CORRA futures (3.67% terminal). Bull = TD/BMO dovish hold. Bear = RBC/Scotiabank hawkish (3.5% terminal). Forward curve uses step function at BoC meeting months.",
   "rates_stale": false,
   "stale_reason": null
 }
