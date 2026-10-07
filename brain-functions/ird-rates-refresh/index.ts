@@ -75,14 +75,13 @@ const FETCHERS: Record<string, () => Promise<Row[]>> = {
   },
 
   async BMO() {
-    const url = "https://www.bmo.com/public-data/api/epm/v1.0/bmo-epm-mortgage.json";
-    // BMO's CDN resets HTTP/2 streams from the edge runtime; HTTP/1.1 gets through.
-    const client = (Deno as any).createHttpClient?.({ http2: false, http1: true });
-    const d = await (await get(url, client ? ({ client } as RequestInit) : {})).json(); // usually times out
-    const f = d?.mortgageRates?.fixed || {};
-    const by: Record<string, unknown> = {};
-    for (const t of ["1", "2", "3", "4", "5"]) by[t] = f[`${t}YearClosed`]?.value;
-    return bankRows("BMO", url, by);
+    // BMO's CDN drops non-browser TLS handshakes, so the edge runtime cannot
+    // reach it directly. The bmo-posted-rates Cloud Function fetches it with a
+    // Chrome handshake and passes the posted rates through unchanged.
+    const relay = "https://bmo-posted-rates-vxwqplu37q-uc.a.run.app";
+    const d = await (await get(relay)).json();
+    if (d?.error) throw new Error(`BMO relay: ${d.error}`);
+    return bankRows("BMO", d.source_url || "https://www.bmo.com/en-ca/main/personal/mortgages/mortgage-rates/", d?.posted || {});
   },
 
   async CIBC() {
@@ -175,9 +174,7 @@ Deno.serve(async () => {
   );
 
   const good = results.flatMap((r) => r.rows ?? []);
-  // Stored too, so ird_rates_heartbeat() can compare BMO against it: BMO's CDN
-  // refuses every non-browser client, so its row is hand-verified and this is
-  // the tripwire that says when it needs re-checking.
+  // Stored as a cross-check: the BoC typical posted rate is the Big 6 mode.
   if (typical) {
     for (const [term, rate] of Object.entries(typical)) {
       good.push({ source: "BOC_TYPICAL", term, rate, source_url: "https://www.bankofcanada.ca/valet/observations/V80691333,V80691334,V80691335/json" });
@@ -212,8 +209,7 @@ Deno.serve(async () => {
   }
 
   const failed = Object.fromEntries(results.filter((r) => r.error).map((r) => [r.source, r.error]));
-  // BMO failing is expected (see above), so it does not fail the run on its own.
-  const hardFailures = Object.keys(failed).filter((s) => s !== "BMO");
+  const hardFailures = Object.keys(failed);
   if (!typical) hardFailures.push("BOC_TYPICAL");
   return Response.json(
     {
