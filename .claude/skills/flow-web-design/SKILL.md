@@ -24,6 +24,17 @@ Own one idea and keep everything else plain. The winners Alex named each own a s
 
 Round 1 concepts (2026-11-14): "The flow line" (one SVG water line drawn from the logo wave, Figtree) and "Real people" (Alex, the team and real reviews, Atkinson Hyperlegible). Recommended: merge, with the people as the body and the line as the single signature. Reskinning the current template (audit Option B) is dropped.
 
+Round 2 (2026-11-14), Alex: "1 is ok but the waves are not integrated well ... we need to sound and feel more human though but progressive". Current direction, "the waterline":
+
+- The wave is the edge between sections (deep water above, the next section below), never a stroke laid over content. Steps sit on that edge.
+- One hand-drawn wave reused at small scale: under the key word of the headline, as list markers. Long section lines stay clean vector (a texture filter breaks them).
+- Human: Alex's photo large in the hero; real client questions from `ops_content_extracts` (no names, shortened, Alex OK needed for public use); real reviews.
+- Type: Figtree for everything Flow says; Source Serif 4 only for real people's words and small labels. Never a serif headline (Jul 17 rejected serif display).
+- Progressive: pill buttons, a call button beside the main CTA, a visible "Pause motion" control, motion off under reduced-motion.
+- From Wealthsimple, take: serif for human moments, plain copy with a wink, one physical object per section, small hand-drawn sketches, a pause control. Leave: rate-led messaging, posted rates in big type, autoplay video walls, the light cream base.
+
+Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
+
 ## 1. Read first
 
 Live sources override this file. Query them at the start of every run.
