@@ -6,7 +6,23 @@ description: Audit, redesign or visually improve any Flow Mortgage Co. website (
 # Flow web design
 
 Use this before touching how any Flow site looks or reads.
-Built 2026-11-14 from the first visual audit (Drive: FLOW - Mothership / FLOW / MARKETING / 2026-11-14 Website Visual Audit).
+Built 2026-11-14 from the first visual audit (Drive: FLOW - Mothership / FLOW / MARKETING / 2026-11-14 Website Visual Audit) and the first concepts (same path, 2026-11-14 Website Concepts Round 1).
+
+## 0. The goal (Alex, 2026-11-14)
+
+"The goal is to build the non ai looking, unique, fast and functional site that represent who we are and stays unique to us"
+
+Score every page decision on these five tests, in order:
+
+1. Made by a person, for Flow. No template cards, glow, gradient blobs or stock icons in rounded squares.
+2. Only Flow could use it. Alex's face, the team, clients' own words, the water idea behind the name, Alex's voice.
+3. Fast. Phone LCP under 2.5 s (baseline 5.2 to 6.0 s on 2026-11-14).
+4. Works. One clear next step on every screen, phone first, no gate in front of a tool result.
+5. Still ours in a year. Nothing borrowed from a trend.
+
+Own one idea and keep everything else plain. The winners Alex named each own a single idea (Mercury: one photo world with a river; Stripe: one colour wave and a live number; Family: drawn characters). Nav, buttons and forms stay boring and fast.
+
+Round 1 concepts (2026-11-14): "The flow line" (one SVG water line drawn from the logo wave, Figtree) and "Real people" (Alex, the team and real reviews, Atkinson Hyperlegible). Recommended: merge, with the people as the body and the line as the single signature. Reskinning the current template (audit Option B) is dropped.
 
 ## 1. Read first
 
