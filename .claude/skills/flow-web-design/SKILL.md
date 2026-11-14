@@ -120,7 +120,15 @@ Verdicts are against section 3. Licences read 2026-11-13.
 
 Never copy a design from a gallery. Use galleries to pick patterns, then build Flow's own version.
 
-## 7. Output
+## 7. Video (VSLs)
+
+- The plan is Drive MARKETING / 2026-11-06 Hormozi VSL Build / "Flow Journey VSLs - 12 Points Ranked": one job and one next step per video, 4:5 vertical, captions burned in. Read it before proposing any video.
+- Slots are live on www (flow-mortgage-hub PR #112). Videos sit in the brain storage bucket `journey-videos`; `manifest.json` lists live slots. On 2026-11-14 it was empty and every stored clip was a 62 KB test file. Check the manifest before saying a video is live.
+- Never put a video in front of a result or a download. Beside or after.
+- Speed: load the poster only, fetch the video on tap, no autoplay, `preload="none"`. A video must not move phone LCP.
+- In the waterline design the homepage video takes the hero photo slot.
+
+## 8. Output
 
 - Findings and options to Alex as a PDF in FLOW - Mothership / FLOW / MARKETING / `<date> <name>`. Never .md files to Alex.
 - Short lines, the decision in bold, numbers with every finding.
