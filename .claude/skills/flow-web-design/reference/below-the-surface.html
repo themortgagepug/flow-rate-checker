@@ -1,0 +1,492 @@
+<!doctype html>
+<!-- Reference prototype, round 3 (2026-11-14). Images are not in the repo: img/logo.png, img/alex-story.webp, img/alex-cut.webp live in Drive MARKETING / 2026-11-14 Website Concepts (single-file prototype). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flow Mortgage Co. | Below the surface (concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@75..125,300..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #eaf6f8; --muted: #9fbfc8; --aqua: #8fe9e2; --turq: #22c3cf; --deep: #01080f;
+    --glass: #061826; --line: rgba(255,255,255,0.09);
+    --wide: "Mona Sans", system-ui, sans-serif; --serif: "Source Serif 4", Georgia, serif;
+    --surface: 58; /* waterline, % of hero height */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--deep); }
+  body { color: var(--ink); font-family: var(--wide); font-stretch: 100%; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  #sea { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
+  .grain { position: fixed; inset: -50%; z-index: 1; pointer-events: none; opacity: 0.07; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  main, nav, .gauge, .dock, .pause { position: relative; z-index: 2; }
+
+  /* glass nav */
+  nav.top { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100vw - 32px)); height: 58px; z-index: 20;
+    display: flex; align-items: center; gap: 28px; padding: 0 10px 0 18px; border-radius: 999px;
+    background: var(--glass); border: 1px solid rgba(143,233,226,0.14); box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+  .brand { display: flex; align-items: center; gap: 9px; font-stretch: 118%; font-weight: 700; font-size: 17px; letter-spacing: -0.2px; }
+  .brand img { width: 26px; height: 26px; }
+  nav.top .links { display: flex; gap: 24px; font-size: 14.5px; color: var(--muted); font-weight: 500; }
+  nav.top .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 14.5px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--aqua); color: #04131c; font-weight: 650; font-stretch: 108%; padding: 12px 20px; border-radius: 999px; font-size: 15.5px; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid rgba(234,246,248,0.28); }
+  .btn svg { width: 16px; height: 16px; }
+  .menu { display: none; }
+
+  /* hero */
+  .hero { position: relative; height: max(100svh, 760px); }
+  .chip { position: absolute; left: max(32px, calc(50vw - 560px)); top: 108px; display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13.5px; font-weight: 550; color: var(--ink); padding: 8px 14px; border-radius: 999px; background: #061826; border: 1px solid rgba(143,233,226,0.18); }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 0 0 rgba(143,233,226,0.6); animation: pulse 2.4s infinite; }
+  .chip span { color: var(--muted); font-weight: 450; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(143,233,226,0.55); } 70% { box-shadow: 0 0 0 10px rgba(143,233,226,0); } 100% { box-shadow: 0 0 0 0 rgba(143,233,226,0); } }
+
+  .headline { position: absolute; left: max(32px, calc(50vw - 560px)); width: min(820px, calc(100vw - 64px)); }
+  .headline h1 { font-stretch: 122%; font-weight: 640; font-size: clamp(54px, 7.4vw, 112px); line-height: 0.93; letter-spacing: -0.045em; }
+  .headline .above { position: relative; color: #f1fbfc; }
+  .headline .below { position: absolute; inset: 0; color: #86e6df; opacity: 0.95; filter: url(#refract); transform: translateY(2px); }
+
+  .under { position: absolute; left: max(32px, calc(50vw - 560px)); width: min(560px, calc(100vw - 64px)); }
+  .under p { font-size: 19px; line-height: 1.55; color: #cfe7ec; }
+  .under .cta { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+  .under .proof { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 24px; font-size: 13.5px; color: var(--muted); }
+  .under .proof b { color: var(--ink); font-weight: 600; }
+  .cue { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); font-size: 12.5px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .cue i { width: 1px; height: 34px; background: linear-gradient(var(--aqua), transparent); animation: drip 2.2s infinite; }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  /* story card floating on the surface */
+  .story { position: absolute; right: max(32px, calc(50vw - 590px)); width: 228px; aspect-ratio: 9 / 16; border-radius: 26px; overflow: hidden; cursor: pointer;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.12); transition: transform 0.4s cubic-bezier(.2,.8,.2,1); }
+  .story:hover { transform: translateY(-6px) rotate(-0.6deg); }
+  .story img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story .bars { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; }
+  .story .bars i { flex: 1; height: 2.5px; border-radius: 2px; background: rgba(255,255,255,0.3); overflow: hidden; }
+  .story .bars i:first-child::after { content: ""; display: block; height: 100%; width: 38%; background: #fff; }
+  .story .who { position: absolute; top: 22px; left: 12px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; }
+  .story .who img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--aqua); }
+  .story .who span { color: rgba(255,255,255,0.75); font-weight: 450; }
+  .story .cap { position: absolute; left: 14px; right: 14px; bottom: 16px; font-size: 18px; font-stretch: 112%; font-weight: 650; line-height: 1.12; letter-spacing: -0.01em; }
+  .story .cap small { display: block; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); margin-top: 6px; font-stretch: 100%; letter-spacing: 0; }
+  .story .play { position: absolute; right: 12px; top: 50%; margin-top: -20px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.16); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.25); }
+  .story .play::after { content: ""; position: absolute; left: 15px; top: 12px; border-left: 13px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+  .reflection { position: absolute; right: max(32px, calc(50vw - 590px)); width: 228px; aspect-ratio: 9 / 16; border-radius: 26px; overflow: hidden; pointer-events: none;
+    transform: scaleY(-1); opacity: 0.32; filter: url(#refract) blur(1.2px);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 55%); mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 55%); }
+  .reflection img { width: 100%; height: 100%; object-fit: cover; }
+  .ring { display: none; }
+
+  /* depth gauge */
+  .gauge { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 15; display: flex; flex-direction: column; gap: 22px; padding-left: 16px; }
+  .gauge::before { content: ""; position: absolute; left: 3px; top: 4px; bottom: 4px; width: 1px; background: rgba(255,255,255,0.14); }
+  .gauge a { position: relative; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.38); font-weight: 600; transition: color .3s; }
+  .gauge a::before { content: ""; position: absolute; left: -16px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: #0b2433; border: 1px solid rgba(255,255,255,0.25); transition: all .3s; }
+  .gauge a.on { color: var(--ink); }
+  .gauge a.on::before { background: var(--aqua); border-color: var(--aqua); box-shadow: 0 0 0 4px rgba(143,233,226,0.15); }
+
+  /* depth layers */
+  .layer { position: relative; min-height: 72vh; display: flex; align-items: center; padding: 11vh 0; }
+  .layer .wrap { width: min(1120px, calc(100vw - 64px)); margin: 0 auto; display: grid; grid-template-columns: 220px 1fr; gap: 56px; align-items: start; }
+  .depth { font-stretch: 125%; font-weight: 300; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--aqua); padding-top: 14px; }
+  .depth b { display: block; font-weight: 640; font-size: 64px; letter-spacing: -0.04em; color: rgba(234,246,248,0.12); margin-top: 6px; line-height: 1; }
+  .layer h2 { font-stretch: 118%; font-weight: 620; font-size: clamp(30px, 3.4vw, 46px); letter-spacing: -0.03em; line-height: 1.02; }
+  .layer q { display: block; font-family: var(--serif); font-size: clamp(26px, 2.6vw, 38px); line-height: 1.3; margin-top: 26px; color: #f3fbfc; quotes: none; max-width: 760px; }
+  .layer .src { margin-top: 12px; font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .layer .src .count { display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px; border-radius: 999px; background: rgba(143,233,226,0.08); border: 1px solid rgba(143,233,226,0.2); color: var(--aqua); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .layer p.body { margin-top: 26px; font-size: 19px; line-height: 1.6; color: #c9e1e7; max-width: 620px; }
+  .layer .go { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; font-weight: 620; font-stretch: 108%; color: var(--aqua); font-size: 16px; border-bottom: 1px solid rgba(143,233,226,0.35); padding-bottom: 3px; }
+  .bar { margin-top: 14px; width: min(420px, 100%); height: 4px; border-radius: 4px; background: rgba(143,233,226,0.12); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #22c3cf, #8fe9e2); border-radius: 4px; transition: width 1.4s cubic-bezier(.2,.8,.2,1) .3s; }
+  .in .bar i { width: var(--w); }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); }
+  .in .reveal { opacity: 1; transform: none; }
+  .in .reveal:nth-child(2) { transition-delay: .08s; } .in .reveal:nth-child(3) { transition-delay: .16s; } .in .reveal:nth-child(4) { transition-delay: .24s; } .in .reveal:nth-child(5) { transition-delay: .32s; }
+
+  /* seabed: the plan */
+  .plan .wrap { grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .plan h2 { font-size: clamp(38px, 4.6vw, 66px); }
+  .plan .body { max-width: 520px; }
+  .plan .cta { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .seabed { position: relative; min-height: 620px; }
+  .seabed .cut { position: absolute; right: -30px; bottom: 0; height: 600px; width: auto; opacity: 0.95;
+    -webkit-mask-image: linear-gradient(to bottom, #000 66%, transparent 97%), linear-gradient(to left, transparent 0, #000 16%); -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, #000 66%, transparent 97%), linear-gradient(to left, transparent 0, #000 16%); mask-composite: intersect; }
+  .bubbles { position: absolute; left: -10px; top: 30px; width: 54%; display: flex; flex-direction: column; gap: 16px; z-index: 2; }
+  .bubbles .bubble { animation: rise 9s ease-in-out infinite; }
+  .bubbles .bubble:nth-child(2) { animation-delay: -3s; } .bubbles .bubble:nth-child(3) { animation-delay: -6s; }
+  @keyframes rise { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+  .bubble { padding: 18px 20px; border-radius: 22px 22px 22px 6px; background: #071d2b; border: 1px solid rgba(143,233,226,0.12); font-family: var(--serif); font-size: 17.5px; line-height: 1.45; color: #e6f4f6; }
+  .bubble:nth-child(2) { margin-left: 44px; border-radius: 22px 22px 6px 22px; background: #0b2a36; }
+  .bubble .who { font-family: var(--wide); font-size: 12.5px; color: var(--muted); margin-top: 10px; font-weight: 500; }
+  .bubble .who b { color: var(--ink); font-weight: 650; }
+
+  footer { position: relative; z-index: 2; padding: 10vh 0 40px; }
+  footer .wrap { width: min(1120px, calc(100vw - 64px)); margin: 0 auto; }
+  footer .mark { font-stretch: 125%; font-weight: 700; font-size: clamp(90px, 19vw, 300px); letter-spacing: -0.06em; line-height: 0.8; color: rgba(234,246,248,0.06); }
+  footer .legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 26px; font-size: 13px; color: var(--muted); }
+
+  .pause { position: fixed; left: 22px; bottom: 22px; z-index: 15; display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; padding: 9px 13px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(143,233,226,0.14); }
+  .pause i { width: 8px; height: 10px; border-left: 2.5px solid var(--ink); border-right: 2.5px solid var(--ink); }
+  .pause.off i { width: 0; height: 0; border-left: 9px solid var(--ink); border-top: 5.5px solid transparent; border-bottom: 5.5px solid transparent; border-right: 0; }
+  .dock { display: none; }
+
+  /* story overlay */
+  .sheet { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(1,8,15,0.78); backdrop-filter: blur(16px); }
+  .sheet.open { display: flex; }
+  .sheet .story { position: relative; right: auto; width: min(380px, 86vw); cursor: default; }
+  .sheet .story .bars i:first-child::after { animation: fill 90s linear forwards; width: 0; }
+  @keyframes fill { to { width: 100%; } }
+  .sheet .note { position: absolute; top: 58px; left: 12px; right: 12px; font-size: 11.5px; color: #04131c; background: var(--aqua); padding: 6px 10px; border-radius: 10px; font-weight: 600; }
+  .sheet .x { position: absolute; top: 18px; right: 18px; width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid var(--line); font-size: 22px; line-height: 40px; text-align: center; }
+
+  @media (max-width: 760px) {
+    nav.top { height: 54px; padding: 0 8px 0 14px; gap: 10px; top: 10px; }
+    nav.top .links, nav.top .right .phone { display: none; }
+    .menu { display: inline-flex; font-size: 14px; font-weight: 600; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); }
+    nav.top .right .btn { display: none; }
+    .chip { top: 84px; left: 20px; font-size: 12.5px; }
+    .headline, .under { left: 20px; width: calc(100vw - 40px); }
+    .headline h1 { font-size: 13.4vw; font-stretch: 112%; }
+    .under p { font-size: 17px; }
+    .hero .story, .reflection { display: none; }
+    .ring { display: flex; align-items: center; gap: 12px; margin-top: 22px; font-size: 14px; }
+    .ring .av { width: 54px; height: 54px; border-radius: 50%; padding: 2.5px; background: conic-gradient(var(--aqua), #22c3cf, #0f8b8d, var(--aqua)); }
+    .ring .av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--deep); }
+    .ring b { display: block; font-weight: 650; }
+    .ring span { color: var(--muted); font-size: 13px; }
+    .under .cta .ghost { display: none; }
+    .cue { display: none; }
+    .gauge { display: none; }
+    .layer { min-height: auto; padding: 12vh 0; }
+    .layer .wrap { grid-template-columns: 1fr; gap: 10px; width: calc(100vw - 40px); }
+    .depth b { font-size: 40px; }
+    .plan .wrap { grid-template-columns: 1fr; gap: 40px; }
+    .seabed { min-height: 560px; }
+    .seabed .cut { height: 430px; right: -20px; opacity: 0.55; }
+    .bubbles { position: relative; width: 100%; top: 0; }
+    .bubble:nth-child(2) { margin-left: 22px; }
+    .pause { display: none; }
+    .dock { display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(143,233,226,0.16); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .dock .where { font-size: 12.5px; color: var(--muted); }
+    .dock .where b { color: var(--ink); font-weight: 650; display: block; font-size: 14px; }
+    .dock .btn { padding: 11px 16px; font-size: 14.5px; }
+    footer { padding-bottom: 110px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .chip i, .cue i, .bubbles .bubble { animation: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sea" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="refract" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.010 0.045" numOctaves="2" seed="3" result="t">
+      <animate attributeName="baseFrequency" dur="7s" values="0.010 0.045;0.013 0.06;0.010 0.045" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="t" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<nav class="top">
+  <a class="brand" href="#"><img src="img/logo.png" alt="">Flow</a>
+  <div class="links"><a href="#equity">Equity</a><a href="#tax">Self-employed</a><a>Investors</a><a>Buying</a><a href="#term">Renewing</a></div>
+  <div class="right"><a class="phone">604-262-3500</a><a class="btn">Find my strategy</a></div>
+  <a class="menu" style="margin-left:auto">Menu</a>
+</nav>
+
+<main>
+  <section class="hero" id="surface">
+    <div class="chip"><i></i>Next Bank of Canada decision: Dec 9 <span>6:45 AM PT</span></div>
+    <div class="headline" id="headline">
+      <h1 class="above" id="hAbove">Make your mortgage build your wealth.</h1>
+      <h1 class="below" id="hBelow" aria-hidden="true">Make your mortgage build your wealth.</h1>
+    </div>
+    <div class="story" id="storyCard" role="button" aria-label="Play: Alex on which path fits you, 1 minute 30">
+      <img src="img/alex-story.webp" alt="Alex McFadyen speaking">
+      <div class="bars"><i></i><i></i><i></i></div>
+      <div class="who"><img src="img/alex-story.webp" alt="">Alex <span>@themortgagepug</span></div>
+      <div class="cap">Which path fits you?<small>1:30, captions on</small></div>
+      <span class="play"></span>
+    </div>
+    <div class="reflection" id="reflection" aria-hidden="true"><img src="img/alex-story.webp" alt=""></div>
+    <div class="under" id="under">
+      <p>The rate sits on the surface. Payment, term, equity and tax sit underneath, and they decide what your mortgage costs you. We plan all of it, with you, on video, across BC and Alberta.</p>
+      <div class="ring" id="ring"><div class="av"><img src="img/alex-story.webp" alt=""></div><div><b>Hear it from Alex</b><span>1:30, which path fits you</span></div></div>
+      <div class="cta"><a class="btn" href="#plan">Find my strategy</a><button class="btn ghost" id="hear"><svg viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Hear it from Alex</button></div>
+      <div class="proof"><span><b>400+</b> five-star Google reviews</span><span>Award-winning, <b>CMP Top 75</b> broker every year since 2018</span></div>
+    </div>
+    <div class="cue"><i></i>Scroll to go deeper</div>
+  </section>
+
+  <section class="layer" id="rate" data-depth="The rate"><div class="wrap">
+    <div class="depth reveal">Surface<b>00</b></div>
+    <div>
+      <h2 class="reveal">The rate</h2>
+      <q class="reveal">"What are the rates looking like right now anyways?"</q>
+      <div class="src reveal">A Flow client, recorded call <span class="count">Raised on 383 of 1,810 calls</span></div>
+      <div class="bar reveal" aria-hidden="true"><i style="--w:21.2%"></i></div>
+      <p class="body reveal">Fair question. We compare it across more than 50 lenders. It's also the top layer, and what sits under it decides what the mortgage costs you.</p>
+    </div>
+  </div></section>
+
+  <section class="layer" id="payment" data-depth="Your payment"><div class="wrap">
+    <div class="depth reveal">Depth<b>01</b></div>
+    <div>
+      <h2 class="reveal">Your payment</h2>
+      <q class="reveal">"What would that mean for our payments, versus what we're paying now?"</q>
+      <div class="src reveal">A Flow client, recorded call <span class="count">Raised on 472 of 1,810 calls</span></div>
+      <div class="bar reveal" aria-hidden="true"><i style="--w:26.1%"></i></div>
+      <p class="body reveal">We set the payment against your next five years first, then pick the mortgage that fits it.</p>
+      <a class="go reveal">Work out a payment <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></a>
+    </div>
+  </div></section>
+
+  <section class="layer" id="term" data-depth="The term"><div class="wrap">
+    <div class="depth reveal">Depth<b>02</b></div>
+    <div>
+      <h2 class="reveal">The term, and the way out</h2>
+      <q class="reveal">"What's it going to cost us to get out of it?"</q>
+      <div class="src reveal">A Flow client, recorded call <span class="count">Term raised on 471 of 1,810 calls</span></div>
+      <div class="bar reveal" aria-hidden="true"><i style="--w:26.0%"></i></div>
+      <p class="body reveal">Every option comes with its exit cost worked out before you sign: the term, the penalty, and what happens if you sell or refinance early.</p>
+      <a class="go reveal">Check a penalty <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></a>
+    </div>
+  </div></section>
+
+  <section class="layer" id="equity" data-depth="Your equity"><div class="wrap">
+    <div class="depth reveal">Depth<b>03</b></div>
+    <div>
+      <h2 class="reveal">Your equity</h2>
+      <q class="reveal">"Honestly, I only want to work till I'm 55."</q>
+      <div class="src reveal">A Flow client, recorded call <span class="count">Equity raised on 244 of 1,810 calls</span></div>
+      <div class="bar reveal" aria-hidden="true"><i style="--w:13.5%"></i></div>
+      <p class="body reveal">Then your house belongs in that plan. We look at what your equity could do: clear debt, fund an investment, or buy the next place.</p>
+      <a class="go reveal">Use your equity <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></a>
+    </div>
+  </div></section>
+
+  <section class="layer" id="tax" data-depth="Tax and income"><div class="wrap">
+    <div class="depth reveal">Depth<b>04</b></div>
+    <div>
+      <h2 class="reveal">Tax, and how you get paid</h2>
+      <q class="reveal">"We're just trying to save on some tax."</q>
+      <div class="src reveal">A Flow client, recorded call <span class="count">Tax raised on 226 of 1,810 calls</span></div>
+      <div class="bar reveal" aria-hidden="true"><i style="--w:12.5%"></i></div>
+      <p class="body reveal">Self-employed? We rebuild your income the way lenders read it, so your tax plan and your mortgage stop working against each other.</p>
+      <a class="go reveal">Self-employed path <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></a>
+    </div>
+  </div></section>
+
+  <section class="layer plan" id="plan" data-depth="The plan"><div class="wrap">
+    <div>
+      <div class="depth reveal" style="padding:0 0 18px">The bottom<b style="display:none"></b></div>
+      <h2 class="reveal">Start with the question you'd ask first.</h2>
+      <p class="body reveal">Book a call with Alex's team. We work down through every layer with you and hand you a plan you can act on.</p>
+      <div class="cta reveal"><a class="btn">Find my strategy</a><a class="btn ghost">Call 604-262-3500</a></div>
+    </div>
+    <div class="seabed">
+      <img class="cut" src="img/alex-cut.webp" alt="Alex McFadyen">
+    <div class="bubbles">
+      <div class="bubble reveal">"The equity optimization assessment opened my eyes. I had no idea I was sitting on so much potential."<div class="who"><b>Sarah K.</b>, Burnaby, BC, Google review</div></div>
+      <div class="bubble reveal">"As a self-employed business owner, getting a mortgage felt impossible until I found Flow. They reconstructed my income properly."<div class="who"><b>Marco D.</b>, Calgary, AB, Google review</div></div>
+      <div class="bubble reveal">"Alex and his team did an amazing job supporting us throughout the process!"<div class="who"><b>Priya S.</b>, Vancouver, BC, Google review</div></div>
+    </div>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="mark">Flow</div>
+  <div class="legal"><span>Flow Mortgage Co. is licensed with BRX Mortgage. Serving BC and Alberta.</span><span>604-262-3500</span></div>
+</div></footer>
+
+<nav class="gauge" id="gauge" aria-label="Depth">
+  <a href="#surface" data-for="surface">Surface</a><a href="#payment" data-for="payment">Payment</a><a href="#term" data-for="term">Term</a><a href="#equity" data-for="equity">Equity</a><a href="#tax" data-for="tax">Tax</a><a href="#plan" data-for="plan">Plan</a>
+</nav>
+<div class="dock"><div class="where">Depth<b id="dockWhere">Surface</b></div><a class="btn">Find my strategy</a></div>
+<button class="pause" id="pause"><i></i><span>Pause motion</span></button>
+
+<div class="sheet" id="sheet" role="dialog" aria-label="Alex: which path fits you">
+  <div class="story">
+    <img src="img/alex-story.webp" alt="Alex McFadyen speaking">
+    <div class="bars"><i></i><i></i><i></i></div>
+    <div class="who"><img src="img/alex-story.webp" alt="">Alex <span>@themortgagepug</span></div>
+    <div class="note">Concept: homepage video #6 plays here, 90 s, 4:5 or 9:16, captions burned in.</div>
+    <div class="cap">"So we built a path for each situation."<small>Captions on</small></div>
+  </div>
+  <button class="x" id="close" aria-label="Close">&times;</button>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let paused = reduce;
+  const canvas = document.getElementById('sea');
+  const hero = document.querySelector('.hero');
+  const above = document.getElementById('hAbove'), below = document.getElementById('hBelow');
+  const head = document.getElementById('headline'), under = document.getElementById('under');
+  const card = document.getElementById('storyCard'), refl = document.getElementById('reflection');
+  const ripples = []; // {x, y, t}
+  let t0 = performance.now(), frozen = 0;
+  const now = () => paused ? frozen : (performance.now() - t0) / 1000;
+
+  // the waterline, in page pixels; same formula in JS and the shader
+  function surfaceY() { return hero.offsetHeight * 0.58; }
+  function waveAt(x, t) {
+    let y = surfaceY() + 5 * Math.sin(x * 0.0105 + t * 0.7) + 2.4 * Math.sin(x * 0.027 - t * 1.25) + 1.1 * Math.sin(x * 0.061 + t * 2.1);
+    for (const r of ripples) {
+      const age = t - r.t; if (age < 0 || age > 6) continue;
+      const d = Math.hypot(x - r.x, (surfaceY() - r.y) * 0.6);
+      const front = age * 260; if (d > front) continue;
+      y += 9 * Math.exp(-age * 0.9) * Math.exp(-d * 0.0035) * Math.sin(d * 0.07 - age * 7.0);
+    }
+    return y;
+  }
+
+  // layout: headline straddles the waterline, text below it sits under water
+  function layout() {
+    const s = surfaceY(), hH = above.offsetHeight;
+    const lines = Math.round(hH / parseFloat(getComputedStyle(above).lineHeight));
+    const lineH = hH / Math.max(lines, 1);
+    // waterline crosses the middle of the last line
+    head.style.top = (s - (hH - lineH * 0.34)) + 'px';
+    under.style.top = (s + lineH * 0.40 + 34) + 'px';
+    const cardH = card.offsetHeight;
+    card.style.top = (s - cardH + 6) + 'px';
+    refl.style.top = (s + 2) + 'px';
+  }
+
+  function clipHeadline(t) {
+    const r = head.getBoundingClientRect(), top = r.top + scrollY, w = r.width, h = r.height;
+    const pts = [];
+    const N = 36;
+    for (let i = 0; i <= N; i++) { const x = (w * i) / N; pts.push([x, waveAt(r.left + x, t) - top]); }
+    const line = pts.map(p => p[0].toFixed(1) + 'px ' + p[1].toFixed(1) + 'px').join(',');
+    above.style.clipPath = `polygon(0 -40px, ${w}px -40px, ${[...pts].reverse().map(p => p[0].toFixed(1) + 'px ' + p[1].toFixed(1) + 'px').join(',')})`;
+    below.style.clipPath = `polygon(${line}, ${w}px ${h + 40}px, 0 ${h + 40}px)`;
+  }
+
+  // WebGL ocean
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
+  let prog, uni = {};
+  const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
+  const FS = `precision highp float;
+uniform vec2 uRes; uniform float uT, uScroll, uSurf, uDocH, uDpr; uniform vec4 uRip[8];
+float h(vec2 p){ return fract(sin(dot(p, vec2(41.3, 289.1))) * 45758.5453); }
+float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=.5, s=0.; for(int i=0;i<4;i++){ s+=a*n(p); p=p*2.03+vec2(1.7,9.2); a*=.5; } return s; }
+float wave(float x){
+  float y = uSurf + 5.*sin(x*0.0105 + uT*0.7) + 2.4*sin(x*0.027 - uT*1.25) + 1.1*sin(x*0.061 + uT*2.1);
+  for(int i=0;i<8;i++){ vec4 r=uRip[i]; float age=uT-r.z; if(r.w<0.5||age<0.||age>6.) continue;
+    float d=length(vec2(x-r.x,(uSurf-r.y)*0.6)); if(d>age*260.) continue;
+    y += 9.*exp(-age*0.9)*exp(-d*0.0035)*sin(d*0.07-age*7.); }
+  return y; }
+float caustic(vec2 q, float t){
+  vec2 w = vec2(fbm(q*0.9 + vec2(t*0.05, -t*0.04)), fbm(q*0.9 + vec2(-t*0.03, t*0.06) + 4.1));
+  float v = fbm(q*1.6 + w*2.2 + t*0.08);
+  float r = 1. - abs(v*2. - 1.);
+  return pow(r, 7.);
+}
+void main(){
+  float x = gl_FragCoord.x / uDpr;
+  float y = (uRes.y - gl_FragCoord.y) / uDpr + uScroll;
+  float wy = wave(x);
+  vec3 col;
+  if (y < wy) {
+    float k = clamp(y / max(uSurf,1.), 0., 1.);
+    col = mix(vec3(0.016,0.047,0.078), vec3(0.035,0.12,0.17), pow(k, 1.6));
+    col += vec3(0.05,0.16,0.18) * exp(-(wy - y) * 0.03) * 0.55;
+  } else {
+    float d = y - wy;
+    float dn = clamp(d / max(uDocH - uSurf, 1.), 0., 1.);
+    vec3 top = vec3(0.045,0.21,0.27), mid = vec3(0.022,0.10,0.15), bot = vec3(0.006,0.035,0.06);
+    col = mix(top, mid, smoothstep(0., 0.30, dn));
+    col = mix(col, bot, smoothstep(0.35, 1.0, dn));
+    float c = caustic(vec2(x, y) * 0.0042, uT);
+    col += vec3(0.30,0.80,0.78) * c * (0.20 * exp(-d * 0.0019) + 0.06 * exp(-d * 0.00045));
+    float ray = pow(max(0., sin(x*0.0045 + sin(uT*0.15)*1.2 + d*0.0006)), 18.) * (exp(-d*0.0028) + 0.35*exp(-d*0.0007));
+    col += vec3(0.25,0.6,0.6) * ray * 0.07;
+    col += vec3(0.20,0.62,0.62) * exp(-d * 0.05) * 0.18;
+  }
+  float edge = 1. - smoothstep(0., 1.8, abs(y - wy));
+  col = mix(col, vec3(0.56,0.92,0.89), edge * 0.85);
+  col += (h(gl_FragCoord.xy + uT) - 0.5) * 0.018;
+  gl_FragColor = vec4(col, 1.);
+}`;
+  function sh(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s; }
+  if (gl) {
+    prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    ['uRes','uT','uScroll','uSurf','uDocH','uDpr','uRip'].forEach(k => uni[k] = gl.getUniformLocation(prog, k));
+  }
+  let dpr = 1;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, innerWidth < 760 ? 1.25 : 1.5) * 0.85;
+    canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr);
+    if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+    layout();
+  }
+  function frame() {
+    const t = now();
+    if (gl) {
+      gl.uniform2f(uni.uRes, canvas.width, canvas.height); gl.uniform1f(uni.uT, t); gl.uniform1f(uni.uScroll, scrollY);
+      gl.uniform1f(uni.uSurf, surfaceY()); gl.uniform1f(uni.uDocH, document.documentElement.scrollHeight); gl.uniform1f(uni.uDpr, dpr);
+      const arr = new Float32Array(32); ripples.slice(-8).forEach((r, i) => { arr.set([r.x, r.y, r.t, 1], i * 4); });
+      gl.uniform4fv(uni.uRip, arr); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    clipHeadline(t);
+    requestAnimationFrame(frame);
+  }
+  function addRipple(clientX, clientY) {
+    if (paused) return; const y = clientY + scrollY; if (Math.abs(y - surfaceY()) > 260) return;
+    const t = now(); const last = ripples[ripples.length - 1];
+    if (last && t - last.t < 0.18) return;
+    ripples.push({ x: clientX, y, t }); if (ripples.length > 8) ripples.shift();
+  }
+  addEventListener('pointermove', e => addRipple(e.clientX, e.clientY), { passive: true });
+  addEventListener('pointerdown', e => addRipple(e.clientX, e.clientY), { passive: true });
+  addEventListener('resize', resize);
+  document.fonts.ready.then(() => { resize(); });
+  new ResizeObserver(() => layout()).observe(above);
+  addEventListener('load', layout);
+  resize(); requestAnimationFrame(frame);
+
+  // reveals and the depth gauge
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.18 });
+  document.querySelectorAll('.layer').forEach(l => io.observe(l));
+  const marks = [...document.querySelectorAll('#gauge a')], dockWhere = document.getElementById('dockWhere');
+  const names = { surface: 'Surface', rate: 'The rate', payment: 'Your payment', term: 'The term', equity: 'Your equity', tax: 'Tax and income', plan: 'The plan' };
+  function onScroll() {
+    const secs = [...document.querySelectorAll('section')];
+    let cur = 'surface';
+    for (const s of secs) { if (s.getBoundingClientRect().top < innerHeight * 0.45) cur = s.id; }
+    const g = cur === 'rate' ? 'surface' : cur;
+    marks.forEach(m => m.classList.toggle('on', m.dataset.for === g));
+    dockWhere.textContent = names[cur] || 'Surface';
+  }
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // pause control
+  const pb = document.getElementById('pause');
+  pb.addEventListener('click', () => { paused = !paused; if (paused) frozen = (performance.now() - t0) / 1000; else t0 = performance.now() - frozen * 1000; pb.classList.toggle('off', paused); pb.querySelector('span').textContent = paused ? 'Play motion' : 'Pause motion'; });
+  if (reduce) { pb.classList.add('off'); pb.querySelector('span').textContent = 'Play motion'; }
+
+  // story sheet
+  const sheet = document.getElementById('sheet');
+  const open = () => sheet.classList.add('open'), close = () => sheet.classList.remove('open');
+  card.addEventListener('click', open); document.getElementById('hear').addEventListener('click', open); document.getElementById('ring').addEventListener('click', open);
+  document.getElementById('close').addEventListener('click', close);
+  window.__flow = { open, close, addRipple, setPaused: v => { paused = v; } };
+})();
+</script>
+</body>
+</html>

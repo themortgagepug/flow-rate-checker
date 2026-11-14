@@ -33,6 +33,17 @@ Round 2 (2026-11-14), Alex: "1 is ok but the waves are not integrated well ... w
 - Progressive: pill buttons, a call button beside the main CTA, a visible "Pause motion" control, motion off under reduced-motion.
 - From Wealthsimple, take: serif for human moments, plain copy with a wink, one physical object per section, small hand-drawn sketches, a pause control. Leave: rate-led messaging, posted rates in big type, autoplay video walls, the light cream base.
 
+Round 3 (2026-11-14), Alex: "Missed the mark. Not modern at all. The face image the way it is... is like 2010. Bring it up to 2026. Get original. Go 10x deeper." Current direction, "Below the surface" (prototype in Drive, 2026-11-14 Website Concepts):
+
+- Original idea from Flow's own data: a mortgage has a surface (the rate) and a depth (payment, term, equity, tax). The page is a dive. Each depth opens with a real client question and its call count.
+- Never a boxed headshot. The founder appears as a story-style vertical video card (IG story ring on phone) and as a duotone cut-out from real footage, toned into the water palette.
+- One live WebGL ocean behind the page, loaded after the text: waterline, pointer ripples, caustics that fade with depth. The waterline cuts the headline (clip-path from the same wave formula as the shader, lower copy through an SVG displacement filter).
+- Solid surfaces only. Glassmorphism and liquid glass, bento grids, AI portraits and motion for motion's sake are on Creative Boom's April 2026 "so over" list.
+- Fresh in 2025-26 winners: navy plus one accent, type-led hero, scroll storytelling with a pinned guide (depth gauge), live data on the page, the person as the interface.
+- Type: Mona Sans (wide cut for display, normal for body) and Source Serif 4 for real people's words only.
+- Measured: prototype phone LCP 0.5 to 0.6 s on the audit throttle (local server, no tags or app code).
+- Before shipping: re-measure layout on font load (ResizeObserver) and check that overlays still show on phone. Both broke once.
+
 Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
 
 ## 1. Read first
