@@ -50,10 +50,11 @@ Round 4 (2026-11-15), Alex on round 3: "The colour is a bit too teal ... looks a
 - Light bright sky and true blues (#2470f0 Flow blue, #1652c2, #5aa9ff, #8cc8ff, logo cyan #12b4e4). No teal. Navy #0b2247 only for text, outlines and the footer.
 - Nothing may look like it's sinking. Every house rides on a raft above the waterline.
 - Illustration: original houses drawn for Flow (A-frame, Vancouver Special, West Coast modern, narrow city house, the hero home), flat fills with a navy outline. Never copy the Up house.
-- Messaging matches the picture: "Five things lift a mortgage ... one balloon at a time." Sections are "Balloon N of 5". Client questions in plain words, labelled "Based on a real client question".
+- Messaging matches the picture: "Five things lift a mortgage ... one balloon at a time." Sections are "Balloon N of 5".
+- Client questions (Alex, Nov 15): written the way a client would say them, but exceptionally clear. No "Based on a real client question" label.
 - Alex in natural colour (Drive Staff Pictures "resized Single shot of Alex.jpg"), cut out, sitting on a cloud. Never boxed, never duotone.
 - Plain SVG and one small script, no WebGL. Measured phone LCP 0.8 to 0.9 s on the audit throttle.
-- Open: Alex to confirm the light page (it breaks the Jul 17 "dark backgrounds" rule in section 3).
+- Open: light (daytime) or dark (evening) sky. The prototype has a switch for both (`#dusk`). Dark keeps the Jul 17 "dark backgrounds" rule in section 3.
 
 Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
 

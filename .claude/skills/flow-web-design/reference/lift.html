@@ -124,6 +124,8 @@
   .pause { position: fixed; left: 22px; bottom: 22px; z-index: 15; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 620; padding: 0 14px; min-height: 40px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 8px 18px -12px rgba(11,34,71,0.5); }
   .pause i { width: 10px; height: 11px; border-left: 3px solid var(--ink); border-right: 3px solid var(--ink); }
   .pause.off i { width: 0; height: 0; border-right: 0; border-left: 9px solid var(--ink); border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+  .pause.sky { left: auto; right: 22px; }
+  @media (max-width: 760px) { .pause.sky { right: 12px; bottom: 82px; } }
   .dock { display: none; }
 
   /* story overlay */
@@ -140,6 +142,24 @@
   .reveal.in { opacity: 1; transform: none; }
   
 
+
+  /* dusk: the same page on a dark evening sky */
+  body.dusk { --ink: #f2f7ff; --muted: #b3c6e6; --line: rgba(255,255,255,0.16); background: #0b1d45; }
+  body.dusk .hero h1 .w { color: #6fb4ff; }
+  body.dusk .sub, body.dusk .lift-sec p.body, body.dusk .plan p.body { color: #d3e1f7; }
+  body.dusk .ask { color: #ffffff; }
+  body.dusk .tag, body.dusk .go { color: #7dbcff; }
+  body.dusk .go { border-color: rgba(125,188,255,0.35); }
+  body.dusk .chip, body.dusk .meta .n, body.dusk .btn.ghost, body.dusk .pause, body.dusk .menu { background: #132c63; color: #f2f7ff; }
+  body.dusk .btn.ghost { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.22); }
+  body.dusk .pause i { border-color: #f2f7ff; }
+  body.dusk nav.top.solid, body.dusk .dock { background: #0b1d45; }
+  body.dusk .gauge a { color: rgba(255,255,255,0.4); } body.dusk .gauge a.done { color: #fff; } body.dusk .gauge a.done i { border-color: #fff; }
+  body.dusk .halo { text-shadow: 0 0 14px #0b1d45, 0 0 5px #0b1d45; }
+  body.dusk .story { box-shadow: 0 0 0 2px #fff, 0 24px 40px -22px rgba(0,0,0,0.6); }
+  body.dusk .hang .lift path { stroke: #cfe0ff; }
+  body.dusk footer { background: #071431; }
+  body.dusk .story { --ink: #0b2247; --muted: #4a6488; color: #0b2247; }
   @media (max-width: 1100px) { .hang { display: none; } }
   @media (max-width: 760px) {
     .wrap { width: calc(100% - 40px); }
@@ -309,8 +329,8 @@
   <section class="lift-sec" id="rate" data-name="Rate"><div class="wrap"><div class="copy halo">
     <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#2470f0" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 1 of 5</div>
     <h2 class="reveal">The rate</h2>
-    <p class="ask reveal">"What are mortgage rates like right now?"</p>
-    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 5 of our calls</span></div>
+    <p class="ask reveal">"What are mortgage rates looking like right now?"</p>
+    <div class="meta reveal"><span class="n"><i></i>Asked on about 1 in 5 of our calls</span></div>
     <p class="body reveal">Good place to start. We shop your rate across lenders and check the terms that come with it, because those decide what the mortgage costs you.</p>
     <a class="go reveal" href="https://rate.getflowmortgage.ca">Try the rate checker <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
@@ -318,8 +338,8 @@
   <section class="lift-sec" id="payment" data-name="Payment"><div class="wrap"><div class="copy halo">
     <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#5aa9ff" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 2 of 5</div>
     <h2 class="reveal">Your payment</h2>
-    <p class="ask reveal">"How would my monthly payment change?"</p>
-    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="ask reveal">"What would my payment be, compared to what I pay now?"</p>
+    <div class="meta reveal"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
     <p class="body reveal">We start with your next five years, then pick the mortgage with a payment that fits them.</p>
     <a class="go reveal">Work out a payment <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
@@ -327,8 +347,8 @@
   <section class="lift-sec" id="term" data-name="Term"><div class="wrap"><div class="copy halo">
     <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#12b4e4" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 3 of 5</div>
     <h2 class="reveal">The term, and the way out</h2>
-    <p class="ask reveal">"What does it cost to get out of my mortgage early?"</p>
-    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="ask reveal">"What would it cost me to get out of my mortgage early?"</p>
+    <div class="meta reveal"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
     <p class="body reveal">Before you sign, you see the exit cost: the penalty, and what happens if you sell or refinance early.</p>
     <a class="go reveal">Check a penalty <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
@@ -336,8 +356,8 @@
   <section class="lift-sec" id="equity" data-name="Equity"><div class="wrap"><div class="copy halo">
     <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#8cc8ff" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 4 of 5</div>
     <h2 class="reveal">Your equity</h2>
-    <p class="ask reveal">"Can my home help me retire at 55?"</p>
-    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 7 of our calls</span></div>
+    <p class="ask reveal">"I want to stop working at 55. Can my home help?"</p>
+    <div class="meta reveal"><span class="n"><i></i>Asked on about 1 in 7 of our calls</span></div>
     <p class="body reveal">It can be part of the plan. Your equity could clear debt, fund an investment or help you buy the next place.</p>
     <a class="go reveal">Use your equity <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
@@ -345,8 +365,8 @@
   <section class="lift-sec" id="tax" data-name="Tax"><div class="wrap"><div class="copy halo">
     <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#1652c2" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 5 of 5</div>
     <h2 class="reveal">Tax, and how you get paid</h2>
-    <p class="ask reveal">"I'm self-employed. Can I save on tax and still get approved?"</p>
-    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 8 of our calls</span></div>
+    <p class="ask reveal">"We're trying to save on tax. Will that hurt our mortgage?"</p>
+    <div class="meta reveal"><span class="n"><i></i>Asked on about 1 in 8 of our calls</span></div>
     <p class="body reveal">We show lenders your income the way they need to see it, so your tax plan and your mortgage can work together.</p>
     <a class="go reveal">Self-employed path <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
@@ -378,6 +398,7 @@
 </nav>
 <div class="dock"><div class="where">Balloons <b id="dockWhere">0 of 5</b></div><a class="btn" href="#plan">Find my strategy</a></div>
 <button class="pause" id="pause"><i></i><span>Pause motion</span></button>
+<button class="pause sky" id="skyBtn" aria-label="Switch sky">Try evening sky</button>
 
 <div class="sheet" id="sheet" role="dialog" aria-label="Alex: which path fits you">
   <div class="story">
@@ -480,8 +501,21 @@
     return { c: Math.min(5, i + 1), L: i + clamp((y - tops[i]) / (next - tops[i]), 0, 1) };
   }
 
-  const sky0 = [[169, 214, 255], [215, 236, 255], [243, 250, 255]];
-  const sky1 = [[122, 186, 255], [185, 220, 255], [228, 243, 255]];
+  const dusk = /dusk/.test(location.search + location.hash);
+  if (dusk) {
+    document.body.classList.add('dusk');
+    $('strings').setAttribute('stroke', '#cfe0ff');
+    const st = el('g', { fill: '#fff' }, null); svg.insertBefore(st, $('sun'));
+    for (let i = 0; i < 60; i++) el('circle', { cx: ((i * 0.6180339) % 1 * 100).toFixed(2) + '%', cy: ((i * 0.3819 + i * i * 0.013) % 0.7 * 100).toFixed(2) + '%', r: i % 7 ? 1 : 1.6, opacity: 0.35 + (i % 5) * 0.12 }, st);
+    document.querySelector('#gSun stop:nth-child(1)').setAttribute('stop-color', '#ffffff');
+    document.querySelector('#gSun stop:nth-child(2)').setAttribute('stop-color', '#dbe9ff');
+    document.querySelector('#gSun stop:nth-child(3)').setAttribute('stop-color', '#dbe9ff');
+    document.querySelector('#gSun stop:nth-child(1)').setAttribute('stop-opacity', '0.95');
+    document.querySelector('#gSun stop:nth-child(2)').setAttribute('stop-opacity', '0.28');
+    document.querySelector('#gSun stop:nth-child(2)').setAttribute('offset', '0.3');
+  }
+  const sky0 = dusk ? [[8, 22, 58], [16, 44, 104], [38, 86, 168]] : [[169, 214, 255], [215, 236, 255], [243, 250, 255]];
+  const sky1 = dusk ? [[6, 18, 48], [14, 38, 92], [30, 72, 146]] : [[122, 186, 255], [185, 220, 255], [228, 243, 255]];
   const rgb = (a, b, m) => `rgb(${a.map((v, i) => Math.round(mix(v, b[i], m))).join(',')})`;
 
   function frame(now) {
@@ -495,7 +529,7 @@
     $('sk1').setAttribute('stop-color', rgb(sky0[1], sky1[1], sm));
     $('sk2').setAttribute('stop-color', rgb(sky0[2], sky1[2], sm));
 
-    const sun = $('sun'); sun.setAttribute('cx', vw * (phone ? 0.84 : 0.8)); sun.setAttribute('cy', vh * 0.14 + Lc * vh * 0.05); sun.setAttribute('r', 130 * k);
+    const sun = $('sun'); sun.setAttribute('cx', vw * (phone ? 0.84 : 0.8)); sun.setAttribute('cy', vh * 0.14 + Lc * vh * 0.05); sun.setAttribute('r', (dusk ? 90 : 130) * k);
 
     // camera rises: clouds slide down, water drops away
     for (const c of clouds) {
@@ -503,7 +537,7 @@
       let cy = (c.y * vh + Lc * vh * 0.22 * c.d) % span - vh * 0.2;
       const minX = phone ? 0 : vw * 0.5, range = vw - minX + 300;
       const cx = minX + ((c.x * range + c.v * t * 3) % range) - 150;
-      c.g.setAttribute('transform', `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${(c.s * k * (phone ? 0.75 : 1)).toFixed(3)})`); c.g.setAttribute('opacity', phone ? 0.7 : 0.92);
+      c.g.setAttribute('transform', `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${(c.s * k * (phone ? 0.75 : 1)).toFixed(3)})`); c.g.setAttribute('opacity', dusk ? (phone ? 0.16 : 0.2) : (phone ? 0.7 : 0.92));
     }
     waterY = vh * (phone ? 0.83 : 0.79) + Lc * vh * 0.13;
     $('backWater').setAttribute('d', waterPath(backWave, waterY));
@@ -611,6 +645,10 @@
   function setPause(v) { paused = v; pb.classList.toggle('off', v); pb.querySelector('span').textContent = v ? 'Play motion' : 'Pause motion'; document.body.classList.toggle('still', v); }
   setPause(paused);
   pb.addEventListener('click', () => setPause(!paused));
+
+  // sky switch (prototype only)
+  const sb = $('skyBtn'); sb.textContent = dusk ? 'Try daytime sky' : 'Try evening sky';
+  sb.addEventListener('click', () => { location.hash = dusk ? 'day' : 'dusk'; location.reload(); });
 
   // story sheet
   const sheet = $('sheet');
