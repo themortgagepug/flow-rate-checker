@@ -49,11 +49,14 @@ Round 4 (2026-11-15), Alex on round 3: "The colour is a bit too teal ... looks a
 - Same idea flipped: the five topics are now balloons that lift your home (rate, payment, term, equity, tax). The page rises; it never dives or sinks.
 - Light bright sky and true blues (#2470f0 Flow blue, #1652c2, #5aa9ff, #8cc8ff, logo cyan #12b4e4). No teal. Navy #0b2247 only for text, outlines and the footer.
 - Nothing may look like it's sinking. Every house rides on a raft above the waterline.
-- Illustration: original houses drawn for Flow (A-frame, Vancouver Special, West Coast modern, narrow city house, the hero home), flat fills with a navy outline. Never copy the Up house.
-- Messaging matches the picture: "Five things lift a mortgage ... one balloon at a time." Sections are "Balloon N of 5".
+- Illustration (v3, Alex: "a little bit more of a cartoon look ... but also clean design and flat"): original houses drawn for Flow (A-frame, Vancouver Special box, West Coast modern, narrow city house, the hero home). Chunky shapes, round windows, 3.4 px navy outlines, flat fills, no gradients on objects. Never copy the Up house.
+- One typeface (v3, Alex: "fix the fonts so we don't have too many different font types"): Figtree 400/600/800 for every word. No second family, no width variants.
+- Calm motion (v3, Alex: "still feels a little bit glitchy"): few moving parts, eased (no springs or pops), no flicker, no moving labels. Record walkthrough videos frame by frame with Playwright's clock (`scripts/record-frames.cjs desktop|phone <page.html> <outDir>`, then ffmpeg at 30 fps), never with recordVideo, which stutters.
+- Messaging matches the picture: "A mortgage has five moving parts ... one balloon at a time." Sections are "Balloon N of 5".
 - Client questions (Alex, Nov 15): written the way a client would say them, but exceptionally clear. No "Based on a real client question" label.
-- Alex in natural colour (Drive Staff Pictures "resized Single shot of Alex.jpg"), cut out, sitting on a cloud. Never boxed, never duotone.
-- Plain SVG and one small script, no WebGL. Measured phone LCP 0.8 to 0.9 s on the audit throttle.
+- Not all about Alex (v3): no founder face in the hero. The end shows "Who you'll talk to" (the team) and one candid real photo. He dislikes the brick-wall portrait in Staff Pictures.
+- Team photos: the March 2026 team headshots in Drive carry the Gemini sparkle (AI-made or AI-edited). Do not use them. Real photos are still needed.
+- Plain SVG and one small script, no WebGL. Measured phone LCP 0.7 to 0.9 s on the audit throttle.
 - Open: light (daytime) or dark (evening) sky. The prototype has a switch for both (`#dusk`). Dark keeps the Jul 17 "dark backgrounds" rule in section 3.
 
 Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
