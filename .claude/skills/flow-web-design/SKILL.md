@@ -44,6 +44,17 @@ Round 3 (2026-11-14), Alex: "Missed the mark. Not modern at all. The face image 
 - Measured: prototype phone LCP 0.5 to 0.6 s on the audit throttle (local server, no tags or app code).
 - Before shipping: re-measure layout on font load (ResizeObserver) and check that overlays still show on phone. Both broke once.
 
+Round 4 (2026-11-15), Alex on round 3: "The colour is a bit too teal ... looks a little bit intimidating. I want more blue ... right now it looks much more like drowning, which is not good ... little houses that are floating along that we have little balloons like movie up ... our messaging should in someways match this style." Current direction, "Lift" (prototype in Drive, 2026-11-14 Website Concepts, Round 4 files; source in `reference/lift.html`):
+
+- Same idea flipped: the five topics are now balloons that lift your home (rate, payment, term, equity, tax). The page rises; it never dives or sinks.
+- Light bright sky and true blues (#2470f0 Flow blue, #1652c2, #5aa9ff, #8cc8ff, logo cyan #12b4e4). No teal. Navy #0b2247 only for text, outlines and the footer.
+- Nothing may look like it's sinking. Every house rides on a raft above the waterline.
+- Illustration: original houses drawn for Flow (A-frame, Vancouver Special, West Coast modern, narrow city house, the hero home), flat fills with a navy outline. Never copy the Up house.
+- Messaging matches the picture: "Five things lift a mortgage ... one balloon at a time." Sections are "Balloon N of 5". Client questions in plain words, labelled "Based on a real client question".
+- Alex in natural colour (Drive Staff Pictures "resized Single shot of Alex.jpg"), cut out, sitting on a cloud. Never boxed, never duotone.
+- Plain SVG and one small script, no WebGL. Measured phone LCP 0.8 to 0.9 s on the audit throttle.
+- Open: Alex to confirm the light page (it breaks the Jul 17 "dark backgrounds" rule in section 3).
+
 Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
 
 ## 1. Read first

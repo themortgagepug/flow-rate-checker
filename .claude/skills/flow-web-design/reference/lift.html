@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flow Mortgage Co. | Lift (concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@75..125,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0b2247; --muted: #4a6488; --blue: #2470f0; --blue-d: #1652c2; --cyan: #12b4e4;
+    --sun: #ffd76a; --sky: #e6f4ff; --line: rgba(11,34,71,0.12);
+    --wide: "Mona Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "Source Serif 4", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--sky); color: var(--ink); font-family: var(--wide); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .wrap { width: min(1200px, 100% - 64px); margin: 0 auto; position: relative; }
+
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+  main, footer, nav.top { position: relative; z-index: 2; }
+
+  /* nav: boring on purpose */
+  nav.top { position: fixed; top: 0; left: 0; right: 0; z-index: 20; transition: background .3s, box-shadow .3s; }
+  nav.top.solid { background: #fff; box-shadow: 0 1px 0 var(--line); }
+  nav.top .wrap { display: flex; align-items: center; gap: 28px; height: 72px; }
+  .brand { display: flex; align-items: center; min-height: 44px; gap: 9px; font-stretch: 115%; font-weight: 720; font-size: 18px; letter-spacing: -0.2px; }
+  .brand img { width: 30px; height: 30px; }
+  nav.top .links { display: flex; gap: 24px; font-size: 15px; color: var(--muted); font-weight: 520; }
+  nav.top .links a:hover { color: var(--ink); }
+  nav.top .right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 15px; font-weight: 560; }
+  .menu { display: none; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; background: var(--blue); color: #fff; font-weight: 650; font-stretch: 105%; padding: 0 22px; border-radius: 999px; font-size: 16px; white-space: nowrap; box-shadow: 0 6px 16px -8px rgba(36,112,240,0.8); transition: transform .2s, background .2s; }
+  .btn:hover { background: var(--blue-d); transform: translateY(-1px); }
+  .btn.ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1.5px var(--blue); }
+  .btn.ghost img { width: 26px; height: 26px; border-radius: 50%; margin-left: -10px; box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--blue); }
+  nav.top .btn { min-height: 42px; font-size: 15px; padding: 0 18px; }
+
+  /* hero */
+  .hero { min-height: 100vh; min-height: 100svh; padding-top: 128px; }
+  .chip { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 560; padding: 8px 15px; border-radius: 999px; background: #fff; box-shadow: 0 1px 0 var(--line), 0 6px 18px -12px rgba(11,34,71,0.4); }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(36,112,240,0.18); }
+  .chip span { color: var(--muted); font-weight: 450; }
+  .hero h1 { margin-top: 26px; font-stretch: 116%; font-weight: 680; font-size: clamp(46px, 6.3vw, 96px); line-height: 0.96; letter-spacing: -0.042em; max-width: 980px; }
+  .hero h1 .w { color: var(--blue); }
+  .dot { display: inline-block; position: relative; width: 0.24em; height: 0.2em; }
+  .dot svg { position: absolute; left: 0.02em; bottom: -0.02em; width: 0.38em; height: 1.05em; overflow: visible; transform-origin: 20% 100%; animation: sway 5s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
+  .sub { margin-top: 26px; font-size: 20px; line-height: 1.55; color: #2c4669; max-width: 590px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .proof { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 24px; font-size: 14px; color: var(--muted); }
+  .proof b { color: var(--ink); font-weight: 650; }
+  .stars { color: #f5a623; letter-spacing: 1px; margin-right: 4px; }
+
+  /* story card held up by two balloons */
+  .hang { position: absolute; top: 108px; right: max(40px, calc(50vw - 640px)); width: 214px; z-index: 3; transform-origin: 50% -150px; animation: hang 7s ease-in-out infinite; }
+  @keyframes hang { 0%,100% { transform: rotate(-1.6deg) translateY(0); } 50% { transform: rotate(1.4deg) translateY(-8px); } }
+  .hang .lift { display: block; width: 214px; height: 150px; margin-bottom: -2px; overflow: visible; }
+  .story { position: relative; width: 214px; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; cursor: pointer; background: #cfe6ff; box-shadow: 0 0 0 2px var(--ink), 0 24px 40px -22px rgba(11,34,71,0.6); }
+  .story > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story .bars { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; }
+  .story .bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(11,34,71,0.18); overflow: hidden; }
+  .story .bars i:first-child::after { content: ""; display: block; height: 100%; width: 38%; background: var(--ink); }
+  .story .who { position: absolute; top: 22px; left: 12px; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 650; }
+  .story .who img { width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--blue); }
+  .story .who span { color: var(--muted); font-weight: 480; }
+  .story .cap { position: absolute; left: 10px; right: 10px; bottom: 12px; background: #fff; border-radius: 14px; padding: 10px 12px; font-size: 15.5px; font-stretch: 108%; font-weight: 660; line-height: 1.15; letter-spacing: -0.01em; box-shadow: 0 0 0 1.5px var(--ink); }
+  .story .cap small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 4px; letter-spacing: 0; }
+  .story .play { position: absolute; right: 12px; top: 54px; width: 38px; height: 38px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 2px #fff; }
+  .story .play::after { content: ""; position: absolute; left: 15px; top: 11px; border-left: 12px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+
+  /* the five lifts */
+  .lift-sec { min-height: 96vh; display: flex; align-items: center; padding: 120px 0; }
+  .lift-sec .copy { max-width: 560px; }
+  .tag { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
+  .tag svg { width: 16px; height: 22px; }
+  .lift-sec h2 { margin-top: 14px; font-stretch: 114%; font-weight: 660; font-size: clamp(34px, 3.6vw, 52px); letter-spacing: -0.035em; line-height: 1.02; }
+  .ask { margin-top: 24px; font-family: var(--serif); font-size: clamp(25px, 2.3vw, 33px); line-height: 1.3; color: #12305e; max-width: 540px; }
+  .meta { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 14px; color: var(--muted); }
+  .meta .n { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+  .meta .n i { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+  .lift-sec p.body { margin-top: 22px; font-size: 19px; line-height: 1.6; color: #2c4669; max-width: 520px; }
+  .go { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; padding: 16px 0 6px; min-height: 44px; font-weight: 650; color: var(--blue); font-size: 16.5px; border-bottom: 2px solid rgba(36,112,240,0.3); padding-bottom: 3px; }
+  .go:hover { border-color: var(--blue); }
+
+  /* plan */
+  .plan { min-height: 100vh; padding: 140px 0 0; overflow-x: clip; display: flex; flex-direction: column; justify-content: flex-end; }
+  .plan .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+  .plan h2 { margin-top: 14px; font-stretch: 116%; font-weight: 680; font-size: clamp(40px, 4.6vw, 68px); letter-spacing: -0.04em; line-height: 0.98; }
+  .plan p.body { margin-top: 22px; font-size: 19px; line-height: 1.6; color: #2c4669; max-width: 500px; }
+  .plan .left { padding-bottom: 170px; }
+  .stage { position: relative; height: min(660px, 80vh); }
+  .figure { position: absolute; inset: 0; }
+  .stage .cut { position: absolute; bottom: 18px; right: -2%; height: 84%; width: auto; max-width: none; }
+  .bank { position: absolute; left: -24%; width: 148%; bottom: -1px; height: 118px; display: block; }
+  .cloud { position: absolute; width: 270px; background: #fff; border-radius: 26px; padding: 18px 20px 16px; font-family: var(--serif); font-size: 16.5px; line-height: 1.45; color: #12305e; box-shadow: 0 18px 30px -22px rgba(11,34,71,0.45); animation: drift 9s ease-in-out infinite; }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; z-index: -1; }
+  .cloud::before { width: 92px; height: 92px; top: -34px; left: 34px; }
+  .cloud::after { width: 64px; height: 64px; top: -22px; left: 108px; }
+  .cloud .who { font-family: var(--wide); font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .cloud .who b { color: var(--ink); font-weight: 650; }
+  .cloud:nth-child(2) { animation-delay: -3s; } .cloud:nth-child(3) { animation-delay: -6s; }
+  @keyframes drift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  .cloud { z-index: 2; } .c1 { top: 2%; left: -14%; } .c2 { top: 60%; right: -6%; } .c3 { top: 70%; left: -18%; }
+
+  footer { background: #0e2f6e; color: #eaf3ff; padding: 70px 0 96px; }
+  footer .mark { font-stretch: 125%; font-weight: 720; font-size: clamp(90px, 19vw, 290px); letter-spacing: -0.06em; line-height: 0.8; color: rgba(255,255,255,0.08); }
+  footer .legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 26px; font-size: 14px; color: #a9c3e8; }
+
+  /* balloon gauge */
+  .gauge { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 10; display: flex; flex-direction: column; gap: 14px; align-items: flex-end; opacity: 0; transition: opacity .4s; }
+  .gauge.on { opacity: 1; }
+  .gauge a { display: flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 620; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(11,34,71,0.4); transition: color .3s; }
+  .gauge a i { width: 12px; height: 15px; border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%; border: 1.6px solid currentColor; transition: background .3s, transform .3s; }
+  .gauge a.done { color: var(--ink); }
+  .gauge a.done i { background: var(--blue); border-color: var(--ink); }
+  .gauge a.here i { transform: scale(1.3); }
+
+  .pause { position: fixed; left: 22px; bottom: 22px; z-index: 15; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 620; padding: 0 14px; min-height: 40px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 8px 18px -12px rgba(11,34,71,0.5); }
+  .pause i { width: 10px; height: 11px; border-left: 3px solid var(--ink); border-right: 3px solid var(--ink); }
+  .pause.off i { width: 0; height: 0; border-right: 0; border-left: 9px solid var(--ink); border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+  .dock { display: none; }
+
+  /* story overlay */
+  .sheet { position: fixed; inset: 0; z-index: 40; background: rgba(11,34,71,0.6); display: none; align-items: center; justify-content: center; }
+  .sheet.open { display: flex; }
+  .sheet .story { width: min(380px, 86vw); cursor: default; }
+  .sheet .story .bars i:first-child::after { animation: fill 90s linear forwards; width: 0; }
+  @keyframes fill { to { width: 100%; } }
+  .sheet .note { position: absolute; top: 56px; left: 12px; right: 64px; font-size: 12px; color: #fff; background: var(--blue); padding: 7px 10px; border-radius: 10px; font-weight: 600; line-height: 1.35; }
+  .sheet .x { position: absolute; top: 18px; right: 18px; width: 46px; height: 46px; border-radius: 50%; background: #fff; font-size: 24px; line-height: 46px; text-align: center; }
+
+  h1, h2, .ask { text-wrap: balance; } p, .cloud { text-wrap: pretty; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  
+
+  @media (max-width: 1100px) { .hang { display: none; } }
+  @media (max-width: 760px) {
+    .wrap { width: calc(100% - 40px); }
+    nav.top .links, nav.top .right .call, nav.top .right .btn { display: none; }
+    .menu { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 620; padding: 0 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+    .hero { padding-top: 96px; }
+    .chip { font-size: 13px; padding: 7px 12px; white-space: nowrap; }
+    .chip span { display: none; }
+    .halo { text-shadow: 0 0 14px #eef8ff, 0 0 5px #eef8ff, 0 0 2px #eef8ff; }
+    .halo .btn, .halo .n { text-shadow: none; }
+    .hero h1 { margin-top: 20px; font-size: 12.4vw; font-stretch: 108%; }
+    .sub { font-size: 17px; margin-top: 18px; }
+    .cta { margin-top: 22px; } .cta .btn { flex: 1 1 100%; }
+    .proof { font-size: 13px; margin-top: 18px; }
+    .lift-sec { min-height: 100svh; align-items: flex-start; padding: 96px 0 40vh; }
+    .ask { font-size: 23px; }
+    .lift-sec p.body { font-size: 17px; }
+    .gauge { display: none; }
+    .plan { padding-top: 96px; }
+    .plan .wrap { grid-template-columns: 1fr; gap: 0; }
+    .plan .left { padding-bottom: 20px; }
+    .plan .cta .btn { flex: 1 1 100%; }
+    .stage { height: auto; padding-bottom: 40px; }
+    .figure { position: relative; height: 380px; margin-top: 10px; }
+    .stage .cut { right: auto; left: 50%; transform: translateX(-50%); height: 92%; bottom: 14px; }
+    .bank { height: 80px; left: -10%; width: 120%; }
+    .cloud { position: relative; width: auto; font-size: 15.5px; padding: 16px 18px; margin-top: 46px; inset: auto; animation: none; }
+    .pause { bottom: 82px; left: 12px; min-height: 44px; font-size: 12.5px; }
+    .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -1px 0 var(--line); }
+    .dock .where { font-size: 12.5px; color: var(--muted); }
+    .dock .where b { color: var(--ink); font-weight: 650; display: block; font-size: 14.5px; }
+    .dock .btn { min-height: 46px; padding: 0 18px; font-size: 15px; }
+    footer { padding-bottom: 150px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hang, .cloud, .dot svg { animation: none; }
+  }
+  body.still .hang, body.still .cloud, body.still .dot svg { animation-play-state: paused; }
+</style>
+</head>
+<body>
+
+<svg id="scene" aria-hidden="true" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop id="sk0" offset="0" stop-color="#a9d6ff"/><stop id="sk1" offset="0.55" stop-color="#d7ecff"/><stop id="sk2" offset="1" stop-color="#f3faff"/>
+    </linearGradient>
+    <radialGradient id="gSun"><stop offset="0" stop-color="#fffbe8"/><stop offset="0.35" stop-color="#fff3c4" stop-opacity="0.9"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4ea6ff"/><stop offset="0.35" stop-color="#2d7cf0"/><stop offset="1" stop-color="#1a55c9"/>
+    </linearGradient>
+    <linearGradient id="gBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fd0ff"/><stop offset="1" stop-color="#6fb5ff"/>
+    </linearGradient>
+
+    <!-- Original houses, drawn for Flow. Base centre of each sits at the bottom middle of its box. -->
+    <symbol id="h-home" viewBox="0 0 150 140">
+      <g stroke="#0b2247" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="98" y="22" width="16" height="34" fill="#f3e3c8"/>
+        <path d="M8 68 L75 14 L142 68 Z" fill="#2470f0"/>
+        <path d="M22 66 H128 V132 H22 Z" fill="#fff"/>
+        <path d="M60 78 a15 15 0 0 1 30 0 v10 h-30z" fill="#ffe08a"/>
+        <path d="M75 63 v25 M60 82 h30" stroke-width="2"/>
+        <rect x="32" y="92" width="26" height="22" fill="#cfe6ff"/>
+        <path d="M45 92 v22 M32 103 h26" stroke-width="2"/>
+        <rect x="92" y="96" width="24" height="36" fill="#12b4e4"/>
+        <circle cx="111" cy="115" r="1.8" fill="#0b2247" stroke="none"/>
+        <path d="M14 132 H136" stroke-width="3"/>
+      </g>
+    </symbol>
+    <symbol id="h-aframe" viewBox="0 0 120 110">
+      <g stroke="#0b2247" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="76" y="22" width="12" height="26" fill="#f3e3c8"/>
+        <path d="M6 102 L60 8 L114 102 Z" fill="#1652c2"/>
+        <path d="M24 102 L60 38 L96 102 Z" fill="#fff"/>
+        <path d="M40 102 L60 66 L80 102 Z" fill="#ffe08a"/>
+        <path d="M60 66 V102 M48 88 H72" stroke-width="2"/>
+      </g>
+    </symbol>
+    <symbol id="h-special" viewBox="0 0 160 110">
+      <g stroke="#0b2247" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M4 32 L80 14 L156 32 Z" fill="#0b2247"/>
+        <rect x="14" y="32" width="132" height="34" fill="#fff"/>
+        <rect x="24" y="40" width="30" height="18" fill="#cfe6ff"/><rect x="65" y="40" width="30" height="18" fill="#ffe08a"/><rect x="106" y="40" width="30" height="18" fill="#cfe6ff"/>
+        <rect x="14" y="66" width="132" height="38" fill="#dbeafe"/>
+        <path d="M10 66 H150" stroke-width="3"/>
+        <path d="M22 66 v-6 M34 66 v-6 M46 66 v-6 M58 66 v-6 M70 66 v-6 M82 66 v-6 M94 66 v-6 M106 66 v-6 M118 66 v-6 M130 66 v-6 M142 66 v-6" stroke-width="1.6"/>
+        <rect x="26" y="76" width="54" height="28" fill="#fff"/><path d="M26 85 H80 M26 94 H80" stroke-width="1.6"/>
+        <rect x="104" y="74" width="20" height="30" fill="#2470f0"/>
+      </g>
+    </symbol>
+    <symbol id="h-narrow" viewBox="0 0 84 136">
+      <g stroke="#0b2247" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M4 50 L42 6 L80 50 Z" fill="#2470f0"/>
+        <rect x="12" y="50" width="60" height="78" fill="#f3e3c8"/>
+        <circle cx="42" cy="34" r="7" fill="#ffe08a"/>
+        <rect x="22" y="60" width="16" height="20" fill="#cfe6ff"/><rect x="46" y="60" width="16" height="20" fill="#cfe6ff"/>
+        <rect x="22" y="92" width="16" height="18" fill="#cfe6ff"/><rect x="46" y="92" width="16" height="36" fill="#0b2247"/>
+      </g>
+    </symbol>
+    <symbol id="h-modern" viewBox="0 0 160 100">
+      <g stroke="#0b2247" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="14" y="36" width="126" height="56" fill="#fff"/>
+        <rect x="2" y="26" width="156" height="10" fill="#0b2247"/>
+        <rect x="24" y="44" width="70" height="40" fill="#cfe6ff"/>
+        <path d="M34 80 L52 48 M48 80 L66 48" stroke="#fff" stroke-width="3"/>
+        <path d="M47 44 V84 M70 44 V84" stroke-width="2"/>
+        <rect x="102" y="44" width="30" height="48" fill="#e9c99a"/>
+        <path d="M110 44 V92 M118 44 V92 M126 44 V92" stroke-width="1.4"/>
+      </g>
+    </symbol>
+    <symbol id="balloon" viewBox="-28 -80 56 86" overflow="visible">
+      <path d="M0 -3 C-8 -8 -25 -24 -25 -46 C-25 -64 -13 -76 0 -76 C13 -76 25 -64 25 -46 C25 -24 8 -8 0 -3 Z" stroke="#0b2247" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M-4 3 L0 -3 L4 3 Z" stroke="#0b2247" stroke-width="2" stroke-linejoin="round"/>
+      <ellipse cx="-10" cy="-56" rx="4.5" ry="8.5" fill="#fff" opacity="0.55" transform="rotate(-22 -10 -56)"/>
+    </symbol>
+  </defs>
+  <rect id="skyRect" x="0" y="0" width="100%" height="100%" fill="url(#gSky)"/>
+  <circle id="sun" r="120" fill="url(#gSun)"/>
+  <g id="clouds"></g>
+  <g id="farHouses"></g>
+  <path id="backWater" fill="url(#gBack)"/>
+  <g id="homeG"><rect x="-72" y="-4" width="144" height="13" rx="4" fill="#e9c99a" stroke="#0b2247" stroke-width="2.6"/><path d="M-50 -4 v13 M-20 -4 v13 M10 -4 v13 M40 -4 v13" stroke="#0b2247" stroke-width="1.6"/><use href="#h-home" id="homeUse"/></g>
+  <path id="frontWater" fill="url(#gWater)"/>
+  <path id="crest" fill="none" stroke="#fff" stroke-width="2.2" stroke-opacity="0.7" stroke-linejoin="round"/>
+  <g id="glints" stroke="#fff" stroke-linecap="round" stroke-width="2.4"></g>
+  <g id="rings" fill="none" stroke="#fff" stroke-width="2"></g>
+  <g id="strings" fill="none" stroke="#0b2247" stroke-width="1.6"></g>
+  <g id="balloons"></g>
+  <g id="label" opacity="0"><rect id="labelBg" rx="11" height="26" fill="#fff" stroke="#0b2247" stroke-width="1.8"/><text id="labelTx" font-family="Mona Sans, system-ui, sans-serif" font-size="13" font-weight="650" fill="#0b2247" dy="17.5" dx="11"></text></g>
+</svg>
+
+<nav class="top" id="nav"><div class="wrap">
+  <a class="brand" href="#top"><img src="img/logo.png" alt="">Flow</a>
+  <div class="links"><a href="#equity">Equity</a><a href="#tax">Self-employed</a><a>Investors</a><a>Buying</a><a href="#term">Renewing</a></div>
+  <div class="right"><a class="call" href="tel:6042623500">604-262-3500</a><a class="btn" href="#plan">Find my strategy</a><button class="menu">Menu</button></div>
+</div></nav>
+
+<main>
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="chip"><i></i>Next Bank of Canada decision: <b>Dec 9</b> <span>6:45 AM PT</span></div>
+      <h1>Make your mortgage build your <span class="w">wealth</span><span class="dot" aria-hidden="true"><svg viewBox="-14 -40 28 50"><path d="M0 9 C-3 -2 4 -10 0 -14" fill="none" stroke="#0b2247" stroke-width="1.4"/><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z" fill="#2470f0" stroke="#0b2247" stroke-width="1.6"/><ellipse cx="-5" cy="-37" rx="2" ry="4" fill="#fff" opacity=".6" transform="rotate(-22 -5 -37)"/><circle cx="0" cy="9" r="2.6" fill="#0b2247"/></svg></span></h1>
+      <p class="sub">Five things lift a mortgage: the rate, the payment, the term, your equity and your tax. We work on all five with you, one balloon at a time.</p>
+      <div class="cta"><a class="btn" href="#plan">Find my strategy</a><button class="btn ghost" id="hear"><img src="img/alex-face.webp" alt="">Hear it from Alex</button></div>
+      <div class="proof"><span><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><b>400+</b> five-star Google reviews</span><span>Award-winning, <b>CMP Top 75</b> broker every year since 2018</span></div>
+    </div>
+    <div class="hang" id="hang">
+      <svg class="lift" viewBox="0 0 214 150" aria-hidden="true">
+        <path d="M30 150 C40 120 70 110 64 70" fill="none" stroke="#0b2247" stroke-width="1.6"/>
+        <path d="M184 150 C176 122 150 112 150 84" fill="none" stroke="#0b2247" stroke-width="1.6"/>
+        <use href="#balloon" x="34" y="0" width="60" height="92" fill="#2470f0"/>
+        <use href="#balloon" x="120" y="16" width="60" height="92" fill="#12b4e4"/>
+      </svg>
+      <div class="story" id="storyCard" role="button" tabindex="0" aria-label="Play: Alex on which path fits you, 1 minute 30">
+        <img src="img/alex-story.webp" alt="Alex McFadyen">
+        <div class="bars"><i></i><i></i><i></i></div>
+        <div class="who"><img src="img/alex-face.webp" alt="">Alex <span>@themortgagepug</span></div>
+        <span class="play" aria-hidden="true"></span>
+        <div class="cap">Which path fits you?<small>1:30 with Alex, captions on</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lift-sec" id="rate" data-name="Rate"><div class="wrap"><div class="copy halo">
+    <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#2470f0" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 1 of 5</div>
+    <h2 class="reveal">The rate</h2>
+    <p class="ask reveal">"What are mortgage rates like right now?"</p>
+    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 5 of our calls</span></div>
+    <p class="body reveal">Good place to start. We shop your rate across lenders and check the terms that come with it, because those decide what the mortgage costs you.</p>
+    <a class="go reveal" href="https://rate.getflowmortgage.ca">Try the rate checker <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="payment" data-name="Payment"><div class="wrap"><div class="copy halo">
+    <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#5aa9ff" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 2 of 5</div>
+    <h2 class="reveal">Your payment</h2>
+    <p class="ask reveal">"How would my monthly payment change?"</p>
+    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="body reveal">We start with your next five years, then pick the mortgage with a payment that fits them.</p>
+    <a class="go reveal">Work out a payment <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="term" data-name="Term"><div class="wrap"><div class="copy halo">
+    <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#12b4e4" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 3 of 5</div>
+    <h2 class="reveal">The term, and the way out</h2>
+    <p class="ask reveal">"What does it cost to get out of my mortgage early?"</p>
+    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="body reveal">Before you sign, you see the exit cost: the penalty, and what happens if you sell or refinance early.</p>
+    <a class="go reveal">Check a penalty <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="equity" data-name="Equity"><div class="wrap"><div class="copy halo">
+    <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#8cc8ff" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 4 of 5</div>
+    <h2 class="reveal">Your equity</h2>
+    <p class="ask reveal">"Can my home help me retire at 55?"</p>
+    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 7 of our calls</span></div>
+    <p class="body reveal">It can be part of the plan. Your equity could clear debt, fund an investment or help you buy the next place.</p>
+    <a class="go reveal">Use your equity <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="tax" data-name="Tax"><div class="wrap"><div class="copy halo">
+    <div class="tag reveal"><svg viewBox="-14 -40 28 52"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#1652c2" stroke="#0b2247" stroke-width="1.8"/></svg>Balloon 5 of 5</div>
+    <h2 class="reveal">Tax, and how you get paid</h2>
+    <p class="ask reveal">"I'm self-employed. Can I save on tax and still get approved?"</p>
+    <div class="meta reveal">Based on a real client question <span class="n"><i></i>Asked on about 1 in 8 of our calls</span></div>
+    <p class="body reveal">We show lenders your income the way they need to see it, so your tax plan and your mortgage can work together.</p>
+    <a class="go reveal">Self-employed path <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="plan" id="plan" data-name="Plan"><div class="wrap">
+    <div class="left halo">
+      <div class="tag reveal">All five balloons on</div>
+      <h2 class="reveal">Start with the question you'd ask first.</h2>
+      <p class="body reveal">Book a call with Alex's team. We go through all five with you and hand you a plan you can act on.</p>
+      <div class="cta reveal"><a class="btn">Find my strategy</a><a class="btn ghost" href="tel:6042623500">Call 604-262-3500</a></div>
+    </div>
+    <div class="stage">
+      <div class="figure"><img class="cut" src="img/alex-cut.webp" alt="Alex McFadyen, founder of Flow Mortgage Co." loading="lazy">
+        <svg class="bank" viewBox="0 0 600 118" preserveAspectRatio="none" aria-hidden="true"><path d="M0 118 V74 a34 34 0 0 1 58 -22 a44 44 0 0 1 82 -14 a38 38 0 0 1 70 4 a52 52 0 0 1 98 -6 a40 40 0 0 1 76 10 a46 46 0 0 1 86 2 a36 36 0 0 1 64 18 a30 30 0 0 1 66 12 V118 Z" fill="#fff"/></svg></div>
+      <div class="cloud c1 reveal">"The equity optimization assessment opened my eyes. I had no idea I was sitting on so much potential."<div class="who"><b>Sarah K.</b>, Burnaby, BC, Google review</div></div>
+      <div class="cloud c2 reveal">"As a self-employed business owner, getting a mortgage felt impossible until I found Flow. They reconstructed my income properly."<div class="who"><b>Marco D.</b>, Calgary, AB, Google review</div></div>
+      <div class="cloud c3 reveal">"Alex and his team did an amazing job supporting us throughout the process!"<div class="who"><b>Priya S.</b>, Vancouver, BC, Google review</div></div>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="mark">Flow</div>
+  <div class="legal"><span>Flow Mortgage Co. is licensed with BRX Mortgage. Serving BC and Alberta.</span><span>604-262-3500</span></div>
+</div></footer>
+
+<nav class="gauge" id="gauge" aria-label="Balloons">
+  <a href="#rate" data-i="0">Rate<i></i></a><a href="#payment" data-i="1">Payment<i></i></a><a href="#term" data-i="2">Term<i></i></a><a href="#equity" data-i="3">Equity<i></i></a><a href="#tax" data-i="4">Tax<i></i></a><a href="#plan" data-i="5">Plan<i></i></a>
+</nav>
+<div class="dock"><div class="where">Balloons <b id="dockWhere">0 of 5</b></div><a class="btn" href="#plan">Find my strategy</a></div>
+<button class="pause" id="pause"><i></i><span>Pause motion</span></button>
+
+<div class="sheet" id="sheet" role="dialog" aria-label="Alex: which path fits you">
+  <div class="story">
+    <img src="img/alex-story.webp" alt="Alex McFadyen">
+    <div class="bars"><i></i><i></i><i></i></div>
+    <div class="who"><img src="img/alex-face.webp" alt="">Alex <span>@themortgagepug</span></div>
+    <div class="note">Concept: homepage video #6 plays here. 90 s, 9:16, captions burned in.</div>
+    <div class="cap">"So we built a path for each situation."<small>Captions on</small></div>
+  </div>
+  <button class="x" id="close" aria-label="Close">&times;</button>
+</div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let paused = reduce;
+  const $ = id => document.getElementById(id);
+  const svg = $('scene');
+  const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const mix = (a, b, t) => a + (b - a) * t;
+  const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+
+  let vw = 0, vh = 0, phone = false, k = 1, tops = [], scrollY0 = 0;
+  const secs = ['rate', 'payment', 'term', 'equity', 'tax', 'plan'].map($);
+  const names = ['Rate', 'Payment', 'Term', 'Equity', 'Tax'];
+  const colours = ['#2470f0', '#5aa9ff', '#12b4e4', '#8cc8ff', '#1652c2'];
+
+  // clouds
+  const cloudG = $('clouds');
+  const cloudDefs = [[0.08, 0.13, 1.0, 0.9], [0.42, 0.07, 0.7, 0.6], [0.7, 0.30, 0.85, 0.75], [0.25, 0.42, 0.6, 0.5], [0.88, 0.52, 0.75, 0.65], [0.55, 0.62, 0.55, 0.45], [0.12, 0.78, 0.8, 0.7], [0.78, 0.92, 0.65, 0.55]];
+  const clouds = cloudDefs.map(([x, y, s, d], i) => {
+    const g = el('g', { opacity: 0.92 }, cloudG);
+    el('ellipse', { cx: 0, cy: 0, rx: 70, ry: 22, fill: '#fff' }, g);
+    el('circle', { cx: -26, cy: -14, r: 26, fill: '#fff' }, g);
+    el('circle', { cx: 12, cy: -24, r: 32, fill: '#fff' }, g);
+    el('circle', { cx: 44, cy: -8, r: 20, fill: '#fff' }, g);
+    return { g, x, y, s, d, v: 4 + i % 3 * 2 };
+  });
+
+  // far houses drifting along
+  const farG = $('farHouses');
+  const houseDefs = [['h-special', 160, 110, 0.04, 0.7, 9], ['h-aframe', 120, 110, 0.25, 0.66, 7], ['h-modern', 160, 100, 0.45, 0.68, 11], ['h-narrow', 84, 136, 0.86, 0.6, 8], ['h-aframe', 120, 110, 0.64, 0.52, 6], ['h-special', 160, 110, 0.97, 0.56, 10]];
+  const houses = houseDefs.map(([id, w, h, x, s, v], i) => {
+    const g = el('g', {}, farG);
+    el('use', { href: '#' + id, x: -w / 2, y: -h + 4, width: w, height: h }, g);
+    el('rect', { x: -w * 0.47, y: -4, width: w * 0.94, height: 12, rx: 3.5, fill: '#e9c99a', stroke: '#0b2247', 'stroke-width': 2.6 }, g);
+    return { g, w, h, x, s, v, ph: i * 1.7 };
+  });
+
+  // hero home + balloons
+  const homeG = $('homeG'), homeUse = $('homeUse');
+  homeUse.setAttribute('x', -75); homeUse.setAttribute('y', -136); homeUse.setAttribute('width', 150); homeUse.setAttribute('height', 140);
+  const strG = $('strings'), balG = $('balloons');
+  const offs = [[-62, -116], [0, -150], [62, -116], [-36, -230], [38, -240]];
+  const balloons = offs.map((o, i) => {
+    const s = el('path', {}, strG);
+    const g = el('g', {}, balG);
+    el('use', { href: '#balloon', x: -28, y: -80, width: 56, height: 86, fill: colours[i] }, g);
+    return { s, g, o, sc: 0, v: 0 };
+  });
+  const label = $('label'), labelBg = $('labelBg'), labelTx = $('labelTx');
+
+  const glintG = $('glints');
+  const glints = Array.from({ length: 9 }, (_, i) => ({ n: el('line', {}, glintG), x: (i * 0.137 + 0.03) % 1, y: 0.15 + (i * 0.29) % 0.8, ph: i * 2.1 }));
+  const ringG = $('rings');
+  const ripples = [];
+
+  let t = 0, last = performance.now(), home = { x: 0, y: 0, vy: 0, init: false }, count = 0, Lc = 0, waterY = 0;
+
+  function size() {
+    vw = innerWidth; vh = innerHeight; phone = vw <= 760;
+    k = phone ? 0.62 : clamp(vw / 1440, 0.7, 1.1);
+    svg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+    tops = secs.map(s => s.getBoundingClientRect().top + scrollY);
+  }
+
+  function wave(x, base) {
+    let y = base + 5 * Math.sin(x * 0.0095 + t * 0.8) + 2.6 * Math.sin(x * 0.024 - t * 1.2) + 1.2 * Math.sin(x * 0.052 + t * 2.0);
+    for (const r of ripples) {
+      const age = t - r.t; if (age < 0 || age > 5) continue;
+      const d = Math.abs(x - r.x); if (d > age * 240) continue;
+      y += 6 * Math.exp(-age * 0.9) * Math.exp(-d * 0.004) * Math.sin(d * 0.07 - age * 7);
+    }
+    return y;
+  }
+  function backWave(x, base) { return base - 16 * k + 3 * Math.sin(x * 0.006 - t * 0.5) + 1.6 * Math.sin(x * 0.017 + t * 0.9); }
+  function waterPath(fn, base) {
+    const step = phone ? 12 : 16; let d = `M0 ${vh + 2} L0 ${fn(0, base).toFixed(1)}`;
+    for (let x = step; x <= vw + step; x += step) d += ` L${x} ${fn(x, base).toFixed(1)}`;
+    return d + ` L${vw + step} ${vh + 2} Z`;
+  }
+
+  function progress() {
+    const y = scrollY + vh * 0.55;
+    if (y < tops[0]) return { c: 0, L: 0 };
+    let i = 0; while (i < tops.length - 1 && y >= tops[i + 1]) i++;
+    const next = i < tops.length - 1 ? tops[i + 1] : tops[i] + vh;
+    return { c: Math.min(5, i + 1), L: i + clamp((y - tops[i]) / (next - tops[i]), 0, 1) };
+  }
+
+  const sky0 = [[169, 214, 255], [215, 236, 255], [243, 250, 255]];
+  const sky1 = [[122, 186, 255], [185, 220, 255], [228, 243, 255]];
+  const rgb = (a, b, m) => `rgb(${a.map((v, i) => Math.round(mix(v, b[i], m))).join(',')})`;
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!paused) t += dt;
+    const p = progress();
+    if (p.c > count && count === 0 && home.init) ripples.push({ x: home.x, t });
+    count = p.c; Lc = p.L;
+    const sm = Math.min(1, Lc / 5);
+    $('sk0').setAttribute('stop-color', rgb(sky0[0], sky1[0], sm));
+    $('sk1').setAttribute('stop-color', rgb(sky0[1], sky1[1], sm));
+    $('sk2').setAttribute('stop-color', rgb(sky0[2], sky1[2], sm));
+
+    const sun = $('sun'); sun.setAttribute('cx', vw * (phone ? 0.84 : 0.8)); sun.setAttribute('cy', vh * 0.14 + Lc * vh * 0.05); sun.setAttribute('r', 130 * k);
+
+    // camera rises: clouds slide down, water drops away
+    for (const c of clouds) {
+      const span = vh * 1.5;
+      let cy = (c.y * vh + Lc * vh * 0.22 * c.d) % span - vh * 0.2;
+      const minX = phone ? 0 : vw * 0.5, range = vw - minX + 300;
+      const cx = minX + ((c.x * range + c.v * t * 3) % range) - 150;
+      c.g.setAttribute('transform', `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${(c.s * k * (phone ? 0.75 : 1)).toFixed(3)})`); c.g.setAttribute('opacity', phone ? 0.7 : 0.92);
+    }
+    waterY = vh * (phone ? 0.83 : 0.79) + Lc * vh * 0.13;
+    $('backWater').setAttribute('d', waterPath(backWave, waterY));
+    $('frontWater').setAttribute('d', waterPath(wave, waterY));
+    { const step = phone ? 12 : 16; let d = `M-4 ${wave(-4, waterY).toFixed(1)}`; for (let x = step; x <= vw + step; x += step) d += ` L${x} ${wave(x, waterY).toFixed(1)}`; $('crest').setAttribute('d', d); }
+
+    for (const h of houses) {
+      const x = ((h.x * (vw + 340) + h.v * t * 2.2) % (vw + 340)) - 170;
+      const y = backWave(x, waterY) - 3;
+      const r = 2.2 * Math.sin(t * 0.9 + h.ph);
+      const by = 1.6 * Math.sin(t * 1.3 + h.ph);
+      h.g.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + by).toFixed(1)}) rotate(${r.toFixed(2)}) scale(${(h.s * k).toFixed(3)})`);
+    }
+
+    // hero home
+    const hk = phone ? 0.46 : k;
+    const hx = vw * (phone ? 0.77 : 0.7);
+    const floatY = wave(hx, waterY) + 3 * hk;
+    let target;
+    if (count === 0) target = floatY;
+    else {
+      const air = phone ? vh - 96 - 3 * count : vh * (0.74 - 0.026 * count);
+      target = Math.min(floatY - 26 * hk, air);
+      if (Lc > 5) target -= (Lc - 5) * vh * (phone ? 1.9 : 1.25);
+    }
+    if (!home.init || reduce) { home.y = target; home.init = true; home.x = hx; }
+    else {
+      const a = count === 0 ? 0.35 : 0.06;
+      home.y += (target - home.y) * a; home.x = hx;
+    }
+    const air = count > 0;
+    const sway = air && !paused ? Math.sin(t * 0.7) * 2.2 : (count === 0 ? Math.sin(t * 1.1) * 1.8 : 0);
+    const hy = home.y + (air ? Math.sin(t * 0.9) * 4 : 0);
+    homeG.setAttribute('transform', `translate(${hx.toFixed(1)} ${hy.toFixed(1)}) rotate(${sway.toFixed(2)}) scale(${hk.toFixed(3)})`);
+
+    // balloons inflate one by one
+    const rad = sway * Math.PI / 180;
+    const ax = hx + Math.sin(rad) * 128 * hk, ay = hy - Math.cos(rad) * 128 * hk;
+    let newest = null;
+    balloons.forEach((b, i) => {
+      const tgt = count > i ? 1 : 0;
+      if (reduce) b.sc = tgt; else { b.v += (tgt - b.sc) * 0.14; b.v *= 0.76; b.sc += b.v; }
+      const sc = Math.max(0, b.sc);
+      const sx = paused ? 0 : Math.sin(t * 0.8 + i * 1.3) * 6, sy = paused ? 0 : Math.cos(t * 0.7 + i) * 4;
+      const bx = ax + (b.o[0] + sx) * hk, by = ay + (b.o[1] + sy) * hk * Math.min(1, 0.35 + sc * 0.65);
+      if (sc < 0.02) { b.g.setAttribute('opacity', 0); b.s.setAttribute('opacity', 0); return; }
+      b.g.setAttribute('opacity', 1); b.s.setAttribute('opacity', 1);
+      b.g.setAttribute('transform', `translate(${bx.toFixed(1)} ${by.toFixed(1)}) rotate(${(sx * 0.8).toFixed(2)}) scale(${(hk * sc * 1.05).toFixed(3)})`);
+      const mx = (ax + bx) / 2 + (i % 2 ? 8 : -8) * hk;
+      b.s.setAttribute('d', `M${ax.toFixed(1)} ${ay.toFixed(1)} Q${mx.toFixed(1)} ${((ay + by) / 2).toFixed(1)} ${bx.toFixed(1)} ${(by + 3 * hk).toFixed(1)}`);
+      if (tgt) newest = { i, bx, by };
+    });
+    if (newest && Lc <= 5.2) {
+      const tx = names[newest.i]; if (labelTx.textContent !== tx) labelTx.textContent = tx;
+      const w = tx.length * 8.2 + 22; labelBg.setAttribute('width', w);
+      const right = newest.i === 0 || newest.i === 3;
+      const lx = newest.bx + (right ? -w - 30 * hk : 30 * hk), ly = newest.by - 62 * hk;
+      label.setAttribute('transform', `translate(${lx.toFixed(1)} ${ly.toFixed(1)})`);
+      label.setAttribute('opacity', 1);
+    } else label.setAttribute('opacity', 0);
+
+    // glints on the water
+    glints.forEach((g, i) => {
+      const x = (g.x * vw + t * 6) % vw, y = waterY + 20 + g.y * vh * 0.18;
+      const o = paused ? 0.35 : 0.15 + 0.45 * Math.abs(Math.sin(t * 1.4 + g.ph));
+      g.n.setAttribute('x1', x.toFixed(1)); g.n.setAttribute('x2', (x + 10 + (i % 3) * 5).toFixed(1));
+      g.n.setAttribute('y1', y.toFixed(1)); g.n.setAttribute('y2', y.toFixed(1)); g.n.setAttribute('opacity', y < vh ? o.toFixed(2) : 0);
+    });
+
+    // ripple rings
+    while (ripples.length && t - ripples[0].t > 5) { ripples.shift(); }
+    let ri = 0; const ringEls = ringG.children;
+    for (const r of ripples) {
+      const age = t - r.t; if (age > 1.8) continue;
+      let n = ringEls[ri] || el('ellipse', {}, ringG); ri++;
+      n.setAttribute('cx', r.x); n.setAttribute('cy', wave(r.x, waterY) + 6);
+      n.setAttribute('rx', 8 + age * 70); n.setAttribute('ry', 2 + age * 8); n.setAttribute('opacity', Math.max(0, 0.5 - age * 0.3));
+    }
+    for (let j = ri; j < ringEls.length; j++) ringEls[j].setAttribute('opacity', 0);
+
+    // gauge and dock
+    document.querySelectorAll('.gauge a').forEach((a, i) => { a.classList.toggle('done', i < count || (i === 5 && Lc >= 5)); a.classList.toggle('here', i === Math.floor(Lc) && count > 0); });
+    $('gauge').classList.toggle('on', count > 0 && Lc < 4.85);
+    $('dockWhere').textContent = count === 0 ? '0 of 5' : (Lc >= 5 ? 'All 5 on' : `${count} of 5 · ${names[count - 1]}`);
+    $('nav').classList.toggle('solid', scrollY > 30);
+
+    requestAnimationFrame(frame);
+  }
+
+  // touch the water
+  let lastRip = 0;
+  addEventListener('pointermove', e => {
+    if (paused) return;
+    const now = performance.now(); if (now - lastRip < 140) return;
+    if (Math.abs(e.clientY - waterY) < 60 && e.clientY < vh) { ripples.push({ x: e.clientX, t }); lastRip = now; if (ripples.length > 10) ripples.shift(); }
+  }, { passive: true });
+  addEventListener('pointerdown', e => { if (!paused && e.clientY > waterY - 40) ripples.push({ x: e.clientX, t }); }, { passive: true });
+
+  // reveal
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(n => reduce ? n.classList.add('in') : io.observe(n));
+
+  // pause
+  const pb = $('pause');
+  function setPause(v) { paused = v; pb.classList.toggle('off', v); pb.querySelector('span').textContent = v ? 'Play motion' : 'Pause motion'; document.body.classList.toggle('still', v); }
+  setPause(paused);
+  pb.addEventListener('click', () => setPause(!paused));
+
+  // story sheet
+  const sheet = $('sheet');
+  const open = () => sheet.classList.add('open');
+  $('storyCard').addEventListener('click', open);
+  $('storyCard').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  $('hear').addEventListener('click', open);
+  $('close').addEventListener('click', () => sheet.classList.remove('open'));
+  sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('open'); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') sheet.classList.remove('open'); });
+
+  size();
+  addEventListener('resize', size);
+  new ResizeObserver(size).observe(document.body);
+  document.fonts && document.fonts.ready.then(size);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
