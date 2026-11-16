@@ -54,10 +54,11 @@ Round 4 (2026-11-15), Alex on round 3: "The colour is a bit too teal ... looks a
 - Calm motion (v3, Alex: "still feels a little bit glitchy"): few moving parts, eased (no springs or pops), no flicker, no moving labels. Record walkthrough videos frame by frame with Playwright's clock (`scripts/record-frames.cjs desktop|phone <page.html> <outDir>`, then ffmpeg at 30 fps), never with recordVideo, which stutters.
 - Messaging matches the picture: "A mortgage has five moving parts ... one balloon at a time." Sections are "Balloon N of 5".
 - Client questions (Alex, Nov 15): written the way a client would say them, but exceptionally clear. No "Based on a real client question" label.
-- Not all about Alex (v3): no founder face in the hero. The end shows "Who you'll talk to" (the team) and one candid real photo. He dislikes the brick-wall portrait in Staff Pictures.
-- Team photos: the March 2026 team headshots in Drive carry the Gemini sparkle (AI-made or AI-edited). Do not use them. Real photos are still needed.
+- Not all about Alex: no founder face in the hero. He dislikes the brick-wall portrait in Staff Pictures.
+- Team (v4, Alex: "smaller or behind in case they change"): small overlapping face avatars with "Talk with our team" and a "Meet the team" link to /about. No names or roles on the homepage, so staff changes need no redesign. Photos come from the live About page (Alex: "see current team page"); check `team_members` for who is active (Leah May resigned Oct 30 but is still on the live About page).
+- Event photos (v4, Alex on the EVOLV shot: "no unless it applies"): use them only where the context is that event.
+- Sky (v4, Alex: "could it adapt based on day or night of viewer?"): the sky follows the viewer's local sunrise and sunset (`nightHere()` in `reference/lift.html`, latitude 50, DST-aware), with a manual override (`#day` / `#dusk`). This settles the light vs dark question from section 3: day sky by day, dark evening sky after sunset.
 - Plain SVG and one small script, no WebGL. Measured phone LCP 0.7 to 0.9 s on the audit throttle.
-- Open: light (daytime) or dark (evening) sky. The prototype has a switch for both (`#dusk`). Dark keeps the Jul 17 "dark backgrounds" rule in section 3.
 
 Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
 

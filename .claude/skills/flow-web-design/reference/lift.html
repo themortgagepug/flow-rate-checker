@@ -73,20 +73,18 @@
 
   /* plan + team */
   .plan { padding: 150px 0 40px; }
-  .plan .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+  .plan .grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: center; }
   .plan h2 { margin-top: 12px; font-size: clamp(40px, 4.6vw, 66px); line-height: 1; letter-spacing: -0.04em; }
   .plan p.body { margin-top: 20px; font-size: 19px; line-height: 1.6; color: var(--body); max-width: 500px; }
-  .photo { position: relative; justify-self: center; width: min(420px, 100%); }
-  .photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 28px; box-shadow: 0 0 0 3px var(--ink), 8px 10px 0 0 var(--ink); transform: rotate(1.5deg); background: #cfe6ff; }
-  .photo .pin { position: absolute; top: -64px; left: 50%; width: 52px; height: 80px; overflow: visible; }
-  .team { margin-top: 40px; }
-  .team h3 { font-size: 22px; letter-spacing: -0.02em; }
-  .people { list-style: none; display: flex; flex-wrap: wrap; gap: 18px 12px; margin-top: 18px; }
-  .people li { width: 98px; text-align: center; font-size: 13.5px; line-height: 1.3; color: var(--muted); }
-  .people b { display: block; color: var(--ink); font-size: 15px; font-weight: 600; margin-top: 10px; }
-  .av { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; background: var(--c, var(--blue)); color: #fff; font-weight: 800; font-size: 20px; box-shadow: 0 0 0 2.5px var(--ink); position: relative; }
-  .av::after { content: ""; position: absolute; left: 50%; top: 100%; width: 0; height: 0; margin-left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 7px solid var(--ink); transform: translateY(1px); }
-  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 110px; }
+  .team { display: inline-flex; align-items: center; gap: 14px; margin-top: 34px; padding: 10px 20px 10px 12px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 2px var(--ink); max-width: 100%; }
+  .faces { display: flex; flex: none; }
+  .faces img { width: 40px; height: 40px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 0 0 1.5px var(--ink); margin-left: -12px; background: #cfe6ff; }
+  .faces img:first-child { margin-left: 0; }
+  .tt { font-size: 14px; line-height: 1.3; color: var(--muted); }
+  .tt b { display: block; color: var(--ink); font-size: 15.5px; font-weight: 600; }
+  .tt u { color: var(--blue); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  .reviews { display: grid; gap: 58px; padding-top: 40px; }
+  .reviews .cloud:nth-child(2) { margin-left: 44px; margin-right: -12px; }
   .cloud { position: relative; background: var(--card); border-radius: 28px; padding: 22px 22px 18px; font-size: 17px; line-height: 1.5; color: #12305e; box-shadow: 0 0 0 2.5px var(--ink); }
   .cloud::before, .cloud::after { content: ""; position: absolute; background: var(--card); border-radius: 50%; z-index: -1; box-shadow: 0 0 0 2.5px var(--ink); }
   .cloud::before { width: 86px; height: 86px; top: -34px; left: 30px; }
@@ -116,7 +114,7 @@
   .sheet { position: fixed; inset: 0; z-index: 40; background: rgba(11,34,71,0.6); display: none; align-items: center; justify-content: center; }
   .sheet.open { display: flex; }
   .story { position: relative; width: min(380px, 86vw); aspect-ratio: 9 / 16; border-radius: 24px; overflow: hidden; background: #cfe6ff; box-shadow: 0 0 0 3px #fff; }
-  .story > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story > img, .story > svg.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
   .story .bars { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; }
   .story .bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.45); overflow: hidden; }
   .story .bars i:first-child::after { content: ""; display: block; height: 100%; width: 0; background: #fff; animation: fill 90s linear forwards; }
@@ -130,9 +128,9 @@
 
   /* evening sky */
   body.dusk { background: #0b1d45; color: #f2f7ff; }
-  body.dusk .hero h1, body.dusk h2, body.dusk h3, body.dusk .brand, body.dusk .people b { color: #f2f7ff; }
+  body.dusk .hero h1, body.dusk h2, body.dusk h3, body.dusk .brand { color: #f2f7ff; }
   body.dusk .hero h1 .w { color: #7dbcff; }
-  body.dusk .sub, body.dusk .lift-sec p.body, body.dusk .plan p.body, body.dusk .proof, body.dusk .people li, body.dusk nav.top .links { color: #c8d8f2; }
+  body.dusk .sub, body.dusk .lift-sec p.body, body.dusk .plan p.body, body.dusk .proof, body.dusk nav.top .links { color: #c8d8f2; }
   body.dusk .proof b, body.dusk nav.top .right { color: #f2f7ff; }
   body.dusk .ask { color: #ffffff; }
   body.dusk .tag, body.dusk .go { color: #7dbcff; }
@@ -140,6 +138,8 @@
   body.dusk .menu { background: #132c63; color: #fff; }
   body.dusk .gauge a { color: rgba(255,255,255,0.4); } body.dusk .gauge a.done { color: #fff; } body.dusk .gauge a.done i { border-color: #fff; }
   body.dusk footer { background: #071431; }
+  body.dusk .pill, body.dusk .chip { color: var(--ink); }
+  body.dusk .team { background: #132c63; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); } body.dusk .tt { color: #c8d8f2; } body.dusk .tt b { color: #fff; } body.dusk .tt u { color: #7dbcff; } body.dusk .faces img { border-color: #132c63; }
 
   @media (max-width: 760px) {
     .wrap { width: calc(100% - 40px); }
@@ -158,9 +158,10 @@
     .gauge { display: none; }
     .plan { padding-top: 96px; }
     .plan .grid { grid-template-columns: 1fr; gap: 40px; }
-    .photo { width: min(320px, 86%); margin-top: 40px; }
-    .people li { width: calc(33.3% - 15px); }
-    .reviews { grid-template-columns: 1fr; gap: 54px; margin-top: 90px; }
+    .team { padding: 10px 16px 10px 10px; gap: 12px; }
+    .faces img { width: 34px; height: 34px; margin-left: -11px; }
+    .reviews { gap: 54px; padding-top: 20px; }
+    .reviews .cloud:nth-child(2) { margin: 0; }
     .pill { bottom: 80px; width: 44px; height: 44px; padding: 0; justify-content: center; }
     .pill span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
     .pause { left: 12px; } .skybtn { right: 12px; }
@@ -330,26 +331,13 @@
         <h2>Start with the question you'd ask first.</h2>
         <p class="body">Book a call with our team and bring your question. We'll go through all five parts with you.</p>
         <div class="cta"><a class="btn">Find my strategy</a><a class="btn ghost" href="tel:6042623500">Call 604-262-3500</a></div>
-        <div class="team">
-          <h3>Who you'll talk to</h3>
-          <ul class="people">
-            <li><span class="av" style="--c:#2470f0">AM</span><b>Alex McFadyen</b>Owner, Mortgage Broker</li>
-            <li><span class="av" style="--c:#12b4e4">SA</span><b>Sckala Amini</b>Loan Specialist</li>
-            <li><span class="av" style="--c:#1652c2">LK</span><b>Lidia Klimek</b>Loan Specialist</li>
-            <li><span class="av" style="--c:#5aa9ff">AB</span><b>Amy Brownjohn</b>Associate Mortgage Advisor</li>
-            <li><span class="av" style="--c:#0b2247">JK</span><b>Joana Kuchta</b>Fulfillment Coordinator</li>
-          </ul>
-        </div>
+        <a class="team" href="https://www.getflowmortgage.ca/about"><span class="faces"><img src="img/t-alex.webp" alt="" title="Alex McFadyen"><img src="img/t-lidia.webp" alt="" title="Lidia Klimek"><img src="img/t-sckala.webp" alt="" title="Sckala Amini"><img src="img/t-amy.webp" alt="" title="Amy Brownjohn"><img src="img/t-alejandra.webp" alt="" title="Alejandra Blandon"><img src="img/t-joana.webp" alt="" title="Joana Kuchta"></span><span class="tt"><b>Talk with our team</b>Brokers and loan specialists. <u>Meet the team</u></span></a>
       </div>
-      <div class="photo reveal">
-        <svg class="pin" viewBox="-28 -80 56 106" aria-hidden="true"><path d="M0 4 C-6 10 6 16 0 26" fill="none" stroke="#0b2247" stroke-width="2"/><use href="#balloon" x="-28" y="-80" width="56" height="86" fill="#12b4e4"/></svg>
-        <img src="img/alex-talk.webp" alt="Alex McFadyen in conversation at an event" loading="lazy">
+      <div class="reviews">
+        <div class="cloud reveal"><div class="inner">"The equity optimization assessment opened my eyes. I had no idea I was sitting on so much potential."<div class="who"><b>Sarah K.</b>, Burnaby, BC, Google review</div></div></div>
+        <div class="cloud reveal"><div class="inner">"As a self-employed business owner, getting a mortgage felt impossible until I found Flow. They reconstructed my income properly."<div class="who"><b>Marco D.</b>, Calgary, AB, Google review</div></div></div>
+        <div class="cloud reveal"><div class="inner">"Alex and his team did an amazing job supporting us throughout the process!"<div class="who"><b>Priya S.</b>, Vancouver, BC, Google review</div></div></div>
       </div>
-    </div>
-    <div class="reviews">
-      <div class="cloud reveal"><div class="inner">"The equity optimization assessment opened my eyes. I had no idea I was sitting on so much potential."<div class="who"><b>Sarah K.</b>, Burnaby, BC, Google review</div></div></div>
-      <div class="cloud reveal"><div class="inner">"As a self-employed business owner, getting a mortgage felt impossible until I found Flow. They reconstructed my income properly."<div class="who"><b>Marco D.</b>, Calgary, AB, Google review</div></div></div>
-      <div class="cloud reveal"><div class="inner">"Alex and his team did an amazing job supporting us throughout the process!"<div class="who"><b>Priya S.</b>, Vancouver, BC, Google review</div></div></div>
     </div>
   </div></section>
 </main>
@@ -366,9 +354,9 @@
 <button class="pill pause" id="pause" aria-label="Pause motion"><i></i><span>Pause motion</span></button>
 <button class="pill skybtn" id="skyBtn" aria-label="Try evening sky"><svg viewBox="0 0 20 20" width="18" height="18"><path d="M14.5 13.5A6.5 6.5 0 0 1 7 4a6.5 6.5 0 1 0 7.5 9.5z" fill="#0b2247"/></svg><span>Try evening sky</span></button>
 
-<div class="sheet" id="sheet" role="dialog" aria-label="How it works">
+<div class="sheet" id="sheet" role="dialog" aria-label="How it works video">
   <div class="story">
-    <img src="img/alex-stage.webp" alt="Alex McFadyen speaking">
+    <svg class="ph" viewBox="0 0 270 480" aria-hidden="true"><rect width="270" height="480" fill="#bfe0ff"/><circle cx="212" cy="96" r="28" fill="#ffe27a"/><path d="M115 178 Q120 210 135 239 M155 166 Q148 206 135 239" stroke="#0b2247" stroke-width="2" fill="none"/><use href="#balloon" x="95" y="120" width="40" height="62" fill="#2470f0"/><use href="#balloon" x="135" y="108" width="40" height="62" fill="#12b4e4"/><use href="#h-home" x="85" y="230" width="100" height="94"/><rect y="352" width="270" height="128" fill="#2d7cf0"/><path d="M0 352 Q34 344 68 352 T136 352 T204 352 T272 352" fill="none" stroke="#fff" stroke-width="2.5"/></svg>
     <div class="bars"><i></i><i></i><i></i></div>
     <div class="note">Concept: homepage video #6 plays here. 90 s, 9:16, captions burned in.</div>
     <div class="cap">"So we built a path for each situation."</div>
@@ -380,7 +368,18 @@
 (() => {
   const NS = 'http://www.w3.org/2000/svg';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const dusk = /dusk/.test(location.search + location.hash);
+  // Evening sky after local sunset, day sky after sunrise (approximate, for latitude 50, close enough for BC and Alberta).
+  function nightHere(d) {
+    const jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset(), dst = d.getTimezoneOffset() < jan;
+    const n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
+    const decl = 23.44 * Math.sin(2 * Math.PI * (284 + n) / 365) * Math.PI / 180, lat = 50 * Math.PI / 180;
+    const cosH = (Math.sin(-0.833 * Math.PI / 180) - Math.sin(lat) * Math.sin(decl)) / (Math.cos(lat) * Math.cos(decl));
+    const half = Math.acos(Math.max(-1, Math.min(1, cosH))) * 12 / Math.PI;
+    const noon = 12 + (dst ? 1 : 0), h = d.getHours() + d.getMinutes() / 60;
+    return h < noon - half - 0.25 || h > noon + half + 0.25;
+  }
+  const pick = location.hash + location.search;
+  const dusk = /dusk/.test(pick) ? true : /day/.test(pick) ? false : nightHere(new Date());
   let paused = reduce;
   const $ = id => document.getElementById(id);
   const svg = $('scene');
