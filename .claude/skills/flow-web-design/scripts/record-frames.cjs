@@ -28,7 +28,7 @@ const FPS = 30, DT = 1000 / FPS;
   await p.evaluate(() => document.getElementById('hear').click()); await hold(2.0);
   await p.evaluate(() => document.getElementById('close').click()); await hold(0.6);
   const off = which === 'phone' ? -40 : -45;
-  for (const id of ['rate', 'payment', 'term', 'equity', 'tax']) { await scrollTo(await topOf(id) + off, 1.4); await hold(1.5); }
+  for (const id of ['payment', 'term', 'equity', 'tax', 'rate']) { await scrollTo(await topOf(id) + off, 1.4); await hold(1.5); }
   await scrollTo(await topOf('plan'), 1.6); await hold(2.4);
   const H = await p.evaluate(() => document.documentElement.scrollHeight - innerHeight);
   await scrollTo(H, 1.4); await hold(1.0);

@@ -53,11 +53,23 @@
   @keyframes sway { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(4deg); } }
   .sub { margin-top: 24px; font-size: 21px; line-height: 1.5; color: var(--body); max-width: 560px; }
   .cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
-  .proof { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 26px; font-size: 15px; color: var(--muted); }
+  .proof { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; margin-top: 22px; font-size: 15px; color: var(--muted); }
   .proof b { color: var(--ink); font-weight: 600; }
+  .proof.m-only { display: none; }
   .stars { color: #f5a623; letter-spacing: 1px; margin-right: 4px; }
 
-  /* the five balloons */
+  .pick { margin-top: 28px; }
+  .pick-q { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; max-width: 760px; }
+  .chips a { display: inline-flex; align-items: center; min-height: 50px; padding: 0 20px; border-radius: 999px; background: #fff; font-size: 16.5px; font-weight: 600; color: var(--ink); box-shadow: 0 0 0 2.5px var(--ink), 0 4px 0 0 var(--ink); transition: transform .15s, box-shadow .15s, background .15s, color .15s; }
+  .chips a:hover { background: var(--blue); color: #fff; transform: translateY(-1px); }
+  .chips a:active { transform: translateY(3px); box-shadow: 0 0 0 2.5px var(--ink), 0 1px 0 0 var(--ink); }
+  .chips a.alt { background: none; box-shadow: none; color: var(--blue); padding: 0 6px; text-decoration: underline; text-underline-offset: 4px; }
+  .chips a.alt:hover { color: var(--blue-d); transform: none; }
+  .watch { display: inline-flex; align-items: center; gap: 8px; min-height: 50px; padding: 0 6px; font-size: 16px; font-weight: 600; color: var(--blue); }
+  .watch svg { width: 20px; height: 20px; }
+  .lift-sec h2.q { margin-top: 14px; font-size: clamp(30px, 3vw, 44px); line-height: 1.12; letter-spacing: -0.03em; max-width: 600px; }
+  /* client questions */
   .lift-sec { min-height: 96vh; display: flex; align-items: center; padding: 120px 0; }
   .lift-sec .copy { max-width: 560px; }
   .tag { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); }
@@ -98,12 +110,6 @@
   footer .mark { font-weight: 800; font-size: clamp(90px, 19vw, 290px); letter-spacing: -0.06em; line-height: 0.8; color: rgba(255,255,255,0.08); }
   footer .legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 26px; font-size: 14.5px; color: #a9c3e8; }
 
-  .gauge { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 10; display: flex; flex-direction: column; gap: 14px; align-items: flex-end; opacity: 0; transition: opacity .4s; }
-  .gauge.on { opacity: 1; }
-  .gauge a { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(11,34,71,0.4); transition: color .3s; }
-  .gauge a i { width: 13px; height: 16px; border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%; border: 2px solid currentColor; transition: background .3s; }
-  .gauge a.done { color: var(--ink); }
-  .gauge a.done i { background: var(--blue); border-color: var(--ink); }
 
   .pill { position: fixed; bottom: 22px; z-index: 15; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; padding: 0 15px; min-height: 44px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 2px var(--ink); }
   .pause { left: 22px; } .skybtn { right: 22px; }
@@ -133,10 +139,10 @@
   body.dusk .sub, body.dusk .lift-sec p.body, body.dusk .plan p.body, body.dusk .proof, body.dusk nav.top .links { color: #c8d8f2; }
   body.dusk .proof b, body.dusk nav.top .right { color: #f2f7ff; }
   body.dusk .ask { color: #ffffff; }
-  body.dusk .tag, body.dusk .go { color: #7dbcff; }
+  body.dusk .tag, body.dusk .go, body.dusk .watch, body.dusk .chips a.alt { color: #7dbcff; }
+  body.dusk .pick-q { color: #fff; }
   body.dusk nav.top.solid, body.dusk .dock { background: #0b1d45; box-shadow: 0 1px 0 rgba(255,255,255,0.12); }
   body.dusk .menu { background: #132c63; color: #fff; }
-  body.dusk .gauge a { color: rgba(255,255,255,0.4); } body.dusk .gauge a.done { color: #fff; } body.dusk .gauge a.done i { border-color: #fff; }
   body.dusk footer { background: #071431; }
   body.dusk .pill, body.dusk .chip { color: var(--ink); }
   body.dusk .team { background: #132c63; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); } body.dusk .tt { color: #c8d8f2; } body.dusk .tt b { color: #fff; } body.dusk .tt u { color: #7dbcff; } body.dusk .faces img { border-color: #132c63; }
@@ -151,11 +157,13 @@
     .hero h1 { margin-top: 20px; font-size: 12.6vw; }
     .sub { font-size: 18px; margin-top: 16px; }
     .cta { margin-top: 22px; } .cta .btn { flex: 1 1 100%; }
+    .pick { margin-top: 18px; } .pick-q { font-size: 16px; } .chips { gap: 9px; } .chips a { min-height: 44px; padding: 0 15px; font-size: 15px; } .chips a.alt, .watch { min-height: 44px; font-size: 15px; }
+    .hero .proof { display: none; }
+    .proof.m-only { display: flex; margin-top: 26px; }
     .proof { font-size: 13.5px; margin-top: 18px; }
     .lift-sec { min-height: 100svh; align-items: flex-start; padding: 96px 0 42vh; }
     .ask { font-size: 22px; }
     .lift-sec p.body { font-size: 17.5px; }
-    .gauge { display: none; }
     .plan { padding-top: 96px; }
     .plan .grid { grid-template-columns: 1fr; gap: 40px; }
     .team { padding: 10px 16px 10px 10px; gap: 12px; }
@@ -165,11 +173,11 @@
     .pill { bottom: 80px; width: 44px; height: 44px; padding: 0; justify-content: center; }
     .pill span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
     .pause { left: 12px; } .skybtn { right: 12px; }
-    .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -1px 0 var(--line); }
+    .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -1px 0 var(--line); }
     .dock .where { font-size: 13px; color: var(--muted); }
     .dock .where b { color: var(--ink); font-weight: 600; display: block; font-size: 15px; }
     body.dusk .dock .where b { color: #fff; }
-    .dock .btn { min-height: 46px; padding: 0 18px; font-size: 15px; }
+    .dock .btn { min-height: 46px; padding: 0 18px; font-size: 15px; flex: 1; } .dock .btn.ghost { flex: 0 0 auto; }
     footer { padding-bottom: 150px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -265,73 +273,78 @@
 <nav class="top" id="nav"><div class="wrap">
   <a class="brand" href="#top"><img src="img/logo.png" alt="">Flow</a>
   <div class="links"><a href="#equity">Equity</a><a href="#tax">Self-employed</a><a>Investors</a><a>Buying</a><a href="#term">Renewing</a></div>
-  <div class="right"><a class="call" href="tel:6042623500">604-262-3500</a><a class="btn" href="#plan">Find my strategy</a><button class="menu">Menu</button></div>
+  <div class="right"><a class="call" href="tel:6042623500">604-262-3500</a><a class="btn" href="#start">Get started</a><button class="menu">Menu</button></div>
 </div></nav>
 
 <main>
   <section class="hero" id="top">
     <div class="wrap">
-      <div class="chip"><i></i>Next Bank of Canada decision: <b>Dec 9</b> <span>6:45 AM PT</span></div>
       <h1>Make your mortgage build your <span class="w">wealth</span><span class="dot" aria-hidden="true"><svg viewBox="-14 -40 28 50"><path d="M0 9 C-3 -2 4 -10 0 -14" fill="none" stroke="#0b2247" stroke-width="1.6"/><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z" fill="#2470f0" stroke="#0b2247" stroke-width="2"/><circle cx="0" cy="9" r="2.8" fill="#0b2247"/></svg></span></h1>
-      <p class="sub">A mortgage has five moving parts: the rate, the payment, the term, your equity and your tax. We work through all five with you, one balloon at a time.</p>
-      <div class="cta"><a class="btn" href="#plan">Find my strategy</a><button class="btn ghost" id="hear"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#2470f0"/><path d="M8 6.5v7l5.5-3.5z" fill="#fff"/></svg>Watch how it works</button></div>
+      <p class="sub">We start with your plans and build the mortgage around them.</p>
+      <div class="pick" id="start">
+        <p class="pick-q">What are you working on?</p>
+        <div class="chips">
+          <a href="https://www.getflowmortgage.ca/ready">Buying a home</a>
+          <a href="https://www.getflowmortgage.ca/smart">Renewing my mortgage</a>
+          <a href="https://www.getflowmortgage.ca/equity">Using my equity</a>
+          <a href="https://www.getflowmortgage.ca/boss">I'm self-employed</a>
+          <a href="https://www.getflowmortgage.ca/invest">Investing in property</a>
+          <a class="alt" href="https://www.getflowmortgage.ca/contact">Not sure yet? Talk to us</a><button class="watch" id="hear"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#2470f0"/><path d="M8 6.5v7l5.5-3.5z" fill="#fff"/></svg>Watch how it works</button>
+        </div>
+      </div>
       <div class="proof"><span><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><b>400+</b> five-star Google reviews</span><span>Award-winning, <b>CMP Top 75</b> broker every year since 2018</span></div>
     </div>
   </section>
 
+  <section class="lift-sec" id="payment"><div class="wrap"><div class="copy reveal">
+    <div class="tag">Your payment</div>
+    <h2 class="q">"What would my payment be, compared to what I pay now?"</h2>
+    <div class="meta"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="body">We start with your plans for the next five years, then pick a mortgage with a payment that fits them.</p>
+    <a class="go" href="https://www.getflowmortgage.ca/calculators/mortgage">Work out a payment <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="term"><div class="wrap"><div class="copy reveal">
+    <div class="tag">Getting out early</div>
+    <h2 class="q">"What would it cost me to get out of my mortgage early?"</h2>
+    <div class="meta"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
+    <p class="body">You'll see the penalty before you sign, and what happens if you sell or refinance early.</p>
+    <a class="go" href="https://www.getflowmortgage.ca/smart">See your renewal options <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="equity"><div class="wrap"><div class="copy reveal">
+    <div class="tag">Your equity</div>
+    <h2 class="q">"I want to stop working at 55. Can my home help?"</h2>
+    <div class="meta"><span class="n"><i></i>Asked on about 1 in 7 of our calls</span></div>
+    <p class="body">It can be part of the plan. Your equity could pay off debt, fund an investment or help you buy your next place.</p>
+    <a class="go" href="https://www.getflowmortgage.ca/equity">Use your equity <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
+  <section class="lift-sec" id="tax"><div class="wrap"><div class="copy reveal">
+    <div class="tag">Tax and self-employed income</div>
+    <h2 class="q">"We're trying to save on tax. Will that hurt our mortgage?"</h2>
+    <div class="meta"><span class="n"><i></i>Asked on about 1 in 8 of our calls</span></div>
+    <p class="body">We show lenders your income the way they need to see it, so your tax plan and your mortgage line up.</p>
+    <a class="go" href="https://www.getflowmortgage.ca/boss">Mortgages for the self-employed <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
+  </div></div></section>
+
   <section class="lift-sec" id="rate"><div class="wrap"><div class="copy reveal">
-    <div class="tag"><svg viewBox="-14 -48 28 60"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#2470f0" stroke="#0b2247" stroke-width="2.2"/></svg>Balloon 1 of 5</div>
-    <h2>The rate</h2>
-    <p class="ask">"What are mortgage rates looking like right now?"</p>
+    <div class="tag">The rate</div>
+    <h2 class="q">"What are mortgage rates looking like right now?"</h2>
     <div class="meta"><span class="n"><i></i>Asked on about 1 in 5 of our calls</span></div>
     <p class="body">We shop your rate across lenders and check the terms that come with it. Those terms decide what the mortgage costs you.</p>
     <a class="go" href="https://rate.getflowmortgage.ca">Try the rate checker <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
   </div></div></section>
 
-  <section class="lift-sec" id="payment"><div class="wrap"><div class="copy reveal">
-    <div class="tag"><svg viewBox="-14 -48 28 60"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#5aa9ff" stroke="#0b2247" stroke-width="2.2"/></svg>Balloon 2 of 5</div>
-    <h2>Your payment</h2>
-    <p class="ask">"What would my payment be, compared to what I pay now?"</p>
-    <div class="meta"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
-    <p class="body">We start with your plans for the next five years, then pick a mortgage with a payment that fits them.</p>
-    <a class="go">Work out a payment <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
-  </div></div></section>
-
-  <section class="lift-sec" id="term"><div class="wrap"><div class="copy reveal">
-    <div class="tag"><svg viewBox="-14 -48 28 60"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#12b4e4" stroke="#0b2247" stroke-width="2.2"/></svg>Balloon 3 of 5</div>
-    <h2>The term, and the way out</h2>
-    <p class="ask">"What would it cost me to get out of my mortgage early?"</p>
-    <div class="meta"><span class="n"><i></i>Asked on about 1 in 4 of our calls</span></div>
-    <p class="body">You'll see the penalty before you sign, and what happens if you sell or refinance early.</p>
-    <a class="go">Check a penalty <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
-  </div></div></section>
-
-  <section class="lift-sec" id="equity"><div class="wrap"><div class="copy reveal">
-    <div class="tag"><svg viewBox="-14 -48 28 60"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#8cc8ff" stroke="#0b2247" stroke-width="2.2"/></svg>Balloon 4 of 5</div>
-    <h2>Your equity</h2>
-    <p class="ask">"I want to stop working at 55. Can my home help?"</p>
-    <div class="meta"><span class="n"><i></i>Asked on about 1 in 7 of our calls</span></div>
-    <p class="body">It can be part of the plan. Your equity could pay off debt, fund an investment or help you buy your next place.</p>
-    <a class="go">Use your equity <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
-  </div></div></section>
-
-  <section class="lift-sec" id="tax"><div class="wrap"><div class="copy reveal">
-    <div class="tag"><svg viewBox="-14 -48 28 60"><path d="M0 -14 C-4 -16 -12 -24 -12 -33 C-12 -41 -6 -46 0 -46 C6 -46 12 -41 12 -33 C12 -24 4 -16 0 -14 Z M0 -14 V10" fill="#1652c2" stroke="#0b2247" stroke-width="2.2"/></svg>Balloon 5 of 5</div>
-    <h2>Tax, and how you get paid</h2>
-    <p class="ask">"We're trying to save on tax. Will that hurt our mortgage?"</p>
-    <div class="meta"><span class="n"><i></i>Asked on about 1 in 8 of our calls</span></div>
-    <p class="body">We show lenders your income the way they need to see it, so your tax plan and your mortgage line up.</p>
-    <a class="go">Self-employed path <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>
-  </div></div></section>
-
   <section class="plan" id="plan"><div class="wrap">
     <div class="grid">
       <div class="reveal">
-        <div class="tag">All five balloons on</div>
+        <div class="tag">Not sure where to start?</div>
         <h2>Start with the question you'd ask first.</h2>
-        <p class="body">Book a call with our team and bring your question. We'll go through all five parts with you.</p>
-        <div class="cta"><a class="btn">Find my strategy</a><a class="btn ghost" href="tel:6042623500">Call 604-262-3500</a></div>
+        <p class="body">Book a call with our team and bring your question. We'll work through it with you.</p>
+        <div class="cta"><a class="btn" href="https://www.getflowmortgage.ca/contact">Book a call</a><a class="btn ghost" href="tel:6042623500">Call 604-262-3500</a></div>
         <a class="team" href="https://www.getflowmortgage.ca/about"><span class="faces"><img src="img/t-alex.webp" alt="" title="Alex McFadyen"><img src="img/t-lidia.webp" alt="" title="Lidia Klimek"><img src="img/t-sckala.webp" alt="" title="Sckala Amini"><img src="img/t-amy.webp" alt="" title="Amy Brownjohn"><img src="img/t-alejandra.webp" alt="" title="Alejandra Blandon"><img src="img/t-joana.webp" alt="" title="Joana Kuchta"></span><span class="tt"><b>Talk with our team</b>Brokers and loan specialists. <u>Meet the team</u></span></a>
+        <div class="proof m-only"><span><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><b>400+</b> five-star Google reviews</span><span>Award-winning, <b>CMP Top 75</b> broker every year since 2018</span></div>
       </div>
       <div class="reviews">
         <div class="cloud reveal"><div class="inner">"The equity optimization assessment opened my eyes. I had no idea I was sitting on so much potential."<div class="who"><b>Sarah K.</b>, Burnaby, BC, Google review</div></div></div>
@@ -347,10 +360,7 @@
   <div class="legal"><span>Flow Mortgage Co. is licensed with BRX Mortgage. Serving BC and Alberta.</span><span>604-262-3500</span></div>
 </div></footer>
 
-<nav class="gauge" id="gauge" aria-label="Balloons">
-  <a href="#rate">Rate<i></i></a><a href="#payment">Payment<i></i></a><a href="#term">Term<i></i></a><a href="#equity">Equity<i></i></a><a href="#tax">Tax<i></i></a>
-</nav>
-<div class="dock"><div class="where">Balloons <b id="dockWhere">0 of 5</b></div><a class="btn" href="#plan">Find my strategy</a></div>
+<div class="dock"><a class="btn ghost" href="tel:6042623500">Call</a><a class="btn" href="#start">Get started</a></div>
 <button class="pill pause" id="pause" aria-label="Pause motion"><i></i><span>Pause motion</span></button>
 <button class="pill skybtn" id="skyBtn" aria-label="Try evening sky"><svg viewBox="0 0 20 20" width="18" height="18"><path d="M14.5 13.5A6.5 6.5 0 0 1 7 4a6.5 6.5 0 1 0 7.5 9.5z" fill="#0b2247"/></svg><span>Try evening sky</span></button>
 
@@ -396,9 +406,8 @@
   }
 
   let vw = 0, vh = 0, phone = false, k = 1, tops = [];
-  const secs = ['rate', 'payment', 'term', 'equity', 'tax', 'plan'].map($);
-  const names = ['Rate', 'Payment', 'Term', 'Equity', 'Tax'];
-  const colours = ['#2470f0', '#5aa9ff', '#12b4e4', '#8cc8ff', '#1652c2'];
+  const secs = ['payment', 'term', 'equity', 'tax', 'rate', 'plan'].map($);
+  const colours = ['#2470f0', '#12b4e4', '#5aa9ff'];
 
   // flat clouds: white with a pale underside
   const cloudG = $('clouds');
@@ -431,7 +440,7 @@
   el('use', { href: '#h-home', x: -80, y: -148, width: 160, height: 150 }, homeG);
   raft(homeG, 160);
   const strG = $('strings'), balG = $('balloons');
-  const offs = [[-64, -112], [0, -146], [64, -112], [-36, -226], [38, -236]];
+  const offs = [[-46, -118], [6, -158], [52, -112]];
   const balloons = offs.map((o, i) => {
     const s = el('path', { opacity: 0 }, strG);
     const g = el('g', { opacity: 0 }, balG);
@@ -473,7 +482,6 @@
   const sky0 = dusk ? [[8, 22, 58], [16, 44, 104], [38, 86, 168]] : [[169, 214, 255], [215, 236, 255], [243, 250, 255]];
   const sky1 = dusk ? [[6, 18, 48], [14, 38, 92], [30, 72, 146]] : [[122, 186, 255], [185, 220, 255], [228, 243, 255]];
   const rgb = (a, b, m) => `rgb(${a.map((v, i) => Math.round(mix(v, b[i], m))).join(',')})`;
-  const gaugeLinks = [...document.querySelectorAll('.gauge a')];
 
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -495,7 +503,7 @@
       c.g.setAttribute('opacity', phone ? 0.75 : 1);
     }
 
-    waterY = vh * (phone ? 0.83 : 0.79) + L * vh * 0.13;
+    waterY = vh * (phone ? 0.87 : 0.8) + L * vh * 0.13;
     $('backWater').setAttribute('d', waterPath(backWave, waterY));
     $('frontWater').setAttribute('d', waterPath(wave, waterY));
     $('crest').setAttribute('d', waterPath(wave, waterY, true));
@@ -509,11 +517,11 @@
 
     // your home floats, then lifts as balloons go on
     const hk = phone ? 0.46 : k * 1.05;
-    const hx = vw * (phone ? 0.62 : 0.7);
+    const hx = vw * (phone ? 0.76 : 0.7);
     const floatY = wave(hx, waterY) + 4 * hk;
     let target = floatY;
     if (count > 0) {
-      const air = phone ? vh - 96 - 3 * count : vh * (0.74 - 0.026 * count);
+      const air = phone ? vh - 96 - 4 * Math.min(L, 5) : vh * (0.72 - 0.024 * Math.min(L, 5));
       target = Math.min(floatY - 24 * hk, air);
       if (L > 5) target -= (L - 5) * vh * (phone ? 1.6 : 1.2);
     }
@@ -526,8 +534,7 @@
     const rad = sway * Math.PI / 180;
     const ax = hx + Math.sin(rad) * 132 * hk, ay = hy - Math.cos(rad) * 132 * hk;
     balloons.forEach((b, i) => {
-      const tgt = count > i ? 1 : 0;
-      b.sc = reduce ? tgt : b.sc + (tgt - b.sc) * ease(4, dt);
+      b.sc = 1;
       const sc = b.sc;
       if (sc < 0.02) { b.g.setAttribute('opacity', 0); b.s.setAttribute('opacity', 0); return; }
       const sx = paused ? 0 : Math.sin(t * 0.7 + i * 1.3) * 4, sy = paused ? 0 : Math.cos(t * 0.6 + i) * 3;
@@ -539,9 +546,6 @@
     });
 
     while (ripples.length && t - ripples[0].t > 4) ripples.shift();
-    gaugeLinks.forEach((a, i) => a.classList.toggle('done', i < count));
-    $('gauge').classList.toggle('on', count > 0 && L < 4.85);
-    $('dockWhere').textContent = count === 0 ? '0 of 5' : (L >= 5 ? 'All 5 on' : `${count} of 5 · ${names[count - 1]}`);
     $('nav').classList.toggle('solid', scrollY > 30);
     requestAnimationFrame(frame);
   }
