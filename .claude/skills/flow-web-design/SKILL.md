@@ -1,0 +1,168 @@
+---
+name: flow-web-design
+description: Audit, redesign or visually improve any Flow Mortgage Co. website (getflowmortgage.ca, rate.getflowmortgage.ca, Lovable-built tools). Loads Alex's design direction, the copy and claims rules that apply to live pages, a one-command speed and copy audit, and the vetted design resource library (component.gallery, navbar.gallery, pixlpin.com, vanta.supply, dithercn.dev) with a verdict and licence for each. Use when asked to audit the site, improve how it looks, redo the nav, hero, reviews or palette, pick fonts, find design inspiration, or check a page before Publish.
+---
+
+# Flow web design
+
+Use this before touching how any Flow site looks or reads.
+Built 2026-11-14 from the first visual audit (Drive: FLOW - Mothership / FLOW / MARKETING / 2026-11-14 Website Visual Audit) and the first concepts (same path, 2026-11-14 Website Concepts Round 1).
+
+## 0. The goal (Alex, 2026-11-14)
+
+"The goal is to build the non ai looking, unique, fast and functional site that represent who we are and stays unique to us"
+
+Score every page decision on these five tests, in order:
+
+1. Made by a person, for Flow. No template cards, glow, gradient blobs or stock icons in rounded squares.
+2. Only Flow could use it. Alex's face, the team, clients' own words, the water idea behind the name, Alex's voice.
+3. Fast. Phone LCP under 2.5 s (baseline 5.2 to 6.0 s on 2026-11-14).
+4. Works. One clear next step on every screen, phone first, no gate in front of a tool result.
+5. Still ours in a year. Nothing borrowed from a trend.
+
+Own one idea and keep everything else plain. The winners Alex named each own a single idea (Mercury: one photo world with a river; Stripe: one colour wave and a live number; Family: drawn characters). Nav, buttons and forms stay boring and fast.
+
+Round 1 concepts (2026-11-14): "The flow line" (one SVG water line drawn from the logo wave, Figtree) and "Real people" (Alex, the team and real reviews, Atkinson Hyperlegible). Recommended: merge, with the people as the body and the line as the single signature. Reskinning the current template (audit Option B) is dropped.
+
+Round 2 (2026-11-14), Alex: "1 is ok but the waves are not integrated well ... we need to sound and feel more human though but progressive". Current direction, "the waterline":
+
+- The wave is the edge between sections (deep water above, the next section below), never a stroke laid over content. Steps sit on that edge.
+- One hand-drawn wave reused at small scale: under the key word of the headline, as list markers. Long section lines stay clean vector (a texture filter breaks them).
+- Human: Alex's photo large in the hero; real client questions from `ops_content_extracts` (no names, shortened, Alex OK needed for public use); real reviews.
+- Type: Figtree for everything Flow says; Source Serif 4 only for real people's words and small labels. Never a serif headline (Jul 17 rejected serif display).
+- Progressive: pill buttons, a call button beside the main CTA, a visible "Pause motion" control, motion off under reduced-motion.
+- From Wealthsimple, take: serif for human moments, plain copy with a wink, one physical object per section, small hand-drawn sketches, a pause control. Leave: rate-led messaging, posted rates in big type, autoplay video walls, the light cream base.
+
+Round 3 (2026-11-14), Alex: "Missed the mark. Not modern at all. The face image the way it is... is like 2010. Bring it up to 2026. Get original. Go 10x deeper." Current direction, "Below the surface" (prototype in Drive, 2026-11-14 Website Concepts):
+
+- Original idea from Flow's own data: a mortgage has a surface (the rate) and a depth (payment, term, equity, tax). The page is a dive. Each depth opens with a real client question and its call count.
+- Never a boxed headshot. The founder appears as a story-style vertical video card (IG story ring on phone) and as a duotone cut-out from real footage, toned into the water palette.
+- One live WebGL ocean behind the page, loaded after the text: waterline, pointer ripples, caustics that fade with depth. The waterline cuts the headline (clip-path from the same wave formula as the shader, lower copy through an SVG displacement filter).
+- Solid surfaces only. Glassmorphism and liquid glass, bento grids, AI portraits and motion for motion's sake are on Creative Boom's April 2026 "so over" list.
+- Fresh in 2025-26 winners: navy plus one accent, type-led hero, scroll storytelling with a pinned guide (depth gauge), live data on the page, the person as the interface.
+- Type: Mona Sans (wide cut for display, normal for body) and Source Serif 4 for real people's words only.
+- Measured: prototype phone LCP 0.5 to 0.6 s on the audit throttle (local server, no tags or app code).
+- Before shipping: re-measure layout on font load (ResizeObserver) and check that overlays still show on phone. Both broke once.
+
+Round 4 (2026-11-15), Alex on round 3: "The colour is a bit too teal ... looks a little bit intimidating. I want more blue ... right now it looks much more like drowning, which is not good ... little houses that are floating along that we have little balloons like movie up ... our messaging should in someways match this style." Current direction, "Lift" (prototype in Drive, 2026-11-14 Website Concepts, Round 4 files; source in `reference/lift.html`):
+
+- The page rises; it never dives or sinks. Floating houses and a home lifted by balloons carry the "lift" feeling.
+- Balloons are decoration only (v5, Alex: "The balloons are a bit confusing"): three balloons always tied to the hero home. No "Balloon N of 5", no balloon gauge, no balloon copy.
+- RATE IS NEVER FIRST (v5, Alex: "rates is Not first.. ever"): not in any list, section order, picker or nav. On the homepage the rate question is the last section.
+- Main call to action (v5, Alex: "Easier as a CTA to guide them to the right page"): a "What are you working on?" picker routing to the live program pages. Buying a home goes to /ready, Renewing my mortgage to /smart, Using my equity to /equity, I'm self-employed to /boss, Investing in property to /invest, and "Not sure yet? Talk to us" to /contact. "Get started" in the nav and the phone dock scrolls to it.
+- No Bank of Canada date chip (v5, Alex: "We don't need the dec bank of Canada call").
+- Light bright sky and true blues (#2470f0 Flow blue, #1652c2, #5aa9ff, #8cc8ff, logo cyan #12b4e4). No teal. Navy #0b2247 only for text, outlines and the footer.
+- Nothing may look like it's sinking. Every house rides on a raft above the waterline.
+- Illustration (v3, Alex: "a little bit more of a cartoon look ... but also clean design and flat"): original houses drawn for Flow (A-frame, Vancouver Special box, West Coast modern, narrow city house, the hero home). Chunky shapes, round windows, 3.4 px navy outlines, flat fills, no gradients on objects. Never copy the Up house.
+- One typeface (v3, Alex: "fix the fonts so we don't have too many different font types"): Figtree 400/600/800 for every word. No second family, no width variants.
+- Calm motion (v3, Alex: "still feels a little bit glitchy"): few moving parts, eased (no springs or pops), no flicker, no moving labels. Record walkthrough videos frame by frame with Playwright's clock (`scripts/record-frames.cjs desktop|phone <page.html> <outDir>`, then ffmpeg at 30 fps), never with recordVideo, which stutters.
+- Section order: payment, getting out early, equity, tax and self-employed income, rate. Each opens with the client question as the heading and links to the matching live page. Subline: "We start with your plans and build the mortgage around them."
+- Client questions (Alex, Nov 15): written the way a client would say them, but exceptionally clear. No "Based on a real client question" label.
+- Not all about Alex: no founder face in the hero. He dislikes the brick-wall portrait in Staff Pictures.
+- Team (v4, Alex: "smaller or behind in case they change"): small overlapping face avatars with "Talk with our team" and a "Meet the team" link to /about. No names or roles on the homepage, so staff changes need no redesign. Photos come from the live About page (Alex: "see current team page"); check `team_members` for who is active (Leah May resigned Oct 30 but is still on the live About page).
+- Event photos (v4, Alex on the EVOLV shot: "no unless it applies"): use them only where the context is that event.
+- Sky (v4, Alex: "could it adapt based on day or night of viewer?"): the sky follows the viewer's local sunrise and sunset (`nightHere()` in `reference/lift.html`, latitude 50, DST-aware), with a manual override (`#day` / `#dusk`). This settles the light vs dark question from section 3: day sky by day, dark evening sky after sunset.
+- Plain SVG and one small script, no WebGL. Measured phone LCP 0.7 to 0.9 s on the audit throttle.
+
+Open compliance flags: region (live site says Canada-wide, voice rules say BC and Alberta only); footer acronyms S.M.A.R.T. and E.Q.U.I.T.Y. are not on the allowed list (PREPARE, READY, BOSS, INVEST); "Banks sell rates. We deliver clarity." is a banned two-beat slogan under the voice rules.
+
+## 1. Read first
+
+Live sources override this file. Query them at the start of every run.
+
+- Supabase brain, project `jkeujqzlclrxhwamplby`, table `brain`:
+  - `topic ilike '%website design direction%'` (Jul 17 redesign direction)
+  - `topic ilike '%interactive tools minimal%'` (Oct 23 rule for calculators and quizzes)
+  - `topic ilike '%no funded volume%'` (Nov 2 claims rule)
+  - `topic ilike '%web design resource library%'` (this skill's resource list, kept current)
+  - `topic ilike '%flow homepage lovable%'` (which Lovable project serves which domain, prerender history)
+- Drive: FLOW Brain Doc 01 "HARD Rules and Standing Rules" and Doc 08 "Change Log".
+
+## 2. Where each site lives
+
+| Domain | Built in | Notes |
+|---|---|---|
+| www.getflowmortgage.ca | Lovable project "Flow Mortgage Hub" `6bf89f98-af7b-4e56-9d55-b7dc5af1f96b`, repo themortgagepug/flow-mortgage-hub | Look-alike "Flow Mortgage Studio" serves studio.getflowmortgage.ca. Confirm the domain in Share/Publish before editing. |
+| rate.getflowmortgage.ca | Lovable project `62c19ea2-e711-4f60-9b59-6f397b40cfd5` | Has no Git connection. The repo themortgagepug/flow-rate-checker is a dead mirror (see its DEPLOYMENT.md). |
+
+Lovable prompts go as one line (Enter sends). "Merged" is not "live": every change needs Publish. Publish only after Alex says go.
+
+## 3. Design direction (Alex, Jul 17 2026)
+
+- Dark backgrounds.
+- A range of water blues: deep ocean navy to teal to turquoise and aqua. One cyan on navy is the current look and reads as a template.
+- A human, easy-to-read typeface. Alex named Inter, Poppins, Montserrat, Space Grotesk and Roboto as "AI" fonts and rejected Fraunces (serif display).
+- Stand out, but stay easy to navigate. Smooth motion with framer-motion, nothing gimmicky.
+- Rejected looks: warm-paper editorial, dark fintech with particles or glow, serif display.
+- Benchmark against named real sites: Family, Stripe, Mercury, Lusion, Wealthsimple.
+- Only design what ships cleanly in Lovable (React, Tailwind, shadcn, framer-motion).
+
+Interactive tools (calculators, quizzes, rate checker), Oct 23: navy, white and grey with cyan as the only accent. No cards, glows, gradients, green or amber. Site fonts inside the site Layout.
+
+Decks and one-sheets use Style A (navy, cyan edge, Bebas Neue and Inter). That rule does not apply to the website.
+
+## 4. Copy and claims rules for live pages
+
+- Award claim: "Award-winning, CMP Top 75 broker every year since 2018", with source and date. "Top 3", "Top 20" and "Top 25" are not approved.
+- Reviews: "400+ five-star Google reviews".
+- No funded counts, application counts or dollar volume ("$1B+ funded", "4,000+ properties financed").
+- No em dashes. No emojis.
+- No rates without Alex's written OK. Never Ratehub or aggregator rates.
+- Never gate a quiz or tool result behind name, email or phone.
+- Never name other brokers. No client faces.
+- Run the humanizer skill on any new page copy before showing it to Alex.
+
+## 5. Audit in one command
+
+```bash
+node .claude/skills/flow-web-design/scripts/site-audit.cjs https://www.getflowmortgage.ca/ ./audit-out
+```
+
+It prints JSON and saves desktop and phone screenshots:
+
+- Phone LCP and first paint under Lighthouse mobile throttling (150 ms, 1.6 Mbps, 4x CPU). Run it twice: results moved 5.2 s to 6.0 s between runs on 2026-11-13/14.
+- JavaScript weight split by host (own code vs Google Tag Manager, Facebook and the rest).
+- Fonts loaded, tap targets under 44 px, page height on a phone.
+- Every "Top N", dollar-volume, funded or financed, families count, rating mention, emoji and em dash, with surrounding text.
+
+Then look at the screenshots yourself. Check:
+
+1. Speed: phone LCP under 2.5 s. Third-party tags load after first paint.
+2. Claims and copy rules from section 4.
+3. Palette and type against section 3.
+4. Repetition: rating shown at most twice, one stats band, one button per card.
+5. Phone: no overlap from the chat bubble, solid menu panel, buttons at least 44 px (48 is better).
+6. Reviews visible without clicking. Text only.
+7. Header is one row on desktop.
+
+Baseline from 2026-11-14 (homepage): phone LCP 5.2 to 6.0 s; 2.0 MB JS uncompressed (own 937 KB in 47 files, GTM 529 KB, Facebook 553 KB); fonts Outfit, Inter, Montserrat; 93 small tap targets; 11,200 px tall on a phone. Rate site: LCP 2.4 s, 0.33 MB JS.
+
+## 6. Design resource library
+
+Verdicts are against section 3. Licences read 2026-11-13.
+
+| Resource | Use it for | Licence | Verdict |
+|---|---|---|---|
+| component.gallery | Checklist for FAQ accordions, reviews, ratings, tabs and nav. Compare Flow's version with 2-3 mature design systems. | Free reference, links out, no code | Use |
+| navbar.gallery | Header redesign. Start with the Static and Announcement types. | Free, screenshots of live sites | Use |
+| pixlpin.com | Mood boards of real finance sites (/designs/site/finance) and motion references. | Terms: "Seeing it here gives you no right to reuse it." Inspiration only. | Use, references only |
+| vanta.supply | At most one slow water-like shader behind a hero, if light and off for reduced motion. | Commercial use OK, no credit, no resale. Pro shown at $72 a year. | Park. Its particles, glow and chrome are the rejected look. |
+| dithercn.dev | Nothing for Flow. | No licence found | Skip. Retro pixel look plus WebGL weight. |
+
+Never copy a design from a gallery. Use galleries to pick patterns, then build Flow's own version.
+
+## 7. Video (VSLs)
+
+- The plan is Drive MARKETING / 2026-11-06 Hormozi VSL Build / "Flow Journey VSLs - 12 Points Ranked": one job and one next step per video, 4:5 vertical, captions burned in. Read it before proposing any video.
+- Slots are live on www (flow-mortgage-hub PR #112). Videos sit in the brain storage bucket `journey-videos`; `manifest.json` lists live slots. On 2026-11-14 it was empty and every stored clip was a 62 KB test file. Check the manifest before saying a video is live.
+- Never put a video in front of a result or a download. Beside or after.
+- Speed: load the poster only, fetch the video on tap, no autoplay, `preload="none"`. A video must not move phone LCP.
+- In the waterline design the homepage video takes the hero photo slot.
+
+## 8. Output
+
+- Findings and options to Alex as a PDF in FLOW - Mothership / FLOW / MARKETING / `<date> <name>`. Never .md files to Alex.
+- Short lines, the decision in bold, numbers with every finding.
+- Show a picture of any new layout, palette or typeface before building it.
+- Draft only. Nothing is published or sent until Alex says so.
+- Add new resources to the brain row "Reference Web Design Resource Library" and to the table above.
